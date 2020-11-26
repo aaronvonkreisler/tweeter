@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import keys from './keys';
+import keys from '../config/keys';
 const db = keys.mongoURI;
 
 export const connectDB = async () => {

@@ -7,17 +7,13 @@ require("core-js/modules/es.promise");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.start = void 0;
+exports.connectDB = void 0;
 
 require("regenerator-runtime/runtime");
 
-var _express = _interopRequireDefault(require("express"));
+var _mongoose = _interopRequireDefault(require("mongoose"));
 
-var _cors = _interopRequireDefault(require("cors"));
-
-var _db = require("./utils/db");
-
-var _user = _interopRequireDefault(require("./Resources/user/user.router"));
+var _keys = _interopRequireDefault(require("../config/keys"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -25,21 +21,9 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-var app = (0, _express.default)();
-app.disable('x-powered-by'); //Middleware
+var db = _keys.default.mongoURI;
 
-app.use((0, _cors.default)());
-app.use(_express.default.json({
-  extended: false
-}));
-app.use(_express.default.urlencoded({
-  extended: true
-})); // Define Routes
-
-app.use('/api/user', _user.default);
-var PORT = process.env.PORT || 5000;
-
-var start = /*#__PURE__*/function () {
+var connectDB = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
@@ -47,21 +31,25 @@ var start = /*#__PURE__*/function () {
           case 0:
             _context.prev = 0;
             _context.next = 3;
-            return (0, _db.connectDB)();
+            return _mongoose.default.connect(db, {
+              useCreateIndex: true,
+              useUnifiedTopology: true,
+              useNewUrlParser: true,
+              useFindAndModify: false
+            });
 
           case 3:
-            app.listen(PORT, function () {
-              return console.log("Server started on port ".concat(PORT));
-            });
-            _context.next = 9;
+            console.log('MongoDB Connected...');
+            _context.next = 10;
             break;
 
           case 6:
             _context.prev = 6;
             _context.t0 = _context["catch"](0);
             console.error(_context.t0.message);
+            process.exit(1);
 
-          case 9:
+          case 10:
           case "end":
             return _context.stop();
         }
@@ -69,9 +57,9 @@ var start = /*#__PURE__*/function () {
     }, _callee, null, [[0, 6]]);
   }));
 
-  return function start() {
+  return function connectDB() {
     return _ref.apply(this, arguments);
   };
 }();
 
-exports.start = start;
+exports.connectDB = connectDB;
