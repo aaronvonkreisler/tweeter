@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const keys = require('./keys');
+import mongoose from 'mongoose';
+import keys from './keys';
 const db = keys.mongoURI;
 
 export const connectDB = async () => {

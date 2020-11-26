@@ -28,10 +28,7 @@ app.get('/', function (req, res) {
   return res.send('Tweeter API Running');
 }); // Define Routes
 
-app.use('/api/users', require('./routes/api/users'));
 app.use('/api/auth', require('./routes/api/auth'));
-app.use('/api/tweets', require('./routes/api/tweets'));
-app.use('/api/profile', require('./routes/api/profile'));
 var PORT = process.env.PORT || 5000;
 
 var start = /*#__PURE__*/function () {
