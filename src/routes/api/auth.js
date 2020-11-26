@@ -14,4 +14,14 @@ router.get('/', async (req, res) => {
    }
 });
 
+router.post('/', (req, res) => {
+   try {
+      console.log(req.body);
+      res.json({ msg: 'yay!' });
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+   }
+});
+
 module.exports = router;
