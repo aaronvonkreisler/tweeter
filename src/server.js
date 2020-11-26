@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { connectDB } from './config/db';
+import userRouter from './Resources/user/user.router';
 
 const app = express();
 
@@ -11,11 +12,8 @@ app.use(cors());
 app.use(express.json({ extended: false }));
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => res.send('Tweeter API Running'));
-
 // Define Routes
-
-app.use('/api/auth', require('./routes/api/auth'));
+app.use('/api/user', userRouter);
 
 const PORT = process.env.PORT || 5000;
 

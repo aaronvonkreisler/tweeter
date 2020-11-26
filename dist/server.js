@@ -17,6 +17,8 @@ var _cors = _interopRequireDefault(require("cors"));
 
 var _db = require("./config/db");
 
+var _user = _interopRequireDefault(require("./Resources/user/user.router"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -32,12 +34,9 @@ app.use(_express.default.json({
 }));
 app.use(_express.default.urlencoded({
   extended: true
-}));
-app.get('/', function (req, res) {
-  return res.send('Tweeter API Running');
-}); // Define Routes
+})); // Define Routes
 
-app.use('/api/auth', require('./routes/api/auth'));
+app.use('/api/user', _user.default);
 var PORT = process.env.PORT || 5000;
 
 var start = /*#__PURE__*/function () {
