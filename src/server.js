@@ -1,10 +1,15 @@
-const express = require('express');
+import express from 'express';
+import cors from 'cors';
 import { connectDB } from './config/db';
 
 const app = express();
 
+app.disable('x-powered-by');
+
 //Middleware
+app.use(cors());
 app.use(express.json({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => res.send('Tweeter API Running'));
 
