@@ -1,14 +1,8 @@
-import keys from '../../config/keys';
-import { User } from '../user/user.model';
-import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 
-export const newToken = (user) => {
-   return jwt.sign({ user: { id: user.id } }, keys.secrets.jwt, {
-      expiresIn: keys.secrets.jwtExp,
-   });
-};
+import { User } from '../user/user.model';
+import { newToken } from '../../utils/auth';
 
 export const signIn = async (req, res) => {
    const { email, password } = req.body;

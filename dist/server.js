@@ -17,9 +17,11 @@ var _cors = _interopRequireDefault(require("cors"));
 
 var _db = require("./utils/db");
 
+var _auth = require("./utils/auth");
+
 var _user = _interopRequireDefault(require("./Resources/user/user.router"));
 
-var _auth = _interopRequireDefault(require("./Resources/auth/auth.router"));
+var _auth2 = _interopRequireDefault(require("./Resources/auth/auth.router"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -38,7 +40,8 @@ app.use(_express.default.urlencoded({
   extended: true
 })); // Define Routes
 
-app.use('/auth', _auth.default);
+app.use('/auth', _auth2.default);
+app.use('/api', _auth.protect);
 app.use('/api/user', _user.default);
 var PORT = process.env.PORT || 5000;
 
