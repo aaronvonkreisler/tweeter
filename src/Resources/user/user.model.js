@@ -1,18 +1,7 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const UserSchema = new mongoose.Schema({
-   name: {
-      type: String,
-      required: true,
-   },
-   userName: {
-      type: String,
-      required: true,
-      unique: true,
-   },
-   displayName: {
-      type: String,
-   },
    email: {
       type: String,
       required: true,
@@ -22,14 +11,58 @@ const UserSchema = new mongoose.Schema({
       type: String,
       required: true,
    },
-   dateOfBirth: {
+   date_of_birth: {
       type: Date,
       required: true,
+   },
+   name: {
+      type: String,
+      required: true,
+      trim: true,
+   },
+   screen_name: {
+      type: String,
+      required: true,
+      maxlength: 15,
+      unique: true,
+      trim: true,
+   },
+   display_name: String,
+   location: String,
+   description: String,
+   protected: {
+      type: Boolean,
+      default: false,
+   },
+   followers_count: Number,
+   following_count: Number,
+   statuses_count: Number,
+   default_profile: {
+      type: Boolean,
+      default: true,
+   },
+   verified: {
+      type: Boolean,
+      default: false,
    },
    createdAt: {
       type: Date,
       default: Date.now,
    },
+});
+
+UserSchema.pre('save', function (next) {
+   if (!this.isModified('password')) {
+      return next();
+   }
+
+   bcrypt.hash(this.password, 10, (err, hash) => {
+      if (err) {
+         return next(err);
+      }
+      this.password = hash;
+      next();
+   });
 });
 
 export const User = mongoose.model('user', UserSchema);

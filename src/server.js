@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { connectDB } from './utils/db';
 import userRouter from './Resources/user/user.router';
+import authRouter from './Resources/auth/auth.router';
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.json({ extended: false }));
 app.use(express.urlencoded({ extended: true }));
 
 // Define Routes
+app.use('/auth', authRouter);
 app.use('/api/user', userRouter);
 
 const PORT = process.env.PORT || 5000;
