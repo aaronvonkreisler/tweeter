@@ -61,6 +61,18 @@ var UserSchema = new _mongoose.default.Schema({
     type: Boolean,
     default: false
   },
+  following: [{
+    user: {
+      type: _mongoose.default.Schema.Types.ObjectId,
+      ref: 'users'
+    }
+  }],
+  followers: [{
+    user: {
+      type: _mongoose.default.Schema.Types.ObjectId,
+      ref: 'users'
+    }
+  }],
   createdAt: {
     type: Date,
     default: Date.now
