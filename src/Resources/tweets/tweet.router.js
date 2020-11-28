@@ -36,6 +36,14 @@ router.delete('/:id', deleteTweet);
 
 // @route            POST api/tweets/comment/:tweet_id
 // @description      Delete a tweet
-router.post('/comment/:tweet_id', replytoTweet);
+router.post(
+   '/comment/:tweet_id',
+   [
+      check('content', 'Please insert some text to send a reply')
+         .not()
+         .isEmpty(),
+   ],
+   replytoTweet
+);
 
 export default router;

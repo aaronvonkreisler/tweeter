@@ -168,3 +168,5 @@ export const replytoTweet = async (req, res) => {
       res.status(500).send('Server Error');
    }
 };
+
+export const deleteReply = async();
