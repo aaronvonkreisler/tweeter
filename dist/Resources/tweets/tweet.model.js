@@ -30,7 +30,10 @@ var TweetSchema = new _mongoose.default.Schema({
       ref: 'users'
     }
   }],
-  favorites_count: Number,
+  favorites_count: {
+    type: Number,
+    default: 0
+  },
   replies: [{
     user: {
       type: _mongoose.default.Schema.Types.ObjectId,
@@ -47,13 +50,25 @@ var TweetSchema = new _mongoose.default.Schema({
       default: Date.now
     }
   }],
-  replies_count: Number,
+  replies_count: {
+    type: Number,
+    default: 0
+  },
   retweet: {
     originalTweetId: {
       type: _mongoose.default.Schema.Types.ObjectId
-    }
+    },
+    original_display_name: String,
+    original_screen_name: String,
+    original_avatar: String,
+    original_content: String,
+    original_verified: Boolean,
+    original_timestamp: Date
   },
-  retweet_count: Number,
+  retweet_count: {
+    type: Number,
+    default: 0
+  },
   entities: {
     hashtags: [String],
     user_mentions: [String]
