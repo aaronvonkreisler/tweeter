@@ -4,6 +4,7 @@ import { connectDB } from './utils/db';
 import { protect } from './utils/auth';
 import userRouter from './Resources/user/user.router';
 import authRouter from './Resources/auth/auth.router';
+import tweetRouter from './Resources/tweets/tweet.router';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/auth', authRouter);
 app.use('/api', protect);
 app.use('/api/user', userRouter);
+app.use('/api/tweets', tweetRouter);
 
 const PORT = process.env.PORT || 5000;
 

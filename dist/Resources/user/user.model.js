@@ -39,6 +39,10 @@ var UserSchema = new _mongoose.default.Schema({
     unique: true,
     trim: true
   },
+  avatar: {
+    type: String,
+    default: 'http://www.avatar.com'
+  },
   display_name: String,
   location: String,
   description: String,

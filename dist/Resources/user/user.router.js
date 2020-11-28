@@ -7,14 +7,11 @@ exports.default = void 0;
 
 var _express = require("express");
 
-var router = (0, _express.Router)();
-router.get('/', function (req, res) {
-  try {
-    res.send('User Route!!');
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
+var _user = require("./user.controllers");
+
+var router = (0, _express.Router)(); // @route            GET api/user/current
+// @description      Fetch the current user from database
+
+router.get('/current', _user.fetchCurrentUser);
 var _default = router;
 exports.default = _default;

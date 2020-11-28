@@ -23,6 +23,8 @@ var _user = _interopRequireDefault(require("./Resources/user/user.router"));
 
 var _auth2 = _interopRequireDefault(require("./Resources/auth/auth.router"));
 
+var _tweet = _interopRequireDefault(require("./Resources/tweets/tweet.router"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -43,6 +45,7 @@ app.use(_express.default.urlencoded({
 app.use('/auth', _auth2.default);
 app.use('/api', _auth.protect);
 app.use('/api/user', _user.default);
+app.use('/api/tweets', _tweet.default);
 var PORT = process.env.PORT || 5000;
 
 var start = /*#__PURE__*/function () {
