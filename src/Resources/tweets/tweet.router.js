@@ -4,6 +4,7 @@ import {
    createTweet,
    replytoTweet,
    deleteTweet,
+   deleteReply,
    favoriteTweet,
    removeFavorite,
    retweet,
@@ -16,6 +17,18 @@ router.post(
    '/',
    [check('content', 'Please enter some text').not().isEmpty()],
    createTweet
+);
+
+// @route            POST api/tweets/comment/:tweet_id
+// @description      Reply to a tweet
+router.post(
+   '/comment/:tweet_id',
+   [
+      check('content', 'Please insert some text to send a reply')
+         .not()
+         .isEmpty(),
+   ],
+   replytoTweet
 );
 
 // @route            POST api/tweets/user/:user_id/retweet/:tweet_id
@@ -34,16 +47,8 @@ router.put('/unlike/:id', removeFavorite);
 // @description      Delete a tweet
 router.delete('/:id', deleteTweet);
 
-// @route            POST api/tweets/comment/:tweet_id
-// @description      Delete a tweet
-router.post(
-   '/comment/:tweet_id',
-   [
-      check('content', 'Please insert some text to send a reply')
-         .not()
-         .isEmpty(),
-   ],
-   replytoTweet
-);
+// @route            DELETE api/tweets/comment/:tweet_id/:reply_id
+// @description      Delete a reply to a tweet
+router.delete('/comment/:tweet_id/:reply_id', deleteReply);
 
 export default router;

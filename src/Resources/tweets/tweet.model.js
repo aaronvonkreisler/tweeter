@@ -48,15 +48,8 @@ const TweetSchema = new mongoose.Schema({
       default: 0,
    },
    retweet: {
-      originalTweetId: {
-         type: mongoose.Schema.Types.ObjectId,
-      },
-      original_display_name: String,
-      original_screen_name: String,
-      original_avatar: String,
-      original_content: String,
-      original_verified: Boolean,
-      original_timestamp: Date,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'tweet',
    },
    retweet_count: {
       type: Number,

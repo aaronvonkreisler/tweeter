@@ -2,9 +2,6 @@ import { validationResult } from 'express-validator';
 import { Tweet } from './tweet.model';
 import { User } from '../user/user.model';
 
-// TODO - Fetch all tweets from a users following
-// TODO - Retweet
-
 export const createTweet = async (req, res) => {
    const errors = validationResult(req);
 
@@ -169,4 +166,33 @@ export const replytoTweet = async (req, res) => {
    }
 };
 
-export const deleteReply = async();
+export const deleteReply = async (req, res) => {
+   try {
+      const tweet = await Tweet.findById(req.params.tweet_id);
+
+      const reply = tweet.replies.find(
+         (reply) => reply.id === req.params.reply_id
+      );
+
+      if (!reply) {
+         return res.status(400).json({ msg: 'Reply does not exist' });
+      }
+
+      if (reply.user.toString() !== req.user.id) {
+         return res
+            .status(401)
+            .json({ msg: 'Not authorized to perform this action' });
+      }
+
+      const removeIndex = tweet.replies.map((reply) =>
+         reply.user.toString().indexOf(req.user.id)
+      );
+
+      tweet.replies.splice(removeIndex, 1);
+      await tweet.save();
+      res.json(tweet.replies);
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+   }
+};
