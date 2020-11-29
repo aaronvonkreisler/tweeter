@@ -3,10 +3,19 @@ import { Tweet } from './tweet.model';
 import { User } from '../user/user.model';
 
 // TODO - Fetch all tweets from a users following
-// TODO - Retweet
+// TODO - If Tweet has a retweet - the tweet needs to be populated
 
-const getTimelineTweets = async (req, res) => {
+export const getTweetById = async (req, res) => {
    try {
-      const user = await User.findById(req.user.id).lean().exec();
-   } catch (err) {}
+      const tweet = await Tweet.findById(req.params.id)
+         .populate('retweet')
+         .exec();
+      if (!tweet) {
+         res.status(404).json({ msg: 'Tweet not found' });
+      }
+      res.json(tweet);
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+   }
 };
