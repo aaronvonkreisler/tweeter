@@ -2,7 +2,7 @@ import { User } from './user.model';
 
 export const fetchCurrentUser = async (req, res) => {
    try {
-      const user = await User.findById(req.user.id).select('-password');
+      const user = await User.findById(req.user.id).select('-password').exec();
       res.json(user);
    } catch (err) {
       console.error(err.message);
@@ -25,7 +25,7 @@ export const fetchUserById = async (req, res) => {
 
 export const followUser = async (req, res) => {
    try {
-      const user = await User.findById(req.user.id);
+      const user = await User.findById(req.user.id).select('-password');
       const userToBeFollowed = await User.findById(req.params.id);
       if (
          userToBeFollowed.followers.filter(
