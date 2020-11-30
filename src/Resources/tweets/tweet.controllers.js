@@ -89,13 +89,11 @@ export const removeFavorite = async (req, res) => {
 };
 
 export const retweet = async (req, res) => {
-   //POST api/tweets/user/:user_id/retweet/:tweet_id
    try {
       const user = await User.findById(req.user.id).select('-password').exec();
       await Tweet.findByIdAndUpdate(req.params.tweet_id, {
          $inc: { retweet_count: 1 },
       }).exec();
-
       const newTweet = await Tweet.create({
          user: req.user.id,
          content: req.body.content,

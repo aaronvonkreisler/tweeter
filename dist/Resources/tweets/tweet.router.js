@@ -37,6 +37,12 @@ router.delete('/:id', _tweet.deleteTweet); // @route            DELETE api/tweet
 router.delete('/comment/:tweet_id/:reply_id', _tweet.deleteReply); // @route            GET api/tweets/:id
 // @description     Get a tweet by id
 
-router.get('/:id', _tweet2.getTweetById);
+router.get('/:id', _tweet2.getTweetById); // @route            GET api/tweets
+// @description     Get tweets for a users timeline
+
+router.get('/', _tweet2.getTimelineTweets); // @route            GET api/tweets/user/:id
+// @description     Get tweets for one user
+
+router.get('/user/:id', _tweet2.getUsersTweets);
 var _default = router;
 exports.default = _default;

@@ -24,7 +24,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 var TweetSchema = new _mongoose.default.Schema({
   user: {
     type: _mongoose.default.Schema.Types.ObjectId,
-    ref: 'users'
+    ref: 'user'
   },
   display_name: String,
   screen_name: String,
@@ -47,8 +47,7 @@ var TweetSchema = new _mongoose.default.Schema({
   replies: [{
     user: {
       type: _mongoose.default.Schema.Types.ObjectId,
-      ref: 'user',
-      unique: true
+      ref: 'user'
     },
     content: {
       type: String,

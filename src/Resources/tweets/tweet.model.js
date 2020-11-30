@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const TweetSchema = new mongoose.Schema({
    user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'users',
+      ref: 'user',
    },
    display_name: String,
    screen_name: String,
@@ -30,7 +30,6 @@ const TweetSchema = new mongoose.Schema({
          user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'user',
-            unique: true,
          },
          content: {
             type: String,

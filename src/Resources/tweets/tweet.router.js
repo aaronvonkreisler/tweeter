@@ -9,7 +9,11 @@ import {
    removeFavorite,
    retweet,
 } from './tweet.controllers';
-import { getTweetById } from './tweet.getControllers';
+import {
+   getTweetById,
+   getTimelineTweets,
+   getUsersTweets,
+} from './tweet.getControllers';
 const router = Router();
 
 // @route            POST api/tweets/
@@ -56,4 +60,11 @@ router.delete('/comment/:tweet_id/:reply_id', deleteReply);
 // @description     Get a tweet by id
 router.get('/:id', getTweetById);
 
+// @route            GET api/tweets
+// @description     Get tweets for a users timeline
+router.get('/', getTimelineTweets);
+
+// @route            GET api/tweets/user/:id
+// @description     Get tweets for one user
+router.get('/user/:id', getUsersTweets);
 export default router;
