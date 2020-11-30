@@ -55,3 +55,49 @@ export const getUsersTweets = async (req, res) => {
       res.status(500).send('Server Error');
    }
 };
+
+export const getTweetsLikedUsers = async (req, res) => {
+   try {
+      const tweet = await Tweet.findById(req.params.tweet_id)
+         .populate({
+            path: 'favorites',
+            populate: {
+               path: 'user',
+               select: '_id display_name screen_name name verified avatar',
+            },
+         })
+         .select('-_id')
+         .lean()
+         .exec();
+      if (!tweet) {
+         res.status(404).json({ msg: 'Tweet not found' });
+      }
+
+      res.json(tweet.favorites);
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+   }
+};
+
+export const getTweetsRetweetUsers = async (req, res) => {
+   try {
+      const tweet = await Tweet.find({ retweet: req.params.tweet_id })
+         .populate({
+            path: 'user',
+            select: '_id display_name screen_name name verified avatar',
+         })
+         .select('user -_id')
+         .lean()
+         .exec();
+
+      if (!tweet) {
+         res.status(400).json({ msg: 'Tweet has not been retweeted' });
+      }
+
+      res.json(tweet);
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+   }
+};

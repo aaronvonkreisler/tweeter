@@ -13,6 +13,8 @@ import {
    getTweetById,
    getTimelineTweets,
    getUsersTweets,
+   getTweetsLikedUsers,
+   getTweetsRetweetUsers,
 } from './tweet.getControllers';
 const router = Router();
 
@@ -67,4 +69,12 @@ router.get('/', getTimelineTweets);
 // @route            GET api/tweets/user/:id
 // @description     Get tweets for one user
 router.get('/user/:id', getUsersTweets);
+
+// @route            GET api/tweets/:tweet_id/liked
+// @description     Get the users who liked a tweet
+router.get('/:tweet_id/likes', getTweetsLikedUsers);
+
+// @route            GET api/tweets/:tweet_id/retweets
+// @description     Get the users who retweeted a tweet
+router.get('/:tweet_id/retweets', getTweetsRetweetUsers);
 export default router;
