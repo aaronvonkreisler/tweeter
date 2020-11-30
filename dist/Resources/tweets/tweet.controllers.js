@@ -363,7 +363,8 @@ var replytoTweet = /*#__PURE__*/function () {
             reply = {
               user: req.user.id,
               content: req.body.content,
-              display_name: user.name,
+              display_name: user.display_name,
+              name: user.name,
               avatar: user.avatar,
               screen_name: user.screen_name,
               verified: user.verified

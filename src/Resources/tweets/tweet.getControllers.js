@@ -56,6 +56,21 @@ export const getUsersTweets = async (req, res) => {
    }
 };
 
+export const getUsersReplies = async (req, res) => {
+   try {
+      const replies = await Tweet.find({ 'replies.user': req.params.id })
+         .lean()
+         .exec();
+      if (!replies) {
+         res.status(404).json({ msg: 'No replies yet' });
+      }
+      res.json(replies);
+   } catch (err) {
+      console.error(err.message);
+      res.statu(500).send('Server Error');
+   }
+};
+
 export const getTweetsLikedUsers = async (req, res) => {
    try {
       const tweet = await Tweet.findById(req.params.tweet_id)

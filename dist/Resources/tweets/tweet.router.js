@@ -43,7 +43,10 @@ router.get('/:id', _tweet2.getTweetById); // @route            GET api/tweets
 router.get('/', _tweet2.getTimelineTweets); // @route            GET api/tweets/user/:id
 // @description     Get tweets for one user
 
-router.get('/user/:id', _tweet2.getUsersTweets); // @route            GET api/tweets/:tweet_id/liked
+router.get('/user/:id', _tweet2.getUsersTweets); // @route            GET api/tweets/user/:id/replies
+// @description     Get replies for one user
+
+router.get('/user/:id/replies', _tweet2.getUsersReplies); // @route            GET api/tweets/:tweet_id/liked
 // @description     Get the users who liked a tweet
 
 router.get('/:tweet_id/likes', _tweet2.getTweetsLikedUsers); // @route            GET api/tweets/:tweet_id/retweets

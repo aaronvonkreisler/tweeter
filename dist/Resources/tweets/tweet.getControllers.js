@@ -15,7 +15,7 @@ require("core-js/modules/es.regexp.exec");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getTweetsRetweetUsers = exports.getTweetsLikedUsers = exports.getUsersTweets = exports.getTimelineTweets = exports.getTweetById = void 0;
+exports.getTweetsRetweetUsers = exports.getTweetsLikedUsers = exports.getUsersReplies = exports.getUsersTweets = exports.getTimelineTweets = exports.getTweetById = void 0;
 
 require("regenerator-runtime/runtime");
 
@@ -197,33 +197,29 @@ var getUsersTweets = /*#__PURE__*/function () {
 
 exports.getUsersTweets = getUsersTweets;
 
-var getTweetsLikedUsers = /*#__PURE__*/function () {
+var getUsersReplies = /*#__PURE__*/function () {
   var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(req, res) {
-    var tweet;
+    var replies;
     return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
             _context4.prev = 0;
             _context4.next = 3;
-            return _tweet.Tweet.findById(req.params.tweet_id).populate({
-              path: 'favorites',
-              populate: {
-                path: 'user',
-                select: '_id display_name screen_name name verified avatar'
-              }
-            }).select('-_id').lean().exec();
+            return _tweet.Tweet.find({
+              'replies.user': req.params.id
+            }).lean().exec();
 
           case 3:
-            tweet = _context4.sent;
+            replies = _context4.sent;
 
-            if (!tweet) {
+            if (!replies) {
               res.status(404).json({
-                msg: 'Tweet not found'
+                msg: 'No replies yet'
               });
             }
 
-            res.json(tweet.favorites);
+            res.json(replies);
             _context4.next = 12;
             break;
 
@@ -231,7 +227,7 @@ var getTweetsLikedUsers = /*#__PURE__*/function () {
             _context4.prev = 8;
             _context4.t0 = _context4["catch"](0);
             console.error(_context4.t0.message);
-            res.status(500).send('Server Error');
+            res.statu(500).send('Server Error');
 
           case 12:
           case "end":
@@ -241,14 +237,14 @@ var getTweetsLikedUsers = /*#__PURE__*/function () {
     }, _callee4, null, [[0, 8]]);
   }));
 
-  return function getTweetsLikedUsers(_x7, _x8) {
+  return function getUsersReplies(_x7, _x8) {
     return _ref4.apply(this, arguments);
   };
 }();
 
-exports.getTweetsLikedUsers = getTweetsLikedUsers;
+exports.getUsersReplies = getUsersReplies;
 
-var getTweetsRetweetUsers = /*#__PURE__*/function () {
+var getTweetsLikedUsers = /*#__PURE__*/function () {
   var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(req, res) {
     var tweet;
     return regeneratorRuntime.wrap(function _callee5$(_context5) {
@@ -257,23 +253,24 @@ var getTweetsRetweetUsers = /*#__PURE__*/function () {
           case 0:
             _context5.prev = 0;
             _context5.next = 3;
-            return _tweet.Tweet.find({
-              retweet: req.params.tweet_id
-            }).populate({
-              path: 'user',
-              select: '_id display_name screen_name name verified avatar'
-            }).select('user -_id').lean().exec();
+            return _tweet.Tweet.findById(req.params.tweet_id).populate({
+              path: 'favorites',
+              populate: {
+                path: 'user',
+                select: '_id display_name screen_name name verified avatar'
+              }
+            }).select('-_id').lean().exec();
 
           case 3:
             tweet = _context5.sent;
 
             if (!tweet) {
-              res.status(400).json({
-                msg: 'Tweet has not been retweeted'
+              res.status(404).json({
+                msg: 'Tweet not found'
               });
             }
 
-            res.json(tweet);
+            res.json(tweet.favorites);
             _context5.next = 12;
             break;
 
@@ -291,8 +288,58 @@ var getTweetsRetweetUsers = /*#__PURE__*/function () {
     }, _callee5, null, [[0, 8]]);
   }));
 
-  return function getTweetsRetweetUsers(_x9, _x10) {
+  return function getTweetsLikedUsers(_x9, _x10) {
     return _ref5.apply(this, arguments);
+  };
+}();
+
+exports.getTweetsLikedUsers = getTweetsLikedUsers;
+
+var getTweetsRetweetUsers = /*#__PURE__*/function () {
+  var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(req, res) {
+    var tweet;
+    return regeneratorRuntime.wrap(function _callee6$(_context6) {
+      while (1) {
+        switch (_context6.prev = _context6.next) {
+          case 0:
+            _context6.prev = 0;
+            _context6.next = 3;
+            return _tweet.Tweet.find({
+              retweet: req.params.tweet_id
+            }).populate({
+              path: 'user',
+              select: '_id display_name screen_name name verified avatar'
+            }).select('user -_id').lean().exec();
+
+          case 3:
+            tweet = _context6.sent;
+
+            if (!tweet) {
+              res.status(400).json({
+                msg: 'Tweet has not been retweeted'
+              });
+            }
+
+            res.json(tweet);
+            _context6.next = 12;
+            break;
+
+          case 8:
+            _context6.prev = 8;
+            _context6.t0 = _context6["catch"](0);
+            console.error(_context6.t0.message);
+            res.status(500).send('Server Error');
+
+          case 12:
+          case "end":
+            return _context6.stop();
+        }
+      }
+    }, _callee6, null, [[0, 8]]);
+  }));
+
+  return function getTweetsRetweetUsers(_x11, _x12) {
+    return _ref6.apply(this, arguments);
   };
 }();
 
