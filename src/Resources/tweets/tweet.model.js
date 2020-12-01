@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const TweetSchema = new mongoose.Schema({
    user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'users',
+      ref: 'user',
    },
    display_name: String,
    screen_name: String,
@@ -17,7 +17,7 @@ const TweetSchema = new mongoose.Schema({
       {
          user: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'users',
+            ref: 'user',
          },
       },
    ],
@@ -29,7 +29,7 @@ const TweetSchema = new mongoose.Schema({
       {
          user: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'users',
+            ref: 'user',
          },
          content: {
             type: String,
@@ -63,6 +63,10 @@ const TweetSchema = new mongoose.Schema({
       type: Date,
       default: Date.now,
    },
+});
+
+TweetSchema.post('remove', async function (doc, next) {
+   await Tweet.updateMany({ retweet: doc._id }, { retweet: null });
 });
 
 export const Tweet = mongoose.model('tweet', TweetSchema);

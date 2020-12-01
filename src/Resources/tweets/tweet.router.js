@@ -9,6 +9,14 @@ import {
    removeFavorite,
    retweet,
 } from './tweet.controllers';
+import {
+   getTweetById,
+   getTimelineTweets,
+   getUsersTweets,
+   getUsersReplies,
+   getTweetsLikedUsers,
+   getTweetsRetweetUsers,
+} from './tweet.getControllers';
 const router = Router();
 
 // @route            POST api/tweets/
@@ -31,9 +39,9 @@ router.post(
    replytoTweet
 );
 
-// @route            POST api/tweets/user/:user_id/retweet/:tweet_id
+// @route            POST api/tweets/retweet/:tweet_id
 // @description      Post a retweet
-router.post('/user/:user_id/retweet/:tweet_id', retweet);
+router.post('/retweet/:tweet_id', retweet);
 
 // @route            PUT api/tweets/like/:id
 // @description      Like a tweet
@@ -51,4 +59,27 @@ router.delete('/:id', deleteTweet);
 // @description      Delete a reply to a tweet
 router.delete('/comment/:tweet_id/:reply_id', deleteReply);
 
+// @route            GET api/tweets/:id
+// @description     Get a tweet by id
+router.get('/:id', getTweetById);
+
+// @route            GET api/tweets
+// @description     Get tweets for a users timeline
+router.get('/', getTimelineTweets);
+
+// @route            GET api/tweets/user/:id
+// @description     Get tweets for one user
+router.get('/user/:id', getUsersTweets);
+
+// @route            GET api/tweets/user/:id/replies
+// @description     Get replies for one user
+router.get('/user/:id/replies', getUsersReplies);
+
+// @route            GET api/tweets/:tweet_id/liked
+// @description     Get the users who liked a tweet
+router.get('/:tweet_id/likes', getTweetsLikedUsers);
+
+// @route            GET api/tweets/:tweet_id/retweets
+// @description     Get the users who retweeted a tweet
+router.get('/:tweet_id/retweets', getTweetsRetweetUsers);
 export default router;
