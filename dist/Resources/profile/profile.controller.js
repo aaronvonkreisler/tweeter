@@ -23,9 +23,12 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+//TODO -- there must be two pictures or else the server will crash,
+// as it wont be able to read the mimetype of a file that isn't there.
+// TODO -- handle error if file size is too large. defaults to 403 status
 var createOrUpdateProfile = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
-    var body, files, regex, response, profileFields, profile;
+    var body, files, regex, profilePicResponse, profileFields, profile;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -34,33 +37,28 @@ var createOrUpdateProfile = /*#__PURE__*/function () {
             body = req.body, files = req.files;
             regex = /(image\/jpg)|(image\/jpeg)|(image\/png)/i;
 
-            if (files.image.mimetype.match(regex)) {
+            if (files.profile.mimetype.match(regex)) {
               _context.next = 7;
               break;
             }
 
             res.status(422).json({
-              msg: 'Invalid file type'
+              msg: 'Invalid file type. Please upload a JPG or PNG filetype.'
             });
-            _context.next = 16;
+            _context.next = 15;
             break;
 
           case 7:
             _context.next = 9;
-            return (0, _imageUpload.uploadPhoto)(files);
+            return (0, _imageUpload.uploadProfilePhoto)(files);
 
           case 9:
-            response = _context.sent;
-
-            if (res.status === 413) {
-              console.log('it worked');
-            }
-
+            profilePicResponse = _context.sent;
             profileFields = {
               user: req.user.id,
-              profile_picture: response.Location
+              profile_picture: profilePicResponse.Location
             };
-            _context.next = 14;
+            _context.next = 13;
             return _profile.Profile.findOneAndUpdate({
               user: req.user.id
             }, {
@@ -69,28 +67,31 @@ var createOrUpdateProfile = /*#__PURE__*/function () {
               new: true,
               upsert: true,
               setDefaultsOnInsert: true
+            }).populate({
+              path: 'user',
+              select: '-password'
             });
 
-          case 14:
+          case 13:
             profile = _context.sent;
             res.json(profile);
 
-          case 16:
-            _context.next = 22;
+          case 15:
+            _context.next = 21;
             break;
 
-          case 18:
-            _context.prev = 18;
+          case 17:
+            _context.prev = 17;
             _context.t0 = _context["catch"](0);
-            console.error(_context.t0.message);
+            console.error(_context.t0);
             res.status(500).send('Server Error');
 
-          case 22:
+          case 21:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 18]]);
+    }, _callee, null, [[0, 17]]);
   }));
 
   return function createOrUpdateProfile(_x, _x2) {
