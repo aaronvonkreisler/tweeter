@@ -15,8 +15,6 @@ var _express = _interopRequireDefault(require("express"));
 
 var _expressFileupload = _interopRequireDefault(require("express-fileupload"));
 
-var _bodyParser = _interopRequireDefault(require("body-parser"));
-
 var _cors = _interopRequireDefault(require("cors"));
 
 var _db = require("./utils/db");
@@ -55,12 +53,20 @@ app.use((0, _expressFileupload.default)({
 })); // app.use(bodyParser.json());
 // Define Routes
 
+app.get('/', function (req, res) {
+  try {
+    res.status(200).send('Server Running');
+  } catch (err) {
+    console.error(err.message);
+    res.status(400).end();
+  }
+});
 app.use('/auth', _auth2.default);
 app.use('/api', _auth.protect);
 app.use('/api/user', _user.default);
 app.use('/api/tweets', _tweet.default);
 app.use('/api/profile', _profile.default);
-var PORT = process.env.PORT || 5000;
+var PORT = process.env.PORT || 5001;
 
 var start = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {

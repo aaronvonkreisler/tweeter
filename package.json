@@ -2,20 +2,19 @@
   "name": "tweeter",
   "version": "1.0.0",
   "description": "MERN Stack Twitter Clone",
-  "main": "index.js",
+  "main": "dist/index.js",
   "engines": {
     "node": "12.18.3",
     "yarn": ""
   },
   "scripts": {
     "start": "node dist/index.js",
-    "server": "nodemon server",
+    "server": "nodemon dist/index.js",
     "client": "yarn start --prefix client",
     "serverDev": "nodemon --exec yarn restart",
-    "dev": "concurrently \"yarn serverDev\" \"yarn client\"",
+    "dev": "concurrently \"yarn run start\" \"yarn run client\"",
     "restart": "rimraf dist && yarn build && yarn start",
     "build": "babel src --out-dir dist"
-
   },
   "author": "Aaron von Kreisler",
   "license": "MIT",
@@ -29,7 +28,8 @@
     "express-fileupload": "^1.2.0",
     "express-validator": "^6.7.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.10.16"
+    "mongoose": "^5.10.16",
+    "regenerator-runtime": "^0.13.7"
   },
   "devDependencies": {
     "@babel/cli": "^7.12.8",
@@ -38,10 +38,9 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
     "@babel/preset-env": "^7.12.7",
     "babel-core": "^6.26.3",
-    "babel-loader": "^8.2.1",
+    "babel-loader": "8.1.0",
     "concurrently": "^5.3.0",
     "nodemon": "^2.0.6",
-    "regenerator-runtime": "^0.13.7",
     "rimraf": "^3.0.2"
   }
 }
