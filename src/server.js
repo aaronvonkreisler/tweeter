@@ -1,6 +1,5 @@
 import express from 'express';
 import fileUpload from 'express-fileupload';
-import bodyParser from 'body-parser';
 import cors from 'cors';
 import { connectDB } from './utils/db';
 import { protect } from './utils/auth';
@@ -32,7 +31,7 @@ app.use('/api/user', userRouter);
 app.use('/api/tweets', tweetRouter);
 app.use('/api/profile', profileRouter);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 export const start = async () => {
    try {
