@@ -25,6 +25,14 @@ app.use(
 // app.use(bodyParser.json());
 
 // Define Routes
+app.get('/', (req, res) => {
+   try {
+      res.status(200).send('Server Running');
+   } catch (err) {
+      console.error(err.message);
+      res.status(400).end();
+   }
+});
 app.use('/auth', authRouter);
 app.use('/api', protect);
 app.use('/api/user', userRouter);

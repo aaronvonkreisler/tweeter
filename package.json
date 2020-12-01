@@ -2,7 +2,7 @@
   "name": "tweeter",
   "version": "1.0.0",
   "description": "MERN Stack Twitter Clone",
-  "main": "index.js",
+  "main": "dist/index.js",
   "engines": {
     "node": "12.18.3",
     "yarn": ""
