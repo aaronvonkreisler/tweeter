@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "description": "MERN Stack Twitter Clone",
   "main": "index.js",
+  "engines": {
+    "node": "12.18.3",
+    "yarn": ""
+  },
   "scripts": {
     "start": "node dist/index.js",
     "server": "nodemon server",
     "dev": "nodemon --exec yarn restart",
     "restart": "rimraf dist && yarn build && yarn start",
     "build": "babel src --out-dir dist"
+
   },
   "author": "Aaron von Kreisler",
   "license": "MIT",
