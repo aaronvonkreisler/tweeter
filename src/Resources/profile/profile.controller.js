@@ -7,8 +7,6 @@ import {
 export const createOrUpdateProfile = async (req, res) => {
    try {
       const { body, files } = req;
-      console.log(files);
-      debugger;
       const regex = /(image\/jpg)|(image\/jpeg)|(image\/png)/i;
       if (
          !files.profile.mimetype.match(regex) ||
