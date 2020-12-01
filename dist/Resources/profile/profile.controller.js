@@ -25,42 +25,45 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 var createOrUpdateProfile = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
-    var body, files, regex, response, profileFields, profile;
+    var body, files, regex, profilePicResponse, backgroundPicResponse, profileFields, profile;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             _context.prev = 0;
             body = req.body, files = req.files;
+            console.log(files);
+            debugger;
             regex = /(image\/jpg)|(image\/jpeg)|(image\/png)/i;
 
-            if (files.image.mimetype.match(regex)) {
-              _context.next = 7;
+            if (!(!files.profile.mimetype.match(regex) || !files.background.mimetype.match(regex))) {
+              _context.next = 9;
               break;
             }
 
             res.status(422).json({
               msg: 'Invalid file type'
             });
-            _context.next = 16;
+            _context.next = 20;
             break;
 
-          case 7:
-            _context.next = 9;
-            return (0, _imageUpload.uploadPhoto)(files);
-
           case 9:
-            response = _context.sent;
+            _context.next = 11;
+            return (0, _imageUpload.uploadProfilePhoto)(files);
 
-            if (res.status === 413) {
-              console.log('it worked');
-            }
+          case 11:
+            profilePicResponse = _context.sent;
+            _context.next = 14;
+            return (0, _imageUpload.uploadBackgroundPhoto)(files);
 
+          case 14:
+            backgroundPicResponse = _context.sent;
             profileFields = {
               user: req.user.id,
-              profile_picture: response.Location
+              profile_picture: profilePicResponse.Location,
+              background_picture: backgroundPicResponse.Location
             };
-            _context.next = 14;
+            _context.next = 18;
             return _profile.Profile.findOneAndUpdate({
               user: req.user.id
             }, {
@@ -71,26 +74,26 @@ var createOrUpdateProfile = /*#__PURE__*/function () {
               setDefaultsOnInsert: true
             });
 
-          case 14:
+          case 18:
             profile = _context.sent;
             res.json(profile);
 
-          case 16:
-            _context.next = 22;
+          case 20:
+            _context.next = 26;
             break;
 
-          case 18:
-            _context.prev = 18;
+          case 22:
+            _context.prev = 22;
             _context.t0 = _context["catch"](0);
             console.error(_context.t0.message);
             res.status(500).send('Server Error');
 
-          case 22:
+          case 26:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[0, 18]]);
+    }, _callee, null, [[0, 22]]);
   }));
 
   return function createOrUpdateProfile(_x, _x2) {
