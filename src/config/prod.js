@@ -1,4 +1,4 @@
-export default config = {
+module.exports = {
    mongoURI: process.env.MONGO_URI,
    jwt: process.env.JWT,
    jwtExp: '5d',

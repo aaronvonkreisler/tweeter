@@ -1,6 +1,5 @@
 import express from 'express';
 import fileUpload from 'express-fileupload';
-import bodyParser from 'body-parser';
 import cors from 'cors';
 import { connectDB } from './utils/db';
 import { protect } from './utils/auth';
@@ -26,13 +25,21 @@ app.use(
 // app.use(bodyParser.json());
 
 // Define Routes
+app.get('/', (req, res) => {
+   try {
+      res.status(200).send('Server Running');
+   } catch (err) {
+      console.error(err.message);
+      res.status(400).end();
+   }
+});
 app.use('/auth', authRouter);
 app.use('/api', protect);
 app.use('/api/user', userRouter);
 app.use('/api/tweets', tweetRouter);
 app.use('/api/profile', profileRouter);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 export const start = async () => {
    try {
