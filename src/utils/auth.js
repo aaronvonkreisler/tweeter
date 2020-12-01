@@ -3,8 +3,8 @@ import keys from '../config/keys';
 import { User } from '../Resources/user/user.model';
 
 export const newToken = (user) => {
-   return jwt.sign({ user: { id: user.id } }, keys.secrets.jwt, {
-      expiresIn: keys.secrets.jwtExp,
+   return jwt.sign({ user: { id: user.id } }, keys.jwt, {
+      expiresIn: keys.jwtExp,
    });
 };
 
@@ -16,7 +16,7 @@ export const protect = async (req, res, next) => {
    }
 
    try {
-      const decoded = jwt.verify(token, keys.secrets.jwt);
+      const decoded = jwt.verify(token, keys.jwt);
       req.user = decoded.user;
       next();
    } catch (err) {
