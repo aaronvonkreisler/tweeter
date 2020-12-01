@@ -4,8 +4,8 @@ import keys from '../config/keys';
 import { generateUniqueFileName } from '../utils/images';
 
 aws.config.update({
-   secretAccessKey: keys.secrets.awsSecretAccessKey,
-   accessKeyId: keys.secrets.awsAccessKey,
+   secretAccessKey: keys.awsSecretAccessKey,
+   accessKeyId: keys.awsAccessKey,
    region: 'us-east-2',
 });
 

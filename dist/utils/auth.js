@@ -28,8 +28,8 @@ var newToken = function newToken(user) {
     user: {
       id: user.id
     }
-  }, _keys.default.secrets.jwt, {
-    expiresIn: _keys.default.secrets.jwtExp
+  }, _keys.default.jwt, {
+    expiresIn: _keys.default.jwtExp
   });
 };
 
@@ -55,7 +55,7 @@ var protect = /*#__PURE__*/function () {
 
           case 3:
             try {
-              decoded = _jsonwebtoken.default.verify(token, _keys.default.secrets.jwt);
+              decoded = _jsonwebtoken.default.verify(token, _keys.default.jwt);
               req.user = decoded.user;
               next();
             } catch (err) {
