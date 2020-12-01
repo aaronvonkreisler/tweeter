@@ -13,6 +13,10 @@ require("regenerator-runtime/runtime");
 
 var _express = _interopRequireDefault(require("express"));
 
+var _expressFileupload = _interopRequireDefault(require("express-fileupload"));
+
+var _bodyParser = _interopRequireDefault(require("body-parser"));
+
 var _cors = _interopRequireDefault(require("cors"));
 
 var _db = require("./utils/db");
@@ -24,6 +28,8 @@ var _user = _interopRequireDefault(require("./Resources/user/user.router"));
 var _auth2 = _interopRequireDefault(require("./Resources/auth/auth.router"));
 
 var _tweet = _interopRequireDefault(require("./Resources/tweets/tweet.router"));
+
+var _profile = _interopRequireDefault(require("./Resources/profile/profile.router"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -40,12 +46,20 @@ app.use(_express.default.json({
 }));
 app.use(_express.default.urlencoded({
   extended: true
-})); // Define Routes
+}));
+app.use((0, _expressFileupload.default)({
+  limits: {
+    fileSize: 50 * 1024 * 1024
+  },
+  abortOnLimit: true
+})); // app.use(bodyParser.json());
+// Define Routes
 
 app.use('/auth', _auth2.default);
 app.use('/api', _auth.protect);
 app.use('/api/user', _user.default);
 app.use('/api/tweets', _tweet.default);
+app.use('/api/profile', _profile.default);
 var PORT = process.env.PORT || 5000;
 
 var start = /*#__PURE__*/function () {
