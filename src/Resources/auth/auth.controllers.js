@@ -38,7 +38,7 @@ export const signIn = async (req, res) => {
 };
 
 export const register = async (req, res) => {
-   const { email, password, date_of_birth, name, screen_name } = req.body;
+   const { email, password, name, screen_name } = req.body;
    const errors = validationResult(req);
 
    if (!errors.isEmpty()) {
@@ -58,7 +58,6 @@ export const register = async (req, res) => {
          name,
          email,
          password,
-         date_of_birth,
          screen_name,
       });
 

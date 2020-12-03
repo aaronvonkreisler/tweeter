@@ -18,9 +18,6 @@ router.post(
          min: 3,
          max: 15,
       }),
-      check('date_of_birth', 'Please provide your date of birth')
-         .not()
-         .isEmpty(),
    ],
    register
 );
