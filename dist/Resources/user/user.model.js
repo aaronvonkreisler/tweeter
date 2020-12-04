@@ -23,10 +23,6 @@ var UserSchema = new _mongoose.default.Schema({
     type: String,
     required: true
   },
-  date_of_birth: {
-    type: Date,
-    required: true
-  },
   name: {
     type: String,
     required: true,
@@ -41,7 +37,7 @@ var UserSchema = new _mongoose.default.Schema({
   },
   avatar: {
     type: String,
-    default: 'http://www.avatar.com'
+    default: 'https://tweeter-dev.s3.us-east-2.amazonaws.com/Profile_avatar_placeholder_large.png'
   },
   display_name: String,
   location: String,

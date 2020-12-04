@@ -115,13 +115,13 @@ exports.signIn = signIn;
 
 var register = /*#__PURE__*/function () {
   var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(req, res) {
-    var _req$body2, email, password, date_of_birth, name, screen_name, errors, user, token;
+    var _req$body2, email, password, name, screen_name, errors, user, token;
 
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            _req$body2 = req.body, email = _req$body2.email, password = _req$body2.password, date_of_birth = _req$body2.date_of_birth, name = _req$body2.name, screen_name = _req$body2.screen_name;
+            _req$body2 = req.body, email = _req$body2.email, password = _req$body2.password, name = _req$body2.name, screen_name = _req$body2.screen_name;
             errors = (0, _expressValidator.validationResult)(req);
 
             if (errors.isEmpty()) {
@@ -160,7 +160,6 @@ var register = /*#__PURE__*/function () {
               name: name,
               email: email,
               password: password,
-              date_of_birth: date_of_birth,
               screen_name: screen_name
             });
 
