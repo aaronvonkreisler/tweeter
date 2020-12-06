@@ -3,9 +3,7 @@ import {
    uploadProfilePhoto,
    uploadBackgroundPhoto,
 } from '../../services/imageUpload';
-
-//TODO -- there must be two pictures or else the server will crash,
-// as it wont be able to read the mimetype of a file that isn't there.
+import { TemporaryCredentials } from 'aws-sdk';
 
 // TODO -- handle error if file size is too large. defaults to 403 status
 
@@ -33,6 +31,24 @@ export const createOrUpdateProfile = async (req, res) => {
       }
    } catch (err) {
       console.error(err);
+      res.status(500).send('Server Error');
+   }
+};
+
+export const getCurrentUsersProfile = async (req, res) => {
+   try {
+      const profile = await Profile.find({ user: req.user.id }).lean().exec();
+
+      if (!profile) {
+         res.status(404).json({ msg: 'No profile found' });
+      }
+
+      res.json(profile);
+   } catch (err) {
+      console.error(err.message);
+      if (err.kind === 'ObjectId') {
+         return res.status(404).json({ msg: 'No Profile found!' });
+      }
       res.status(500).send('Server Error');
    }
 };

@@ -39,7 +39,7 @@ app.use('/api/user', userRouter);
 app.use('/api/tweets', tweetRouter);
 app.use('/api/profile', profileRouter);
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 
 export const start = async () => {
    try {

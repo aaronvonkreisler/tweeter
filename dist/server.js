@@ -66,7 +66,7 @@ app.use('/api', _auth.protect);
 app.use('/api/user', _user.default);
 app.use('/api/tweets', _tweet.default);
 app.use('/api/profile', _profile.default);
-var PORT = process.env.PORT || 5001;
+var PORT = process.env.PORT || 5000;
 
 var start = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
