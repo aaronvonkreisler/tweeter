@@ -114,7 +114,10 @@ var getCurrentUsersProfile = /*#__PURE__*/function () {
             _context2.next = 3;
             return _profile.Profile.find({
               user: req.user.id
-            }).lean().exec();
+            }).populate({
+              path: 'user',
+              select: '-password'
+            }).exec();
 
           case 3:
             profile = _context2.sent;

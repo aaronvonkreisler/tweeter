@@ -37,7 +37,9 @@ export const createOrUpdateProfile = async (req, res) => {
 
 export const getCurrentUsersProfile = async (req, res) => {
    try {
-      const profile = await Profile.find({ user: req.user.id }).lean().exec();
+      const profile = await Profile.find({ user: req.user.id })
+         .populate({ path: 'user', select: '-password' })
+         .exec();
 
       if (!profile) {
          res.status(404).json({ msg: 'No profile found' });
