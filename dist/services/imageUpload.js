@@ -48,7 +48,8 @@ var uploadProfilePhoto = /*#__PURE__*/function () {
               params: {
                 Body: files.profile.data,
                 Key: (0, _images.generateUniqueFileName)(files.profile.name),
-                ACL: 'public-read'
+                ACL: 'public-read',
+                ContentType: 'image/jpeg'
               },
               service: s3
             });
@@ -84,7 +85,8 @@ var uploadBackgroundPhoto = /*#__PURE__*/function () {
               params: {
                 Body: files.background.data,
                 Key: (0, _images.generateUniqueFileName)(files.background.name),
-                ACL: 'public-read'
+                ACL: 'public-read',
+                ContentType: 'image/jpeg'
               },
               service: s3
             });

@@ -17,6 +17,7 @@ export const uploadProfilePhoto = async (files) => {
          Body: files.profile.data,
          Key: generateUniqueFileName(files.profile.name),
          ACL: 'public-read',
+         ContentType: 'image/jpeg',
       },
       service: s3,
    });
@@ -30,6 +31,7 @@ export const uploadBackgroundPhoto = async (files) => {
          Body: files.background.data,
          Key: generateUniqueFileName(files.background.name),
          ACL: 'public-read',
+         ContentType: 'image/jpeg',
       },
       service: s3,
    });
