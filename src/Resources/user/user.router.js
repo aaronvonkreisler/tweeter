@@ -1,5 +1,10 @@
 import { Router } from 'express';
-import { fetchCurrentUser, followUser, unfollowUser } from './user.controllers';
+import {
+   fetchCurrentUser,
+   followUser,
+   unfollowUser,
+   uploadUserAvatar,
+} from './user.controllers';
 
 const router = Router();
 
@@ -14,4 +19,10 @@ router.put('/follow/:id', followUser);
 // @route            PUT api/user/unfollow/:id
 // @description      Unfollow a user by id
 router.put('/unfollow/:id', unfollowUser);
+
+// @route            PUT api/user/avatar
+// @description      Update profile picture
+
+router.put('/avatar', uploadUserAvatar);
+
 export default router;

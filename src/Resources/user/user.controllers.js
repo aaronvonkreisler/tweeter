@@ -1,4 +1,5 @@
 import { User } from './user.model';
+import { uploadProfilePhoto } from '../../services/imageUpload';
 
 export const fetchCurrentUser = async (req, res) => {
    try {
@@ -82,6 +83,31 @@ export const unfollowUser = async (req, res) => {
       res.json(follower.followers);
    } catch (err) {
       console.error(err.message);
+      res.status(500).send('Server Error');
+   }
+};
+
+export const uploadUserAvatar = async (req, res) => {
+   try {
+      const { body, files } = req;
+      const regex = /(image\/jpg)|(image\/jpeg)|(image\/png)/i;
+      if (!files.profile.mimetype.match(regex)) {
+         res.status(422).json({
+            msg: 'Invalid file type. Please upload a JPG or PNG filetype.',
+         });
+      } else {
+         const profilePicResponse = await uploadProfilePhoto(files);
+
+         const user = await User.findByIdAndUpdate(
+            req.user.id,
+            { avatar: profilePicResponse.Location },
+            { new: true, select: '-password' }
+         );
+
+         res.json(user);
+      }
+   } catch (err) {
+      console.error(err);
       res.status(500).send('Server Error');
    }
 };

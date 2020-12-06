@@ -16,14 +16,18 @@ require("core-js/modules/es.regexp.exec");
 
 require("core-js/modules/es.regexp.to-string");
 
+require("core-js/modules/es.string.match");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.unfollowUser = exports.followUser = exports.fetchUserById = exports.fetchCurrentUser = void 0;
+exports.uploadUserAvatar = exports.unfollowUser = exports.followUser = exports.fetchUserById = exports.fetchCurrentUser = void 0;
 
 require("regenerator-runtime/runtime");
 
 var _user = require("./user.model");
+
+var _imageUpload = require("../../services/imageUpload");
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -245,3 +249,68 @@ var unfollowUser = /*#__PURE__*/function () {
 }();
 
 exports.unfollowUser = unfollowUser;
+
+var uploadUserAvatar = /*#__PURE__*/function () {
+  var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(req, res) {
+    var body, files, regex, profilePicResponse, user;
+    return regeneratorRuntime.wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            _context5.prev = 0;
+            body = req.body, files = req.files;
+            regex = /(image\/jpg)|(image\/jpeg)|(image\/png)/i;
+
+            if (files.profile.mimetype.match(regex)) {
+              _context5.next = 7;
+              break;
+            }
+
+            res.status(422).json({
+              msg: 'Invalid file type. Please upload a JPG or PNG filetype.'
+            });
+            _context5.next = 14;
+            break;
+
+          case 7:
+            _context5.next = 9;
+            return (0, _imageUpload.uploadProfilePhoto)(files);
+
+          case 9:
+            profilePicResponse = _context5.sent;
+            _context5.next = 12;
+            return _user.User.findByIdAndUpdate(req.user.id, {
+              avatar: profilePicResponse.Location
+            }, {
+              new: true,
+              select: '-password'
+            });
+
+          case 12:
+            user = _context5.sent;
+            res.json(user);
+
+          case 14:
+            _context5.next = 20;
+            break;
+
+          case 16:
+            _context5.prev = 16;
+            _context5.t0 = _context5["catch"](0);
+            console.error(_context5.t0);
+            res.status(500).send('Server Error');
+
+          case 20:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    }, _callee5, null, [[0, 16]]);
+  }));
+
+  return function uploadUserAvatar(_x9, _x10) {
+    return _ref5.apply(this, arguments);
+  };
+}();
+
+exports.uploadUserAvatar = uploadUserAvatar;
