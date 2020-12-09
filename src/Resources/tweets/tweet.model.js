@@ -5,13 +5,8 @@ const TweetSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'user',
    },
-   display_name: String,
-   screen_name: String,
-   avatar: String,
-   verified: Boolean,
    content: {
       type: String,
-      //required: true,
    },
    favorites: [
       {
@@ -55,14 +50,18 @@ const TweetSchema = new mongoose.Schema({
       type: Number,
       default: 0,
    },
-   entities: {
-      hashtags: [String],
-      user_mentions: [String],
-   },
+
    created_at: {
       type: Date,
       default: Date.now,
    },
+});
+
+TweetSchema.pre('find', async function () {
+   this.populate({
+      path: 'user',
+      select: 'avatar verifies name email screen_name',
+   });
 });
 
 TweetSchema.post('remove', async function (doc, next) {

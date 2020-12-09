@@ -37,7 +37,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 var createTweet = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
-    var errors, user, newTweet;
+    var errors, newTweet, tweet;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -56,23 +56,22 @@ var createTweet = /*#__PURE__*/function () {
           case 3:
             _context.prev = 3;
             _context.next = 6;
-            return _user.User.findById(req.user.id).lean().exec();
-
-          case 6:
-            user = _context.sent;
-            _context.next = 9;
             return _tweet.Tweet.create({
               user: req.user.id,
-              content: req.body.content,
-              display_name: user.name,
-              avatar: user.avatar,
-              screen_name: user.screen_name,
-              verified: user.verified
+              content: req.body.content
+            });
+
+          case 6:
+            newTweet = _context.sent;
+            _context.next = 9;
+            return _tweet.Tweet.findById(newTweet._id).populate({
+              path: 'user',
+              select: 'avatar name screen_name verified'
             });
 
           case 9:
-            newTweet = _context.sent;
-            res.json(newTweet);
+            tweet = _context.sent;
+            res.json(tweet);
             _context.next = 17;
             break;
 

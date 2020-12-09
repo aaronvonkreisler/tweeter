@@ -10,17 +10,17 @@ export const createTweet = async (req, res) => {
    }
 
    try {
-      const user = await User.findById(req.user.id).lean().exec();
       const newTweet = await Tweet.create({
          user: req.user.id,
          content: req.body.content,
-         display_name: user.name,
-         avatar: user.avatar,
-         screen_name: user.screen_name,
-         verified: user.verified,
       });
 
-      res.json(newTweet);
+      const tweet = await Tweet.findById(newTweet._id).populate({
+         path: 'user',
+         select: 'avatar name screen_name verified',
+      });
+
+      res.json(tweet);
    } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');

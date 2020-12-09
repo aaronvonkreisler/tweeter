@@ -82,4 +82,8 @@ UserSchema.pre('save', function (next) {
    });
 });
 
+// UserSchema.post('remove',async function (doc, next) {
+//    await User.updateMany({ following: doc._id }, { retweet: null });
+// })
+
 export const User = mongoose.model('user', UserSchema);

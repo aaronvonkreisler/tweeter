@@ -89,7 +89,9 @@ UserSchema.pre('save', function (next) {
     _this.password = hash;
     next();
   });
-});
+}); // UserSchema.post('remove',async function (doc, next) {
+//    await User.updateMany({ following: doc._id }, { retweet: null });
+// })
 
 var User = _mongoose.default.model('user', UserSchema);
 

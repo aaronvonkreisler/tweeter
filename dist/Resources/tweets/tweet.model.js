@@ -26,13 +26,8 @@ var TweetSchema = new _mongoose.default.Schema({
     type: _mongoose.default.Schema.Types.ObjectId,
     ref: 'user'
   },
-  display_name: String,
-  screen_name: String,
-  avatar: String,
-  verified: Boolean,
   content: {
-    type: String //required: true,
-
+    type: String
   },
   favorites: [{
     user: {
@@ -72,22 +67,35 @@ var TweetSchema = new _mongoose.default.Schema({
     type: Number,
     default: 0
   },
-  entities: {
-    hashtags: [String],
-    user_mentions: [String]
-  },
   created_at: {
     type: Date,
     default: Date.now
   }
 });
+TweetSchema.pre('find', /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+  return regeneratorRuntime.wrap(function _callee$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          this.populate({
+            path: 'user',
+            select: 'avatar verifies name email screen_name'
+          });
+
+        case 1:
+        case "end":
+          return _context.stop();
+      }
+    }
+  }, _callee, this);
+})));
 TweetSchema.post('remove', /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(doc, next) {
-    return regeneratorRuntime.wrap(function _callee$(_context) {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(doc, next) {
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
-        switch (_context.prev = _context.next) {
+        switch (_context2.prev = _context2.next) {
           case 0:
-            _context.next = 2;
+            _context2.next = 2;
             return Tweet.updateMany({
               retweet: doc._id
             }, {
@@ -96,14 +104,14 @@ TweetSchema.post('remove', /*#__PURE__*/function () {
 
           case 2:
           case "end":
-            return _context.stop();
+            return _context2.stop();
         }
       }
-    }, _callee);
+    }, _callee2);
   }));
 
   return function (_x, _x2) {
-    return _ref.apply(this, arguments);
+    return _ref2.apply(this, arguments);
   };
 }());
 
