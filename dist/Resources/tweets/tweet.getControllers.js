@@ -94,18 +94,19 @@ var getTimelineTweets = /*#__PURE__*/function () {
             userIds = user.following.map(function (follow) {
               return follow.user;
             });
-            _context2.next = 7;
+            userIds.push(req.user.id);
+            _context2.next = 8;
             return _tweet.Tweet.find({
               user: userIds
             }).sort({
               created_at: -1
             }).exec();
 
-          case 7:
+          case 8:
             tweets = _context2.sent;
 
             if (tweets) {
-              _context2.next = 10;
+              _context2.next = 11;
               break;
             }
 
@@ -113,18 +114,18 @@ var getTimelineTweets = /*#__PURE__*/function () {
               msg: 'No Tweets found!'
             }));
 
-          case 10:
+          case 11:
             res.json(tweets);
-            _context2.next = 19;
+            _context2.next = 20;
             break;
 
-          case 13:
-            _context2.prev = 13;
+          case 14:
+            _context2.prev = 14;
             _context2.t0 = _context2["catch"](0);
             console.error(_context2.t0.message);
 
             if (!(_context2.t0.kind === 'ObjectId')) {
-              _context2.next = 18;
+              _context2.next = 19;
               break;
             }
 
@@ -132,15 +133,15 @@ var getTimelineTweets = /*#__PURE__*/function () {
               msg: 'No Tweets found!'
             }));
 
-          case 18:
+          case 19:
             res.status(500).send('Server Error');
 
-          case 19:
+          case 20:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[0, 13]]);
+    }, _callee2, null, [[0, 14]]);
   }));
 
   return function getTimelineTweets(_x3, _x4) {
