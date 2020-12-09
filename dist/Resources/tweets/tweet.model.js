@@ -79,7 +79,7 @@ TweetSchema.pre('find', /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regenerator
         case 0:
           this.populate({
             path: 'user',
-            select: 'avatar verifies name email screen_name'
+            select: 'avatar verified name email screen_name'
           });
 
         case 1:

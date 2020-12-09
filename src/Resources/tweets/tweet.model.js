@@ -60,7 +60,7 @@ const TweetSchema = new mongoose.Schema({
 TweetSchema.pre('find', async function () {
    this.populate({
       path: 'user',
-      select: 'avatar verifies name email screen_name',
+      select: 'avatar verified name email screen_name',
    });
 });
 
