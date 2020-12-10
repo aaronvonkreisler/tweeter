@@ -9,6 +9,10 @@ export const getTweetById = async (req, res) => {
    try {
       const tweet = await Tweet.findById(req.params.id)
          .populate('retweet')
+         .populate({
+            path: 'user',
+            select: 'avatar verified name email screen_name',
+         })
          .exec();
       if (!tweet) {
          res.status(404).json({ msg: 'Tweet not found' });
