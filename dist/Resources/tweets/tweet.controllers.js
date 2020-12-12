@@ -331,7 +331,7 @@ exports.retweet = retweet;
 
 var replytoTweet = /*#__PURE__*/function () {
   var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(req, res) {
-    var errors, user, tweet, reply;
+    var errors, reply, tweet;
     return regeneratorRuntime.wrap(function _callee6$(_context6) {
       while (1) {
         switch (_context6.prev = _context6.next) {
@@ -349,47 +349,46 @@ var replytoTweet = /*#__PURE__*/function () {
 
           case 3:
             _context6.prev = 3;
-            _context6.next = 6;
-            return _user.User.findById(req.user.id).select('-password').exec();
-
-          case 6:
-            user = _context6.sent;
-            _context6.next = 9;
-            return _tweet.Tweet.findById(req.params.tweet_id).exec();
-
-          case 9:
-            tweet = _context6.sent;
             reply = {
-              user: req.user.id,
               content: req.body.content,
-              display_name: user.display_name,
-              name: user.name,
-              avatar: user.avatar,
-              screen_name: user.screen_name,
-              verified: user.verified
+              user: req.user.id
             };
-            tweet.replies.push(reply);
-            tweet.replies_count += 1;
-            _context6.next = 15;
-            return tweet.save();
+            _context6.next = 7;
+            return _tweet.Tweet.findByIdAndUpdate(req.params.tweet_id, {
+              $push: {
+                replies: reply
+              },
+              $inc: {
+                replies_count: 1
+              }
+            }, {
+              new: true
+            }).populate({
+              path: 'replies',
+              populate: {
+                path: 'user',
+                select: 'avatar verified name screen_name'
+              }
+            });
 
-          case 15:
+          case 7:
+            tweet = _context6.sent;
             res.json(tweet.replies);
-            _context6.next = 22;
+            _context6.next = 15;
             break;
 
-          case 18:
-            _context6.prev = 18;
+          case 11:
+            _context6.prev = 11;
             _context6.t0 = _context6["catch"](3);
             console.error(_context6.t0.message);
             res.status(500).send('Server Error');
 
-          case 22:
+          case 15:
           case "end":
             return _context6.stop();
         }
       }
-    }, _callee6, null, [[3, 18]]);
+    }, _callee6, null, [[3, 11]]);
   }));
 
   return function replytoTweet(_x11, _x12) {

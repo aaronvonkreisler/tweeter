@@ -118,21 +118,23 @@ export const replytoTweet = async (req, res) => {
    }
 
    try {
-      const user = await User.findById(req.user.id).select('-password').exec();
-      const tweet = await Tweet.findById(req.params.tweet_id).exec();
       const reply = {
-         user: req.user.id,
          content: req.body.content,
-         display_name: user.display_name,
-         name: user.name,
-         avatar: user.avatar,
-         screen_name: user.screen_name,
-         verified: user.verified,
+         user: req.user.id,
       };
 
-      tweet.replies.push(reply);
-      tweet.replies_count += 1;
-      await tweet.save();
+      const tweet = await Tweet.findByIdAndUpdate(
+         req.params.tweet_id,
+         {
+            $push: { replies: reply },
+            $inc: { replies_count: 1 },
+         },
+         { new: true }
+      ).populate({
+         path: 'replies',
+         populate: { path: 'user', select: 'avatar verified name screen_name' },
+      });
+
       res.json(tweet.replies);
    } catch (err) {
       console.error(err.message);
