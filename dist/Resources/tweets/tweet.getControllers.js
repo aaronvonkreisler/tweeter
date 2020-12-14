@@ -43,6 +43,11 @@ var getTweetById = /*#__PURE__*/function () {
             return _tweet.Tweet.findById(req.params.id).populate('retweet').populate({
               path: 'user',
               select: 'avatar verified name email screen_name'
+            }).populate({
+              path: 'replies',
+              populate: {
+                path: 'tweet'
+              }
             }).exec();
 
           case 3:
