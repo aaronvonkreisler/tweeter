@@ -31,7 +31,11 @@ export const getTimelineTweets = async (req, res) => {
       const user = await User.findById(req.user.id).lean().exec();
       const userIds = user.following.map((follow) => follow.user);
       userIds.push(req.user.id);
-      const tweets = await Tweet.find({ user: userIds })
+      // Exclude tweets that are replies to other tweets
+      const tweets = await Tweet.find({
+         user: userIds,
+         in_reply_to: { $exists: false },
+      })
 
          .sort({ created_at: -1 })
          .exec();

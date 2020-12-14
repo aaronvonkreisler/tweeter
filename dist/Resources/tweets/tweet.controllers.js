@@ -349,14 +349,22 @@ var replytoTweet = /*#__PURE__*/function () {
 
           case 3:
             _context6.prev = 3;
-            reply = {
+            _context6.next = 6;
+            return _tweet.Tweet.create({
+              user: req.user.id,
               content: req.body.content,
-              user: req.user.id
-            };
-            _context6.next = 7;
+              in_reply_to: req.params.tweet_id
+            });
+
+          case 6:
+            reply = _context6.sent;
+            _context6.next = 9;
             return _tweet.Tweet.findByIdAndUpdate(req.params.tweet_id, {
               $push: {
-                replies: reply
+                replies: {
+                  user: req.user.id,
+                  tweet: reply._id
+                }
               },
               $inc: {
                 replies_count: 1
@@ -366,29 +374,28 @@ var replytoTweet = /*#__PURE__*/function () {
             }).populate({
               path: 'replies',
               populate: {
-                path: 'user',
-                select: 'avatar verified name screen_name'
+                path: 'tweet'
               }
             });
 
-          case 7:
+          case 9:
             tweet = _context6.sent;
             res.json(tweet.replies);
-            _context6.next = 15;
+            _context6.next = 17;
             break;
 
-          case 11:
-            _context6.prev = 11;
+          case 13:
+            _context6.prev = 13;
             _context6.t0 = _context6["catch"](3);
             console.error(_context6.t0.message);
             res.status(500).send('Server Error');
 
-          case 15:
+          case 17:
           case "end":
             return _context6.stop();
         }
       }
-    }, _callee6, null, [[3, 11]]);
+    }, _callee6, null, [[3, 13]]);
   }));
 
   return function replytoTweet(_x11, _x12) {

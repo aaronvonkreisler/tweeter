@@ -97,10 +97,14 @@ var getTimelineTweets = /*#__PURE__*/function () {
             userIds = user.following.map(function (follow) {
               return follow.user;
             });
-            userIds.push(req.user.id);
+            userIds.push(req.user.id); // Exclude tweets that are replies to other tweets
+
             _context2.next = 8;
             return _tweet.Tweet.find({
-              user: userIds
+              user: userIds,
+              in_reply_to: {
+                $exists: false
+              }
             }).sort({
               created_at: -1
             }).exec();

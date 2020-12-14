@@ -8,6 +8,10 @@ const TweetSchema = new mongoose.Schema({
    content: {
       type: String,
    },
+   in_reply_to: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'tweet',
+   },
    favorites: [
       {
          user: {
@@ -26,12 +30,10 @@ const TweetSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'user',
          },
-         content: {
-            type: String,
-            required: true,
+         tweet: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'tweet',
          },
-         name: String,
-         avatar: String,
          date: {
             type: Date,
             default: Date.now,

@@ -118,21 +118,28 @@ export const replytoTweet = async (req, res) => {
    }
 
    try {
-      const reply = {
-         content: req.body.content,
+      // const reply = {
+      //    content: req.body.content,
+      //    user: req.user.id,
+      // };
+
+      const reply = await Tweet.create({
          user: req.user.id,
-      };
+         content: req.body.content,
+         in_reply_to: req.params.tweet_id,
+      });
 
       const tweet = await Tweet.findByIdAndUpdate(
          req.params.tweet_id,
          {
-            $push: { replies: reply },
+            $push: { replies: { user: req.user.id, tweet: reply._id } },
             $inc: { replies_count: 1 },
          },
          { new: true }
-      ).populate({
+      )
+      .populate({
          path: 'replies',
-         populate: { path: 'user', select: 'avatar verified name screen_name' },
+         populate: { path: 'tweet' },
       });
 
       res.json(tweet.replies);

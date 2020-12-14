@@ -29,6 +29,10 @@ var TweetSchema = new _mongoose.default.Schema({
   content: {
     type: String
   },
+  in_reply_to: {
+    type: _mongoose.default.Schema.Types.ObjectId,
+    ref: 'tweet'
+  },
   favorites: [{
     user: {
       type: _mongoose.default.Schema.Types.ObjectId,
@@ -44,12 +48,10 @@ var TweetSchema = new _mongoose.default.Schema({
       type: _mongoose.default.Schema.Types.ObjectId,
       ref: 'user'
     },
-    content: {
-      type: String,
-      required: true
+    tweet: {
+      type: _mongoose.default.Schema.Types.ObjectId,
+      ref: 'tweet'
     },
-    name: String,
-    avatar: String,
     date: {
       type: Date,
       default: Date.now
