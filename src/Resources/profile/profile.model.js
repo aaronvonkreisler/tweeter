@@ -7,6 +7,8 @@ const ProfileSchema = new mongoose.Schema({
    },
    profile_picture: String,
    background_picture: String,
+   bio: String,
+   location: String,
 });
 
 export const Profile = mongoose.model('profile', ProfileSchema);

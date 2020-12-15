@@ -29,8 +29,7 @@ const UserSchema = new mongoose.Schema({
          'https://tweeter-dev.s3.us-east-2.amazonaws.com/Profile_avatar_placeholder_large.png',
    },
    display_name: String,
-   location: String,
-   description: String,
+
    protected: {
       type: Boolean,
       default: false,

@@ -9,7 +9,7 @@ require("core-js/modules/es.promise");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.uploadBackgroundPhoto = exports.uploadProfilePhoto = void 0;
+exports.uploadPhoto = void 0;
 
 require("regenerator-runtime/runtime");
 
@@ -37,7 +37,7 @@ var s3 = new _awsSdk.default.S3({
   }
 });
 
-var uploadProfilePhoto = /*#__PURE__*/function () {
+var uploadPhoto = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(files) {
     var upload;
     return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -46,8 +46,8 @@ var uploadProfilePhoto = /*#__PURE__*/function () {
           case 0:
             upload = new _awsSdk.default.S3.ManagedUpload({
               params: {
-                Body: files.profile.data,
-                Key: (0, _images.generateUniqueFileName)(files.profile.name),
+                Body: files.image.data,
+                Key: (0, _images.generateUniqueFileName)(files.image.name),
                 ACL: 'public-read',
                 ContentType: 'image/jpeg'
               },
@@ -67,46 +67,9 @@ var uploadProfilePhoto = /*#__PURE__*/function () {
     }, _callee);
   }));
 
-  return function uploadProfilePhoto(_x) {
+  return function uploadPhoto(_x) {
     return _ref.apply(this, arguments);
   };
 }();
 
-exports.uploadProfilePhoto = uploadProfilePhoto;
-
-var uploadBackgroundPhoto = /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(files) {
-    var upload;
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            upload = new _awsSdk.default.S3.ManagedUpload({
-              params: {
-                Body: files.background.data,
-                Key: (0, _images.generateUniqueFileName)(files.background.name),
-                ACL: 'public-read',
-                ContentType: 'image/jpeg'
-              },
-              service: s3
-            });
-            _context2.next = 3;
-            return upload.promise();
-
-          case 3:
-            return _context2.abrupt("return", _context2.sent);
-
-          case 4:
-          case "end":
-            return _context2.stop();
-        }
-      }
-    }, _callee2);
-  }));
-
-  return function uploadBackgroundPhoto(_x2) {
-    return _ref2.apply(this, arguments);
-  };
-}();
-
-exports.uploadBackgroundPhoto = uploadBackgroundPhoto;
+exports.uploadPhoto = uploadPhoto;

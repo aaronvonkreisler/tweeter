@@ -1,10 +1,14 @@
 import { Router } from 'express';
 import {
-   createOrUpdateProfile,
    getCurrentUsersProfile,
+   uploadUserBackgroundPic,
 } from './profile.controller';
 const router = Router();
 
-router.post('/', createOrUpdateProfile);
 router.get('/', getCurrentUsersProfile);
+
+// @route            PUT api/profile/background
+// @description      Update background Picture
+router.put('/background', uploadUserBackgroundPic);
+
 export default router;

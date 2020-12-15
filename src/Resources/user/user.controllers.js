@@ -1,5 +1,6 @@
 import { User } from './user.model';
-import { uploadProfilePhoto } from '../../services/imageUpload';
+import { uploadPhoto } from '../../services/imageUpload';
+import { Profile } from '../profile/profile.model';
 
 export const fetchCurrentUser = async (req, res) => {
    try {
@@ -89,19 +90,25 @@ export const unfollowUser = async (req, res) => {
 
 export const uploadUserAvatar = async (req, res) => {
    try {
-      const { body, files } = req;
+      const { files } = req;
       const regex = /(image\/jpg)|(image\/jpeg)|(image\/png)/i;
-      if (!files.profile.mimetype.match(regex)) {
+      if (!files.image.mimetype.match(regex)) {
          res.status(422).json({
             msg: 'Invalid file type. Please upload a JPG or PNG filetype.',
          });
       } else {
-         const profilePicResponse = await uploadProfilePhoto(files);
+         const profilePicResponse = await uploadPhoto(files);
 
          const user = await User.findByIdAndUpdate(
             req.user.id,
             { avatar: profilePicResponse.Location },
             { new: true, select: '-password' }
+         );
+
+         await Profile.findOneAndUpdate(
+            { user: req.user.id },
+            { $set: { profile_picture: profilePicResponse.Location } },
+            { upsert: true }
          );
 
          res.json(user);

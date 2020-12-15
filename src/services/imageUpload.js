@@ -11,25 +11,11 @@ aws.config.update({
 
 const s3 = new aws.S3({ params: { Bucket: 'tweeter-dev' } });
 
-export const uploadProfilePhoto = async (files) => {
+export const uploadPhoto = async (files) => {
    const upload = new aws.S3.ManagedUpload({
       params: {
-         Body: files.profile.data,
-         Key: generateUniqueFileName(files.profile.name),
-         ACL: 'public-read',
-         ContentType: 'image/jpeg',
-      },
-      service: s3,
-   });
-
-   return await upload.promise();
-};
-
-export const uploadBackgroundPhoto = async (files) => {
-   const upload = new aws.S3.ManagedUpload({
-      params: {
-         Body: files.background.data,
-         Key: generateUniqueFileName(files.background.name),
+         Body: files.image.data,
+         Key: generateUniqueFileName(files.image.name),
          ACL: 'public-read',
          ContentType: 'image/jpeg',
       },

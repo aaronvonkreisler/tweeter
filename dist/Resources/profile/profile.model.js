@@ -15,7 +15,9 @@ var ProfileSchema = new _mongoose.default.Schema({
     ref: 'user'
   },
   profile_picture: String,
-  background_picture: String
+  background_picture: String,
+  bio: String,
+  location: String
 });
 
 var Profile = _mongoose.default.model('profile', ProfileSchema);

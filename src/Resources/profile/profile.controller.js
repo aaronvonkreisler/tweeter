@@ -1,27 +1,25 @@
 import { Profile } from './profile.model';
-import {
-   uploadProfilePhoto,
-   uploadBackgroundPhoto,
-} from '../../services/imageUpload';
-import { TemporaryCredentials } from 'aws-sdk';
+import { uploadPhoto } from '../../services/imageUpload';
 
 // TODO -- handle error if file size is too large. defaults to 403 status
 
-export const createOrUpdateProfile = async (req, res) => {
+export const uploadUserBackgroundPic = async (req, res) => {
    try {
-      const { body, files } = req;
+      const { files } = req;
       const regex = /(image\/jpg)|(image\/jpeg)|(image\/png)/i;
-      if (!files.profile.mimetype.match(regex)) {
+      if (!files.image.mimetype.match(regex)) {
          res.status(422).json({
             msg: 'Invalid file type. Please upload a JPG or PNG filetype.',
          });
       } else {
-         const profilePicResponse = await uploadProfilePhoto(files);
+         const backgroundPicResponse = await uploadPhoto(files);
+
          const profileFields = {
             user: req.user.id,
-            profile_picture: profilePicResponse.Location,
+            background_picture: backgroundPicResponse.Location,
          };
-         let profile = await Profile.findOneAndUpdate(
+
+         const profile = await Profile.findOneAndUpdate(
             { user: req.user.id },
             { $set: profileFields },
             { new: true, upsert: true, setDefaultsOnInsert: true }

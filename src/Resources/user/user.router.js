@@ -4,6 +4,7 @@ import {
    followUser,
    unfollowUser,
    uploadUserAvatar,
+   uploadUserBackgroundPic,
 } from './user.controllers';
 
 const router = Router();
