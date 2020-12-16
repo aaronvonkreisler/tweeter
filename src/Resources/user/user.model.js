@@ -34,6 +34,22 @@ const UserSchema = new mongoose.Schema({
          ref: 'tweet',
       },
    ],
+   following: [
+      {
+         user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'user',
+         },
+      },
+   ],
+   followers: [
+      {
+         user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'user',
+         },
+      },
+   ],
    verified: {
       type: Boolean,
       default: false,

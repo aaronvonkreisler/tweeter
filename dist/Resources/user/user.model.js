@@ -41,6 +41,18 @@ var UserSchema = new _mongoose.default.Schema({
     type: _mongoose.default.Schema.Types.ObjectId,
     ref: 'tweet'
   }],
+  following: [{
+    user: {
+      type: _mongoose.default.Schema.Types.ObjectId,
+      ref: 'user'
+    }
+  }],
+  followers: [{
+    user: {
+      type: _mongoose.default.Schema.Types.ObjectId,
+      ref: 'user'
+    }
+  }],
   verified: {
     type: Boolean,
     default: false
