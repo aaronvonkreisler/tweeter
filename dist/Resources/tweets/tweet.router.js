@@ -22,7 +22,7 @@ router.post('/', [(0, _expressValidator.check)('content', 'Please enter some tex
 router.post('/comment/:tweet_id', [(0, _expressValidator.check)('content', 'Please insert some text to send a reply').not().isEmpty()], _tweet.replytoTweet); // @route            POST api/tweets/retweet/:tweet_id
 // @description      Post a retweet
 
-router.post('/retweet/:tweet_id', _tweet.retweet); // @route            PUT api/tweets/like/:id
+router.post('/:id/retweet', _tweet.retweet); // @route            PUT api/tweets/like/:id
 // @description      Like a tweet
 
 router.put('/like/:id', _tweet.favoriteTweet); // @route            PUT api/tweets/unlike/:id

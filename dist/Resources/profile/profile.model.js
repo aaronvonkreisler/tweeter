@@ -14,6 +14,7 @@ var ProfileSchema = new _mongoose.default.Schema({
     type: _mongoose.default.Schema.Types.ObjectId,
     ref: 'user'
   },
+  screen_name: String,
   profile_picture: String,
   background_picture: String,
   bio: String,

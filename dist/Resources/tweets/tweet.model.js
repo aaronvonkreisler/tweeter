@@ -1,7 +1,5 @@
 "use strict";
 
-require("core-js/modules/es.number.constructor");
-
 require("core-js/modules/es.object.to-string");
 
 require("core-js/modules/es.promise");
@@ -39,10 +37,6 @@ var TweetSchema = new _mongoose.default.Schema({
       ref: 'user'
     }
   }],
-  favorites_count: {
-    type: Number,
-    default: 0
-  },
   replies: [{
     user: {
       type: _mongoose.default.Schema.Types.ObjectId,
@@ -57,18 +51,15 @@ var TweetSchema = new _mongoose.default.Schema({
       default: Date.now
     }
   }],
-  replies_count: {
-    type: Number,
-    default: 0
-  },
-  retweet: {
+  retweetUsers: [{
+    type: _mongoose.default.Schema.Types.ObjectId,
+    ref: 'user'
+  }],
+  retweetData: {
     type: _mongoose.default.Schema.Types.ObjectId,
     ref: 'tweet'
   },
-  retweet_count: {
-    type: Number,
-    default: 0
-  },
+  pinned: Boolean,
   created_at: {
     type: Date,
     default: Date.now

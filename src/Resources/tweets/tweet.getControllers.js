@@ -40,13 +40,14 @@ export const getTimelineTweets = async (req, res) => {
          user: userIds,
          in_reply_to: { $exists: false },
       })
-
+         .populate('retweetData')
          .sort({ created_at: -1 })
          .exec();
 
       if (!tweets) {
          return res.status(404).json({ msg: 'No Tweets found!' });
       }
+
       res.json(tweets);
    } catch (err) {
       console.error(err.message);

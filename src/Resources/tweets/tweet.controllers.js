@@ -58,7 +58,6 @@ export const favoriteTweet = async (req, res) => {
          req.params.id,
          {
             $addToSet: { favorites: { user: req.user.id } },
-            $inc: { favorites_count: 1 },
          },
          { new: true }
       ).exec();
@@ -76,7 +75,6 @@ export const removeFavorite = async (req, res) => {
          req.params.id,
          {
             $pull: { favorites: { user: req.user.id } },
-            $inc: { favorites_count: -1 },
          },
          { new: true }
       ).exec();
@@ -90,21 +88,46 @@ export const removeFavorite = async (req, res) => {
 
 export const retweet = async (req, res) => {
    try {
-      const user = await User.findById(req.user.id).select('-password').exec();
-      await Tweet.findByIdAndUpdate(req.params.tweet_id, {
-         $inc: { retweet_count: 1 },
-      }).exec();
-      const newTweet = await Tweet.create({
-         user: req.user.id,
-         content: req.body.content,
-         display_name: user.name,
-         avatar: user.avatar,
-         screen_name: user.screen_name,
-         verified: user.verified,
-         retweet: req.params.tweet_id,
+      const tweetId = req.params.id;
+      const userId = req.user.id;
+
+      // Try and delete retweet. If delete is successfull, that means user has
+      // already retweeted and is trying to remove retweet.
+
+      const deletedTweet = await Tweet.findOneAndDelete({
+         user: userId,
+         retweetData: tweetId,
       });
 
-      res.json(newTweet);
+      if (!deletedTweet) {
+         res.status(400);
+      }
+
+      const option = deletedTweet !== null ? '$pull' : '$addToSet';
+
+      let retweet = deletedTweet;
+
+      if (retweet === null) {
+         retweet = await Tweet.create({ user: userId, retweetData: tweetId });
+      }
+
+      // Insert retweet to user Schema
+
+      const user = await User.findByIdAndUpdate(
+         userId,
+         { [option]: { retweets: retweet._id } },
+         { new: true }
+      );
+
+      //Add user to tweets retweet users
+
+      const tweet = await Tweet.findByIdAndUpdate(
+         tweetId,
+         { [option]: { retweetUsers: userId } },
+         { new: true }
+      );
+
+      res.json(tweet);
    } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -136,8 +159,7 @@ export const replytoTweet = async (req, res) => {
             $inc: { replies_count: 1 },
          },
          { new: true }
-      )
-      .populate({
+      ).populate({
          path: 'replies',
          populate: { path: 'tweet' },
       });

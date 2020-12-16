@@ -1,7 +1,5 @@
 "use strict";
 
-require("core-js/modules/es.number.constructor");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -39,34 +37,14 @@ var UserSchema = new _mongoose.default.Schema({
     type: String,
     default: 'https://tweeter-dev.s3.us-east-2.amazonaws.com/Profile_avatar_placeholder_large.png'
   },
-  display_name: String,
-  protected: {
-    type: Boolean,
-    default: false
-  },
-  followers_count: Number,
-  following_count: Number,
-  statuses_count: Number,
-  default_profile: {
-    type: Boolean,
-    default: true
-  },
+  retweets: [{
+    type: _mongoose.default.Schema.Types.ObjectId,
+    ref: 'tweet'
+  }],
   verified: {
     type: Boolean,
     default: false
   },
-  following: [{
-    user: {
-      type: _mongoose.default.Schema.Types.ObjectId,
-      ref: 'users'
-    }
-  }],
-  followers: [{
-    user: {
-      type: _mongoose.default.Schema.Types.ObjectId,
-      ref: 'users'
-    }
-  }],
   createdAt: {
     type: Date,
     default: Date.now

@@ -13,7 +13,7 @@ require("core-js/modules/es.string.match");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getCurrentUsersProfile = exports.uploadUserBackgroundPic = void 0;
+exports.getProfileByScreenName = exports.getCurrentUsersProfile = exports.uploadUserBackgroundPic = void 0;
 
 require("regenerator-runtime/runtime");
 
@@ -84,7 +84,9 @@ var uploadUserBackgroundPic = /*#__PURE__*/function () {
             _context.prev = 17;
             _context.t0 = _context["catch"](0);
             console.error(_context.t0);
-            res.status(500).send('Server Error');
+            res.status(500).json({
+              msg: 'Server Error'
+            });
 
           case 21:
           case "end":
@@ -145,7 +147,9 @@ var getCurrentUsersProfile = /*#__PURE__*/function () {
             }));
 
           case 13:
-            res.status(500).send('Server Error');
+            res.status(500).json({
+              msg: 'Server Error'
+            });
 
           case 14:
           case "end":
@@ -161,3 +165,59 @@ var getCurrentUsersProfile = /*#__PURE__*/function () {
 }();
 
 exports.getCurrentUsersProfile = getCurrentUsersProfile;
+
+var getProfileByScreenName = /*#__PURE__*/function () {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(req, res) {
+    var profile;
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            _context3.prev = 0;
+            _context3.next = 3;
+            return _profile.Profile.findOne({
+              screen_name: req.params.screen_name
+            }).populate({
+              path: 'user',
+              select: '-password'
+            });
+
+          case 3:
+            profile = _context3.sent;
+
+            if (profile) {
+              _context3.next = 6;
+              break;
+            }
+
+            return _context3.abrupt("return", res.status(400).json({
+              msg: 'No profile found'
+            }));
+
+          case 6:
+            res.json(profile);
+            _context3.next = 13;
+            break;
+
+          case 9:
+            _context3.prev = 9;
+            _context3.t0 = _context3["catch"](0);
+            console.error(_context3.t0.message);
+            res.status(500).json({
+              msg: 'Server Error'
+            });
+
+          case 13:
+          case "end":
+            return _context3.stop();
+        }
+      }
+    }, _callee3, null, [[0, 9]]);
+  }));
+
+  return function getProfileByScreenName(_x5, _x6) {
+    return _ref3.apply(this, arguments);
+  };
+}();
+
+exports.getProfileByScreenName = getProfileByScreenName;

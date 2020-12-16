@@ -20,10 +20,7 @@ const TweetSchema = new mongoose.Schema({
          },
       },
    ],
-   favorites_count: {
-      type: Number,
-      default: 0,
-   },
+
    replies: [
       {
          user: {
@@ -40,19 +37,19 @@ const TweetSchema = new mongoose.Schema({
          },
       },
    ],
-   replies_count: {
-      type: Number,
-      default: 0,
-   },
-   retweet: {
+
+   retweetUsers: [
+      {
+         type: mongoose.Schema.Types.ObjectId,
+         ref: 'user',
+      },
+   ],
+   retweetData: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'tweet',
    },
-   retweet_count: {
-      type: Number,
-      default: 0,
-   },
 
+   pinned: Boolean,
    created_at: {
       type: Date,
       default: Date.now,

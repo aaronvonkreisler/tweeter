@@ -8,8 +8,6 @@ require("core-js/modules/es.array.map");
 
 require("core-js/modules/es.array.splice");
 
-require("core-js/modules/es.function.name");
-
 require("core-js/modules/es.object.to-string");
 
 require("core-js/modules/es.promise");
@@ -30,6 +28,8 @@ var _expressValidator = require("express-validator");
 var _tweet = require("./tweet.model");
 
 var _user = require("../user/user.model");
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -186,9 +186,6 @@ var favoriteTweet = /*#__PURE__*/function () {
                 favorites: {
                   user: req.user.id
                 }
-              },
-              $inc: {
-                favorites_count: 1
               }
             }, {
               new: true
@@ -235,9 +232,6 @@ var removeFavorite = /*#__PURE__*/function () {
                 favorites: {
                   user: req.user.id
                 }
-              },
-              $inc: {
-                favorites_count: -1
               }
             }, {
               new: true
@@ -272,54 +266,82 @@ exports.removeFavorite = removeFavorite;
 
 var retweet = /*#__PURE__*/function () {
   var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(req, res) {
-    var user, newTweet;
+    var tweetId, userId, deletedTweet, option, _retweet, user, tweet;
+
     return regeneratorRuntime.wrap(function _callee5$(_context5) {
       while (1) {
         switch (_context5.prev = _context5.next) {
           case 0:
             _context5.prev = 0;
-            _context5.next = 3;
-            return _user.User.findById(req.user.id).select('-password').exec();
+            tweetId = req.params.id;
+            userId = req.user.id; // Try and delete retweet. If delete is successfull, that means user has
+            // already retweeted and is trying to remove retweet.
 
-          case 3:
-            user = _context5.sent;
-            _context5.next = 6;
-            return _tweet.Tweet.findByIdAndUpdate(req.params.tweet_id, {
-              $inc: {
-                retweet_count: 1
-              }
-            }).exec();
-
-          case 6:
-            _context5.next = 8;
-            return _tweet.Tweet.create({
-              user: req.user.id,
-              content: req.body.content,
-              display_name: user.name,
-              avatar: user.avatar,
-              screen_name: user.screen_name,
-              verified: user.verified,
-              retweet: req.params.tweet_id
+            _context5.next = 5;
+            return _tweet.Tweet.findOneAndDelete({
+              user: userId,
+              retweetData: tweetId
             });
 
-          case 8:
-            newTweet = _context5.sent;
-            res.json(newTweet);
-            _context5.next = 16;
-            break;
+          case 5:
+            deletedTweet = _context5.sent;
+
+            if (!deletedTweet) {
+              res.status(400);
+            }
+
+            option = deletedTweet !== null ? '$pull' : '$addToSet';
+            _retweet = deletedTweet;
+
+            if (!(_retweet === null)) {
+              _context5.next = 13;
+              break;
+            }
+
+            _context5.next = 12;
+            return _tweet.Tweet.create({
+              user: userId,
+              retweetData: tweetId
+            });
 
           case 12:
-            _context5.prev = 12;
+            _retweet = _context5.sent;
+
+          case 13:
+            _context5.next = 15;
+            return _user.User.findByIdAndUpdate(userId, _defineProperty({}, option, {
+              retweets: _retweet._id
+            }), {
+              new: true
+            });
+
+          case 15:
+            user = _context5.sent;
+            _context5.next = 18;
+            return _tweet.Tweet.findByIdAndUpdate(tweetId, _defineProperty({}, option, {
+              retweetUsers: userId
+            }), {
+              new: true
+            });
+
+          case 18:
+            tweet = _context5.sent;
+            res.json(tweet);
+            _context5.next = 26;
+            break;
+
+          case 22:
+            _context5.prev = 22;
             _context5.t0 = _context5["catch"](0);
             console.error(_context5.t0.message);
             res.status(500).send('Server Error');
 
-          case 16:
+          case 26:
           case "end":
             return _context5.stop();
         }
       }
-    }, _callee5, null, [[0, 12]]);
+    }, _callee5, null, [[0, 22]]);
   }));
 
   return function retweet(_x9, _x10) {

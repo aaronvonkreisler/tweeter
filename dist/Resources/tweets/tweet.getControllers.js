@@ -110,7 +110,7 @@ var getTimelineTweets = /*#__PURE__*/function () {
               in_reply_to: {
                 $exists: false
               }
-            }).sort({
+            }).populate('retweetData').sort({
               created_at: -1
             }).exec();
 

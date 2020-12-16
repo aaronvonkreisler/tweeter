@@ -41,7 +41,7 @@ router.post(
 
 // @route            POST api/tweets/retweet/:tweet_id
 // @description      Post a retweet
-router.post('/retweet/:tweet_id', retweet);
+router.post('/:id/retweet', retweet);
 
 // @route            PUT api/tweets/like/:id
 // @description      Like a tweet
