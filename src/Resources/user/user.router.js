@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import {
    fetchCurrentUser,
+   fetchUserByUsername,
    followUser,
    unfollowUser,
    uploadUserAvatar,
-   uploadUserBackgroundPic,
 } from './user.controllers';
 
 const router = Router();
@@ -12,6 +12,10 @@ const router = Router();
 // @route            GET api/user/current
 // @description      Fetch the current user from database
 router.get('/current', fetchCurrentUser);
+
+// @route            GET api/user/:username
+// @description      Fetch the current user from database
+router.get('/:username', fetchUserByUsername);
 
 // @route            PUT api/user/follow/:id
 // @description      Follow a user by id

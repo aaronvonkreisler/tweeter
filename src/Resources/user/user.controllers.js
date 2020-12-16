@@ -21,7 +21,27 @@ export const fetchUserById = async (req, res) => {
       res.json(user);
    } catch (err) {
       console.error(err.message);
-      res.status(500).send('Server Error');
+      res.status(500).json({ msg: 'Server Error' });
+   }
+};
+
+export const fetchUserByUsername = async (req, res) => {
+   try {
+      const username = req.params.username;
+
+      const user = await User.findOne({ screen_name: username })
+         .select('-password')
+         .lean()
+         .exec();
+
+      if (!user) {
+         res.status(404).json({ msg: 'No user found by that username' });
+      }
+
+      res.json(user);
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ msg: 'Server Error' });
    }
 };
 
@@ -84,7 +104,7 @@ export const unfollowUser = async (req, res) => {
       res.json(follower.followers);
    } catch (err) {
       console.error(err.message);
-      res.status(500).send('Server Error');
+      res.status(500).json({ msg: 'Server Error' });
    }
 };
 
