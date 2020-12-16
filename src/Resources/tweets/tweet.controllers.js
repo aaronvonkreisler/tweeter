@@ -99,16 +99,19 @@ export const retweet = async (req, res) => {
          retweetData: tweetId,
       });
 
-      if (!deletedTweet) {
-         res.status(400);
-      }
+      // if (!deletedTweet) {
+      //    res.sendStatus(400);
+      // }
 
       const option = deletedTweet !== null ? '$pull' : '$addToSet';
 
       let retweet = deletedTweet;
 
       if (retweet === null) {
-         retweet = await Tweet.create({ user: userId, retweetData: tweetId });
+         retweet = await Tweet.create({
+            user: userId,
+            retweetData: tweetId,
+         });
       }
 
       // Insert retweet to user Schema
@@ -125,7 +128,7 @@ export const retweet = async (req, res) => {
          tweetId,
          { [option]: { retweetUsers: userId } },
          { new: true }
-      );
+      ).populate({ path: 'user', select: 'avatar screen_name verified name ' });
 
       res.json(tweet);
    } catch (err) {

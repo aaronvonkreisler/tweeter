@@ -285,63 +285,64 @@ var retweet = /*#__PURE__*/function () {
 
           case 5:
             deletedTweet = _context5.sent;
-
-            if (!deletedTweet) {
-              res.status(400);
-            }
-
+            // if (!deletedTweet) {
+            //    res.sendStatus(400);
+            // }
             option = deletedTweet !== null ? '$pull' : '$addToSet';
             _retweet = deletedTweet;
 
             if (!(_retweet === null)) {
-              _context5.next = 13;
+              _context5.next = 12;
               break;
             }
 
-            _context5.next = 12;
+            _context5.next = 11;
             return _tweet.Tweet.create({
               user: userId,
               retweetData: tweetId
             });
 
-          case 12:
+          case 11:
             _retweet = _context5.sent;
 
-          case 13:
-            _context5.next = 15;
+          case 12:
+            _context5.next = 14;
             return _user.User.findByIdAndUpdate(userId, _defineProperty({}, option, {
               retweets: _retweet._id
             }), {
               new: true
             });
 
-          case 15:
+          case 14:
             user = _context5.sent;
-            _context5.next = 18;
+            _context5.next = 17;
             return _tweet.Tweet.findByIdAndUpdate(tweetId, _defineProperty({}, option, {
               retweetUsers: userId
             }), {
               new: true
+            }).populate({
+              path: 'user',
+              select: 'avatar screen_name verified name '
             });
 
-          case 18:
+          case 17:
             tweet = _context5.sent;
             res.json(tweet);
-            _context5.next = 26;
+            _context5.next = 25;
             break;
 
-          case 22:
-            _context5.prev = 22;
+          case 21:
+            _context5.prev = 21;
             _context5.t0 = _context5["catch"](0);
             console.error(_context5.t0.message);
             res.status(500).send('Server Error');
 
-          case 26:
+          case 25:
           case "end":
             return _context5.stop();
         }
       }
-    }, _callee5, null, [[0, 22]]);
+    }, _callee5, null, [[0, 21]]);
   }));
 
   return function retweet(_x9, _x10) {
