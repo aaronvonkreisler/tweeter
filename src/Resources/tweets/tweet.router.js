@@ -12,10 +12,11 @@ import {
 import {
    getTweetById,
    getTimelineTweets,
-   getUsersTweets,
+   getUsersProfileTweets,
    getUsersReplies,
    getTweetsLikedUsers,
    getTweetsRetweetUsers,
+   getUsersLikedTweets,
 } from './tweet.getControllers';
 const router = Router();
 
@@ -69,11 +70,15 @@ router.get('/', getTimelineTweets);
 
 // @route            GET api/tweets/user/:id
 // @description     Get tweets for one user
-router.get('/user/:id', getUsersTweets);
+router.get('/user/:id', getUsersProfileTweets);
 
 // @route            GET api/tweets/user/:id/replies
 // @description     Get replies for one user
 router.get('/user/:id/replies', getUsersReplies);
+
+// @route            GET api/tweets/user/:id/liked
+// @description     Get all liked tweets for one user
+router.get('/user/:id/likes', getUsersLikedTweets);
 
 // @route            GET api/tweets/:tweet_id/liked
 // @description     Get the users who liked a tweet

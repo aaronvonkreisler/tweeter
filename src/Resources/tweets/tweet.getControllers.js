@@ -2,9 +2,6 @@ import { validationResult } from 'express-validator';
 import { Tweet } from './tweet.model';
 import { User } from '../user/user.model';
 
-// TODO - Fetch all tweets from a users following
-// TODO - If Tweet has a retweet - the tweet needs to be populated
-
 export const getTweetById = async (req, res) => {
    try {
       const tweet = await Tweet.findById(req.params.id)
@@ -28,8 +25,6 @@ export const getTweetById = async (req, res) => {
    }
 };
 
-// fetch the most recent tweets from the currently logged in users following.
-// TODO -- pagination
 export const getTimelineTweets = async (req, res) => {
    try {
       const user = await User.findById(req.user.id).lean().exec();
@@ -58,22 +53,50 @@ export const getTimelineTweets = async (req, res) => {
    }
 };
 
-export const getUsersTweets = async (req, res) => {
+// export const getUsersTweets = async (req, res) => {
+//    try {
+//       const tweets = await Tweet.find({ user: req.params.id }).lean().exec();
+//       if (!tweets) {
+//          res.status(404).json({ msg: 'No tweets found for this user!' });
+//       }
+//       res.json(tweets);
+//    } catch (err) {
+//       console.error(err.message);
+//       res.status(500).send('Server Error');
+//    }
+// };
+
+export const getUsersProfileTweets = async (req, res) => {
    try {
-      const tweets = await Tweet.find({ user: req.params.id }).lean().exec();
-      if (!tweets) {
-         res.status(404).json({ msg: 'No tweets found for this user!' });
+      const userId = req.params.id;
+
+      const profileTweets = await Tweet.find({
+         user: userId,
+         in_reply_to: { $exists: false },
+         retweetData: { $exists: false },
+      });
+
+      if (!profileTweets) {
+         res.status(404).json({ msg: 'No tweets found for this user' });
       }
-      res.json(tweets);
+
+      res.json(profileTweets);
    } catch (err) {
+      if (err.kind === 'ObjectId') {
+         return res.status(404).json({ msg: 'No Tweets found!' });
+      }
       console.error(err.message);
-      res.status(500).send('Server Error');
+      res.status(500).json({ msg: 'Server Error' });
    }
 };
 
 export const getUsersReplies = async (req, res) => {
    try {
-      const replies = await Tweet.find({ 'replies.user': req.params.id })
+      const userId = req.params.id;
+      const replies = await Tweet.find({
+         user: userId,
+         in_reply_to: { $exists: true },
+      })
          .lean()
          .exec();
       if (!replies) {
@@ -83,6 +106,27 @@ export const getUsersReplies = async (req, res) => {
    } catch (err) {
       console.error(err.message);
       res.statu(500).send('Server Error');
+   }
+};
+
+export const getUsersLikedTweets = async (req, res) => {
+   try {
+      const userId = req.params.id;
+
+      const likedTweets = await Tweet.find({
+         'favorites.user': { $in: userId },
+      })
+         .lean()
+         .exec();
+
+      if (!likedTweets) {
+         res.status(404).json({ msg: 'No liked tweets' });
+      }
+
+      res.json(likedTweets);
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ msg: 'Server Error' });
    }
 };
 

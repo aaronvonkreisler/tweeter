@@ -144,10 +144,6 @@ export const replytoTweet = async (req, res) => {
    }
 
    try {
-      // const reply = {
-      //    content: req.body.content,
-      //    user: req.user.id,
-      // };
 
       const reply = await Tweet.create({
          user: req.user.id,
