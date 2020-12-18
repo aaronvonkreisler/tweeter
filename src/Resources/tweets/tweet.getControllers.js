@@ -74,7 +74,10 @@ export const getUsersProfileTweets = async (req, res) => {
          user: userId,
          in_reply_to: { $exists: false },
          retweetData: { $exists: false },
-      });
+      })
+         .sort({ created_at: -1 })
+         .lean()
+         .exec();
 
       if (!profileTweets) {
          res.status(404).json({ msg: 'No tweets found for this user' });
@@ -97,6 +100,7 @@ export const getUsersReplies = async (req, res) => {
          user: userId,
          in_reply_to: { $exists: true },
       })
+         .sort({ created_at: -1 })
          .lean()
          .exec();
       if (!replies) {
@@ -116,6 +120,7 @@ export const getUsersLikedTweets = async (req, res) => {
       const likedTweets = await Tweet.find({
          'favorites.user': { $in: userId },
       })
+         .sort({ created_at: -1 })
          .lean()
          .exec();
 

@@ -189,7 +189,9 @@ var getUsersProfileTweets = /*#__PURE__*/function () {
               retweetData: {
                 $exists: false
               }
-            });
+            }).sort({
+              created_at: -1
+            }).lean().exec();
 
           case 4:
             profileTweets = _context3.sent;
@@ -253,6 +255,8 @@ var getUsersReplies = /*#__PURE__*/function () {
               in_reply_to: {
                 $exists: true
               }
+            }).sort({
+              created_at: -1
             }).lean().exec();
 
           case 4:
@@ -303,6 +307,8 @@ var getUsersLikedTweets = /*#__PURE__*/function () {
               'favorites.user': {
                 $in: userId
               }
+            }).sort({
+              created_at: -1
             }).lean().exec();
 
           case 4:
