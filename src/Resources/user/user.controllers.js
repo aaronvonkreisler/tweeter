@@ -141,9 +141,9 @@ export const uploadUserAvatar = async (req, res) => {
 
 export const fetchUsersFollowers = async (req, res) => {
    try {
-      const userId = req.params.id;
+      const username = req.params.username;
 
-      const user = await User.findById(userId).populate({
+      const user = await User.findOne({ screen_name: username }).populate({
          path: 'followers',
          populate: {
             path: 'user',
@@ -152,7 +152,7 @@ export const fetchUsersFollowers = async (req, res) => {
       });
 
       if (!user) {
-         res.status(404).json({ msg: 'No user found by this ID' });
+         res.status(404).json({ msg: 'No user found by this username' });
       }
 
       res.json(user.followers);
@@ -164,9 +164,9 @@ export const fetchUsersFollowers = async (req, res) => {
 
 export const fetchUsersFollowing = async (req, res) => {
    try {
-      const userId = req.params.id;
+      const username = req.params.username;
 
-      const user = await User.findById(userId).populate({
+      const user = await User.findOne({ screen_name: username }).populate({
          path: 'following',
          populate: {
             path: 'user',
@@ -175,7 +175,7 @@ export const fetchUsersFollowing = async (req, res) => {
       });
 
       if (!user) {
-         res.status(404).json({ msg: 'No user found by this ID' });
+         res.status(404).json({ msg: 'No user found by this username' });
       }
 
       res.json(user.following);

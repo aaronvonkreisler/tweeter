@@ -18,10 +18,10 @@ router.get('/current', _user.fetchCurrentUser); // @route            GET api/use
 router.get('/:username', _user.fetchUserByUsername); // @route            GET api/user/:id/followers
 // @description      Get a users followers - each follower will be populated
 
-router.get('/:id/followers', _user.fetchUsersFollowers); // @route            GET api/user/:id/following
+router.get('/:username/followers', _user.fetchUsersFollowers); // @route            GET api/user/:id/following
 // @description      Get a users following - each follower will be populated
 
-router.get('/:id/following', _user.fetchUsersFollowing); // @route            PUT api/user/follow/:id
+router.get('/:username/following', _user.fetchUsersFollowing); // @route            PUT api/user/follow/:id
 // @description      Follow a user by id
 
 router.put('/follow/:id', _user.followUser); // @route            PUT api/user/unfollow/:id

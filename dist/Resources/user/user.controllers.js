@@ -385,15 +385,17 @@ exports.uploadUserAvatar = uploadUserAvatar;
 
 var fetchUsersFollowers = /*#__PURE__*/function () {
   var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(req, res) {
-    var userId, user;
+    var username, user;
     return regeneratorRuntime.wrap(function _callee7$(_context7) {
       while (1) {
         switch (_context7.prev = _context7.next) {
           case 0:
             _context7.prev = 0;
-            userId = req.params.id;
+            username = req.params.username;
             _context7.next = 4;
-            return _user.User.findById(userId).populate({
+            return _user.User.findOne({
+              screen_name: username
+            }).populate({
               path: 'followers',
               populate: {
                 path: 'user',
@@ -406,7 +408,7 @@ var fetchUsersFollowers = /*#__PURE__*/function () {
 
             if (!user) {
               res.status(404).json({
-                msg: 'No user found by this ID'
+                msg: 'No user found by this username'
               });
             }
 
@@ -439,15 +441,17 @@ exports.fetchUsersFollowers = fetchUsersFollowers;
 
 var fetchUsersFollowing = /*#__PURE__*/function () {
   var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(req, res) {
-    var userId, user;
+    var username, user;
     return regeneratorRuntime.wrap(function _callee8$(_context8) {
       while (1) {
         switch (_context8.prev = _context8.next) {
           case 0:
             _context8.prev = 0;
-            userId = req.params.id;
+            username = req.params.username;
             _context8.next = 4;
-            return _user.User.findById(userId).populate({
+            return _user.User.findOne({
+              screen_name: username
+            }).populate({
               path: 'following',
               populate: {
                 path: 'user',
@@ -460,7 +464,7 @@ var fetchUsersFollowing = /*#__PURE__*/function () {
 
             if (!user) {
               res.status(404).json({
-                msg: 'No user found by this ID'
+                msg: 'No user found by this username'
               });
             }
 
