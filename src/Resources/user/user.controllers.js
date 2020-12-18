@@ -138,3 +138,49 @@ export const uploadUserAvatar = async (req, res) => {
       res.status(500).send('Server Error');
    }
 };
+
+export const fetchUsersFollowers = async (req, res) => {
+   try {
+      const userId = req.params.id;
+
+      const user = await User.findById(userId).populate({
+         path: 'followers',
+         populate: {
+            path: 'user',
+            select: '-password -email -retweets',
+         },
+      });
+
+      if (!user) {
+         res.status(404).json({ msg: 'No user found by this ID' });
+      }
+
+      res.json(user.followers);
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ msg: 'Server Error' });
+   }
+};
+
+export const fetchUsersFollowing = async (req, res) => {
+   try {
+      const userId = req.params.id;
+
+      const user = await User.findById(userId).populate({
+         path: 'following',
+         populate: {
+            path: 'user',
+            select: '-password -email -retweets',
+         },
+      });
+
+      if (!user) {
+         res.status(404).json({ msg: 'No user found by this ID' });
+      }
+
+      res.json(user.following);
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ msg: 'Server Error' });
+   }
+};

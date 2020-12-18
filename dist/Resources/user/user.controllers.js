@@ -21,7 +21,7 @@ require("core-js/modules/es.string.match");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.uploadUserAvatar = exports.unfollowUser = exports.followUser = exports.fetchUserByUsername = exports.fetchUserById = exports.fetchCurrentUser = void 0;
+exports.fetchUsersFollowing = exports.fetchUsersFollowers = exports.uploadUserAvatar = exports.unfollowUser = exports.followUser = exports.fetchUserByUsername = exports.fetchUserById = exports.fetchCurrentUser = void 0;
 
 require("regenerator-runtime/runtime");
 
@@ -382,3 +382,111 @@ var uploadUserAvatar = /*#__PURE__*/function () {
 }();
 
 exports.uploadUserAvatar = uploadUserAvatar;
+
+var fetchUsersFollowers = /*#__PURE__*/function () {
+  var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(req, res) {
+    var userId, user;
+    return regeneratorRuntime.wrap(function _callee7$(_context7) {
+      while (1) {
+        switch (_context7.prev = _context7.next) {
+          case 0:
+            _context7.prev = 0;
+            userId = req.params.id;
+            _context7.next = 4;
+            return _user.User.findById(userId).populate({
+              path: 'followers',
+              populate: {
+                path: 'user',
+                select: '-password -email -retweets'
+              }
+            });
+
+          case 4:
+            user = _context7.sent;
+
+            if (!user) {
+              res.status(404).json({
+                msg: 'No user found by this ID'
+              });
+            }
+
+            res.json(user.followers);
+            _context7.next = 13;
+            break;
+
+          case 9:
+            _context7.prev = 9;
+            _context7.t0 = _context7["catch"](0);
+            console.error(_context7.t0.message);
+            res.status(500).json({
+              msg: 'Server Error'
+            });
+
+          case 13:
+          case "end":
+            return _context7.stop();
+        }
+      }
+    }, _callee7, null, [[0, 9]]);
+  }));
+
+  return function fetchUsersFollowers(_x13, _x14) {
+    return _ref7.apply(this, arguments);
+  };
+}();
+
+exports.fetchUsersFollowers = fetchUsersFollowers;
+
+var fetchUsersFollowing = /*#__PURE__*/function () {
+  var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(req, res) {
+    var userId, user;
+    return regeneratorRuntime.wrap(function _callee8$(_context8) {
+      while (1) {
+        switch (_context8.prev = _context8.next) {
+          case 0:
+            _context8.prev = 0;
+            userId = req.params.id;
+            _context8.next = 4;
+            return _user.User.findById(userId).populate({
+              path: 'following',
+              populate: {
+                path: 'user',
+                select: '-password -email -retweets'
+              }
+            });
+
+          case 4:
+            user = _context8.sent;
+
+            if (!user) {
+              res.status(404).json({
+                msg: 'No user found by this ID'
+              });
+            }
+
+            res.json(user.following);
+            _context8.next = 13;
+            break;
+
+          case 9:
+            _context8.prev = 9;
+            _context8.t0 = _context8["catch"](0);
+            console.error(_context8.t0.message);
+            res.status(500).json({
+              msg: 'Server Error'
+            });
+
+          case 13:
+          case "end":
+            return _context8.stop();
+        }
+      }
+    }, _callee8, null, [[0, 9]]);
+  }));
+
+  return function fetchUsersFollowing(_x15, _x16) {
+    return _ref8.apply(this, arguments);
+  };
+}();
+
+exports.fetchUsersFollowing = fetchUsersFollowing;

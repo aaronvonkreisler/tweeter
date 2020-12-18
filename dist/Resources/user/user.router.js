@@ -15,7 +15,13 @@ var router = (0, _express.Router)(); // @route            GET api/user/current
 router.get('/current', _user.fetchCurrentUser); // @route            GET api/user/:username
 // @description      Fetch the current user from database
 
-router.get('/:username', _user.fetchUserByUsername); // @route            PUT api/user/follow/:id
+router.get('/:username', _user.fetchUserByUsername); // @route            GET api/user/:id/followers
+// @description      Get a users followers - each follower will be populated
+
+router.get('/:id/followers', _user.fetchUsersFollowers); // @route            GET api/user/:id/following
+// @description      Get a users following - each follower will be populated
+
+router.get('/:id/following', _user.fetchUsersFollowing); // @route            PUT api/user/follow/:id
 // @description      Follow a user by id
 
 router.put('/follow/:id', _user.followUser); // @route            PUT api/user/unfollow/:id
