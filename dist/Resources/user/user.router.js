@@ -30,6 +30,9 @@ router.put('/follow/:id', _user.followUser); // @route            PUT api/user/u
 router.put('/unfollow/:id', _user.unfollowUser); // @route            PUT api/user/avatar
 // @description      Update profile picture
 
-router.put('/avatar', _user.uploadUserAvatar);
+router.put('/avatar', _user.uploadUserAvatar); // @route            PUT api/user/background
+// @description      Update background picture
+
+router.put('/background', _user.uploadUserBackgroundImage);
 var _default = router;
 exports.default = _default;

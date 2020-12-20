@@ -21,7 +21,7 @@ require("core-js/modules/es.string.match");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.fetchUsersFollowing = exports.fetchUsersFollowers = exports.uploadUserAvatar = exports.unfollowUser = exports.followUser = exports.fetchUserByUsername = exports.fetchUserById = exports.fetchCurrentUser = void 0;
+exports.fetchUsersFollowing = exports.fetchUsersFollowers = exports.uploadUserBackgroundImage = exports.uploadUserAvatar = exports.unfollowUser = exports.followUser = exports.fetchUserByUsername = exports.fetchUserById = exports.fetchCurrentUser = void 0;
 
 require("regenerator-runtime/runtime");
 
@@ -325,7 +325,7 @@ var uploadUserAvatar = /*#__PURE__*/function () {
             res.status(422).json({
               msg: 'Invalid file type. Please upload a JPG or PNG filetype.'
             });
-            _context6.next = 16;
+            _context6.next = 14;
             break;
 
           case 7:
@@ -339,41 +339,29 @@ var uploadUserAvatar = /*#__PURE__*/function () {
               avatar: profilePicResponse.Location
             }, {
               new: true,
-              select: '-password'
+              select: '-password -email'
             });
 
           case 12:
             user = _context6.sent;
-            _context6.next = 15;
-            return _profile.Profile.findOneAndUpdate({
-              user: req.user.id
-            }, {
-              $set: {
-                profile_picture: profilePicResponse.Location
-              }
-            }, {
-              upsert: true
-            });
-
-          case 15:
             res.json(user);
 
-          case 16:
-            _context6.next = 22;
+          case 14:
+            _context6.next = 20;
             break;
 
-          case 18:
-            _context6.prev = 18;
+          case 16:
+            _context6.prev = 16;
             _context6.t0 = _context6["catch"](0);
             console.error(_context6.t0);
             res.status(500).send('Server Error');
 
-          case 22:
+          case 20:
           case "end":
             return _context6.stop();
         }
       }
-    }, _callee6, null, [[0, 18]]);
+    }, _callee6, null, [[0, 16]]);
   }));
 
   return function uploadUserAvatar(_x11, _x12) {
@@ -383,63 +371,72 @@ var uploadUserAvatar = /*#__PURE__*/function () {
 
 exports.uploadUserAvatar = uploadUserAvatar;
 
-var fetchUsersFollowers = /*#__PURE__*/function () {
+var uploadUserBackgroundImage = /*#__PURE__*/function () {
   var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(req, res) {
-    var username, user;
+    var files, regex, backgroundPicResponse, user;
     return regeneratorRuntime.wrap(function _callee7$(_context7) {
       while (1) {
         switch (_context7.prev = _context7.next) {
           case 0:
             _context7.prev = 0;
-            username = req.params.username;
-            _context7.next = 4;
-            return _user.User.findOne({
-              screen_name: username
-            }).populate({
-              path: 'followers',
-              populate: {
-                path: 'user',
-                select: '-password -email -retweets'
-              }
-            });
+            files = req.files;
+            regex = /(image\/jpg)|(image\/jpeg)|(image\/png)/i;
 
-          case 4:
-            user = _context7.sent;
-
-            if (!user) {
-              res.status(404).json({
-                msg: 'No user found by this username'
-              });
+            if (files.image.mimetype.match(regex)) {
+              _context7.next = 7;
+              break;
             }
 
-            res.json(user.followers);
-            _context7.next = 13;
+            res.status(422).json({
+              msg: 'Invalid file type. Please upload a JPG or PNG filetype.'
+            });
+            _context7.next = 14;
             break;
 
+          case 7:
+            _context7.next = 9;
+            return (0, _imageUpload.uploadPhoto)(files);
+
           case 9:
-            _context7.prev = 9;
-            _context7.t0 = _context7["catch"](0);
-            console.error(_context7.t0.message);
-            res.status(500).json({
-              msg: 'Server Error'
+            backgroundPicResponse = _context7.sent;
+            _context7.next = 12;
+            return _user.User.findByIdAndUpdate(req.user.id, {
+              backgroundPicture: backgroundPicResponse.Location
+            }, {
+              new: true,
+              select: '-password -email'
             });
 
-          case 13:
+          case 12:
+            user = _context7.sent;
+            res.json(user);
+
+          case 14:
+            _context7.next = 20;
+            break;
+
+          case 16:
+            _context7.prev = 16;
+            _context7.t0 = _context7["catch"](0);
+            console.error(_context7.t0);
+            res.status(500).send('Server Error');
+
+          case 20:
           case "end":
             return _context7.stop();
         }
       }
-    }, _callee7, null, [[0, 9]]);
+    }, _callee7, null, [[0, 16]]);
   }));
 
-  return function fetchUsersFollowers(_x13, _x14) {
+  return function uploadUserBackgroundImage(_x13, _x14) {
     return _ref7.apply(this, arguments);
   };
 }();
 
-exports.fetchUsersFollowers = fetchUsersFollowers;
+exports.uploadUserBackgroundImage = uploadUserBackgroundImage;
 
-var fetchUsersFollowing = /*#__PURE__*/function () {
+var fetchUsersFollowers = /*#__PURE__*/function () {
   var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(req, res) {
     var username, user;
     return regeneratorRuntime.wrap(function _callee8$(_context8) {
@@ -452,7 +449,7 @@ var fetchUsersFollowing = /*#__PURE__*/function () {
             return _user.User.findOne({
               screen_name: username
             }).populate({
-              path: 'following',
+              path: 'followers',
               populate: {
                 path: 'user',
                 select: '-password -email -retweets'
@@ -468,7 +465,7 @@ var fetchUsersFollowing = /*#__PURE__*/function () {
               });
             }
 
-            res.json(user.following);
+            res.json(user.followers);
             _context8.next = 13;
             break;
 
@@ -488,8 +485,64 @@ var fetchUsersFollowing = /*#__PURE__*/function () {
     }, _callee8, null, [[0, 9]]);
   }));
 
-  return function fetchUsersFollowing(_x15, _x16) {
+  return function fetchUsersFollowers(_x15, _x16) {
     return _ref8.apply(this, arguments);
+  };
+}();
+
+exports.fetchUsersFollowers = fetchUsersFollowers;
+
+var fetchUsersFollowing = /*#__PURE__*/function () {
+  var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(req, res) {
+    var username, user;
+    return regeneratorRuntime.wrap(function _callee9$(_context9) {
+      while (1) {
+        switch (_context9.prev = _context9.next) {
+          case 0:
+            _context9.prev = 0;
+            username = req.params.username;
+            _context9.next = 4;
+            return _user.User.findOne({
+              screen_name: username
+            }).populate({
+              path: 'following',
+              populate: {
+                path: 'user',
+                select: '-password -email -retweets'
+              }
+            });
+
+          case 4:
+            user = _context9.sent;
+
+            if (!user) {
+              res.status(404).json({
+                msg: 'No user found by this username'
+              });
+            }
+
+            res.json(user.following);
+            _context9.next = 13;
+            break;
+
+          case 9:
+            _context9.prev = 9;
+            _context9.t0 = _context9["catch"](0);
+            console.error(_context9.t0.message);
+            res.status(500).json({
+              msg: 'Server Error'
+            });
+
+          case 13:
+          case "end":
+            return _context9.stop();
+        }
+      }
+    }, _callee9, null, [[0, 9]]);
+  }));
+
+  return function fetchUsersFollowing(_x17, _x18) {
+    return _ref9.apply(this, arguments);
   };
 }();
 

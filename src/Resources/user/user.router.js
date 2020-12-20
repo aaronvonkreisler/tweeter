@@ -7,6 +7,7 @@ import {
    followUser,
    unfollowUser,
    uploadUserAvatar,
+   uploadUserBackgroundImage,
 } from './user.controllers';
 
 const router = Router();
@@ -39,5 +40,10 @@ router.put('/unfollow/:id', unfollowUser);
 // @description      Update profile picture
 
 router.put('/avatar', uploadUserAvatar);
+
+// @route            PUT api/user/background
+// @description      Update background picture
+
+router.put('/background', uploadUserBackgroundImage);
 
 export default router;

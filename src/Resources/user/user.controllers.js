@@ -122,13 +122,32 @@ export const uploadUserAvatar = async (req, res) => {
          const user = await User.findByIdAndUpdate(
             req.user.id,
             { avatar: profilePicResponse.Location },
-            { new: true, select: '-password' }
+            { new: true, select: '-password -email' }
          );
 
-         await Profile.findOneAndUpdate(
-            { user: req.user.id },
-            { $set: { profile_picture: profilePicResponse.Location } },
-            { upsert: true }
+         res.json(user);
+      }
+   } catch (err) {
+      console.error(err);
+      res.status(500).send('Server Error');
+   }
+};
+
+export const uploadUserBackgroundImage = async (req, res) => {
+   try {
+      const { files } = req;
+      const regex = /(image\/jpg)|(image\/jpeg)|(image\/png)/i;
+      if (!files.image.mimetype.match(regex)) {
+         res.status(422).json({
+            msg: 'Invalid file type. Please upload a JPG or PNG filetype.',
+         });
+      } else {
+         const backgroundPicResponse = await uploadPhoto(files);
+
+         const user = await User.findByIdAndUpdate(
+            req.user.id,
+            { backgroundPicture: backgroundPicResponse.Location },
+            { new: true, select: '-password -email' }
          );
 
          res.json(user);

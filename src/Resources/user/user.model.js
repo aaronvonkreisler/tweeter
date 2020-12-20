@@ -28,6 +28,7 @@ const UserSchema = new mongoose.Schema({
       default:
          'https://tweeter-dev.s3.us-east-2.amazonaws.com/Profile_avatar_placeholder_large.png',
    },
+   backgroundPicture: String,
    retweets: [
       {
          type: mongoose.Schema.Types.ObjectId,
