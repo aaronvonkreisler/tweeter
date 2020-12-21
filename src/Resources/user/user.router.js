@@ -47,8 +47,8 @@ router.put('/avatar', uploadUserAvatar);
 
 router.put('/background', uploadUserBackgroundImage);
 
-// @route            GET api/user/:id/pinned
+// @route            GET api/user/:username/pinned
 // @description      Get a users pinned tweet
-router.get('/:id/pinned', getPinnedTweet);
+router.get('/:username/pinned', getPinnedTweet);
 
 export default router;

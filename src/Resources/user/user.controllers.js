@@ -205,9 +205,11 @@ export const fetchUsersFollowing = async (req, res) => {
 };
 
 export const getPinnedTweet = async (req, res) => {
-   const userId = req.params.id;
+   const username = req.params.username;
    try {
-      const user = await User.findById(userId).populate('pinnedTweet');
+      const user = await User.findOne({ screen_name: username }).populate(
+         'pinnedTweet'
+      );
 
       res.json(user.pinnedTweet);
    } catch (err) {

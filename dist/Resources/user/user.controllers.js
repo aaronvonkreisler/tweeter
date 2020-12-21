@@ -550,15 +550,17 @@ exports.fetchUsersFollowing = fetchUsersFollowing;
 
 var getPinnedTweet = /*#__PURE__*/function () {
   var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(req, res) {
-    var userId, user;
+    var username, user;
     return regeneratorRuntime.wrap(function _callee10$(_context10) {
       while (1) {
         switch (_context10.prev = _context10.next) {
           case 0:
-            userId = req.params.id;
+            username = req.params.username;
             _context10.prev = 1;
             _context10.next = 4;
-            return _user.User.findById(userId).populate('pinnedTweet');
+            return _user.User.findOne({
+              screen_name: username
+            }).populate('pinnedTweet');
 
           case 4:
             user = _context10.sent;
