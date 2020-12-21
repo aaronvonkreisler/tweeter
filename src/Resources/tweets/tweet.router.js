@@ -8,6 +8,8 @@ import {
    favoriteTweet,
    removeFavorite,
    retweet,
+   pinTweetToProfile,
+   removePinnedTweet,
 } from './tweet.controllers';
 import {
    getTweetById,
@@ -87,4 +89,15 @@ router.get('/:tweet_id/likes', getTweetsLikedUsers);
 // @route            GET api/tweets/:tweet_id/retweets
 // @description     Get the users who retweeted a tweet
 router.get('/:tweet_id/retweets', getTweetsRetweetUsers);
+
+// @route            PUT api/tweets/pin-tweet/:id
+// @description      Pin a tweet to a profile
+
+router.put('/pin-tweet/:id', pinTweetToProfile);
+
+// @route            PUT api/tweets/remove-pin/:id
+// @description      Remove a pinned tweet
+
+router.put('/remove-pin/', removePinnedTweet);
+
 export default router;

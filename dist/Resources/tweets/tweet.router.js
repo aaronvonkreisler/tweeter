@@ -55,6 +55,12 @@ router.get('/user/:id/likes', _tweet2.getUsersLikedTweets); // @route           
 router.get('/:tweet_id/likes', _tweet2.getTweetsLikedUsers); // @route            GET api/tweets/:tweet_id/retweets
 // @description     Get the users who retweeted a tweet
 
-router.get('/:tweet_id/retweets', _tweet2.getTweetsRetweetUsers);
+router.get('/:tweet_id/retweets', _tweet2.getTweetsRetweetUsers); // @route            PUT api/tweets/pin-tweet/:id
+// @description      Pin a tweet to a profile
+
+router.put('/pin-tweet/:id', _tweet.pinTweetToProfile); // @route            PUT api/tweets/remove-pin/:id
+// @description      Remove a pinned tweet
+
+router.put('/remove-pin/', _tweet.removePinnedTweet);
 var _default = router;
 exports.default = _default;

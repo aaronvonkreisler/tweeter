@@ -203,3 +203,15 @@ export const fetchUsersFollowing = async (req, res) => {
       res.status(500).json({ msg: 'Server Error' });
    }
 };
+
+export const getPinnedTweet = async (req, res) => {
+   const userId = req.params.id;
+   try {
+      const user = await User.findById(userId).populate('pinnedTweet');
+
+      res.json(user.pinnedTweet);
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+   }
+};

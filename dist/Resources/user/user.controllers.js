@@ -21,7 +21,7 @@ require("core-js/modules/es.string.match");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.fetchUsersFollowing = exports.fetchUsersFollowers = exports.uploadUserBackgroundImage = exports.uploadUserAvatar = exports.unfollowUser = exports.followUser = exports.fetchUserByUsername = exports.fetchUserById = exports.fetchCurrentUser = void 0;
+exports.getPinnedTweet = exports.fetchUsersFollowing = exports.fetchUsersFollowers = exports.uploadUserBackgroundImage = exports.uploadUserAvatar = exports.unfollowUser = exports.followUser = exports.fetchUserByUsername = exports.fetchUserById = exports.fetchCurrentUser = void 0;
 
 require("regenerator-runtime/runtime");
 
@@ -547,3 +547,42 @@ var fetchUsersFollowing = /*#__PURE__*/function () {
 }();
 
 exports.fetchUsersFollowing = fetchUsersFollowing;
+
+var getPinnedTweet = /*#__PURE__*/function () {
+  var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(req, res) {
+    var userId, user;
+    return regeneratorRuntime.wrap(function _callee10$(_context10) {
+      while (1) {
+        switch (_context10.prev = _context10.next) {
+          case 0:
+            userId = req.params.id;
+            _context10.prev = 1;
+            _context10.next = 4;
+            return _user.User.findById(userId).populate('pinnedTweet');
+
+          case 4:
+            user = _context10.sent;
+            res.json(user.pinnedTweet);
+            _context10.next = 12;
+            break;
+
+          case 8:
+            _context10.prev = 8;
+            _context10.t0 = _context10["catch"](1);
+            console.error(_context10.t0.message);
+            res.status(500).send('Server Error');
+
+          case 12:
+          case "end":
+            return _context10.stop();
+        }
+      }
+    }, _callee10, null, [[1, 8]]);
+  }));
+
+  return function getPinnedTweet(_x19, _x20) {
+    return _ref10.apply(this, arguments);
+  };
+}();
+
+exports.getPinnedTweet = getPinnedTweet;

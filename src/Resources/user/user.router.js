@@ -8,6 +8,7 @@ import {
    unfollowUser,
    uploadUserAvatar,
    uploadUserBackgroundImage,
+   getPinnedTweet,
 } from './user.controllers';
 
 const router = Router();
@@ -45,5 +46,9 @@ router.put('/avatar', uploadUserAvatar);
 // @description      Update background picture
 
 router.put('/background', uploadUserBackgroundImage);
+
+// @route            GET api/user/:id/pinned
+// @description      Get a users pinned tweet
+router.get('/:id/pinned', getPinnedTweet);
 
 export default router;

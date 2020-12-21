@@ -33,6 +33,9 @@ router.put('/unfollow/:id', _user.unfollowUser); // @route            PUT api/us
 router.put('/avatar', _user.uploadUserAvatar); // @route            PUT api/user/background
 // @description      Update background picture
 
-router.put('/background', _user.uploadUserBackgroundImage);
+router.put('/background', _user.uploadUserBackgroundImage); // @route            GET api/user/:id/pinned
+// @description      Get a users pinned tweet
+
+router.get('/:id/pinned', _user.getPinnedTweet);
 var _default = router;
 exports.default = _default;

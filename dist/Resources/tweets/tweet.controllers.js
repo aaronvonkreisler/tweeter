@@ -19,7 +19,7 @@ require("core-js/modules/es.regexp.to-string");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.deleteReply = exports.replytoTweet = exports.retweet = exports.removeFavorite = exports.favoriteTweet = exports.deleteTweet = exports.createTweet = void 0;
+exports.removePinnedTweet = exports.pinTweetToProfile = exports.deleteReply = exports.replytoTweet = exports.retweet = exports.removeFavorite = exports.favoriteTweet = exports.deleteTweet = exports.createTweet = void 0;
 
 require("regenerator-runtime/runtime");
 
@@ -497,3 +497,110 @@ var deleteReply = /*#__PURE__*/function () {
 }();
 
 exports.deleteReply = deleteReply;
+
+var pinTweetToProfile = /*#__PURE__*/function () {
+  var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(req, res) {
+    var tweetId, userId, tweetToPin, user;
+    return regeneratorRuntime.wrap(function _callee8$(_context8) {
+      while (1) {
+        switch (_context8.prev = _context8.next) {
+          case 0:
+            tweetId = req.params.id;
+            userId = req.user.id;
+            _context8.prev = 2;
+            _context8.next = 5;
+            return _tweet.Tweet.findById(tweetId).lean().exec();
+
+          case 5:
+            tweetToPin = _context8.sent;
+
+            if (!tweetToPin) {
+              res.status(404).json({
+                msg: 'No Tweet found by this ID'
+              });
+            }
+
+            _context8.next = 9;
+            return _user.User.findByIdAndUpdate(userId, {
+              pinnedTweet: tweetToPin._id
+            }, {
+              new: true,
+              select: '-password -email'
+            });
+
+          case 9:
+            user = _context8.sent;
+            res.json(user);
+            _context8.next = 17;
+            break;
+
+          case 13:
+            _context8.prev = 13;
+            _context8.t0 = _context8["catch"](2);
+            console.error(_context8.t0.message);
+            res.status(500).json({
+              msg: 'Server Error'
+            });
+
+          case 17:
+          case "end":
+            return _context8.stop();
+        }
+      }
+    }, _callee8, null, [[2, 13]]);
+  }));
+
+  return function pinTweetToProfile(_x15, _x16) {
+    return _ref8.apply(this, arguments);
+  };
+}();
+
+exports.pinTweetToProfile = pinTweetToProfile;
+
+var removePinnedTweet = /*#__PURE__*/function () {
+  var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(req, res) {
+    var userId, user;
+    return regeneratorRuntime.wrap(function _callee9$(_context9) {
+      while (1) {
+        switch (_context9.prev = _context9.next) {
+          case 0:
+            userId = req.user.id;
+            _context9.prev = 1;
+            _context9.next = 4;
+            return _user.User.findByIdAndUpdate(userId, {
+              $unset: {
+                pinnedTweet: ''
+              }
+            }, {
+              new: true,
+              select: '-password -email'
+            });
+
+          case 4:
+            user = _context9.sent;
+            res.json(user);
+            _context9.next = 12;
+            break;
+
+          case 8:
+            _context9.prev = 8;
+            _context9.t0 = _context9["catch"](1);
+            console.error(_context9.t0.message);
+            res.status(500).json({
+              msg: 'Server Error'
+            });
+
+          case 12:
+          case "end":
+            return _context9.stop();
+        }
+      }
+    }, _callee9, null, [[1, 8]]);
+  }));
+
+  return function removePinnedTweet(_x17, _x18) {
+    return _ref9.apply(this, arguments);
+  };
+}();
+
+exports.removePinnedTweet = removePinnedTweet;

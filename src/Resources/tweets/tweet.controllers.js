@@ -144,7 +144,6 @@ export const replytoTweet = async (req, res) => {
    }
 
    try {
-
       const reply = await Tweet.create({
          user: req.user.id,
          content: req.body.content,
@@ -198,5 +197,46 @@ export const deleteReply = async (req, res) => {
    } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
+   }
+};
+
+export const pinTweetToProfile = async (req, res) => {
+   const tweetId = req.params.id;
+   const userId = req.user.id;
+
+   try {
+      const tweetToPin = await Tweet.findById(tweetId).lean().exec();
+
+      if (!tweetToPin) {
+         res.status(404).json({ msg: 'No Tweet found by this ID' });
+      }
+
+      const user = await User.findByIdAndUpdate(
+         userId,
+         { pinnedTweet: tweetToPin._id },
+         { new: true, select: '-password -email' }
+      );
+
+      res.json(user);
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ msg: 'Server Error' });
+   }
+};
+
+export const removePinnedTweet = async (req, res) => {
+   const userId = req.user.id;
+
+   try {
+      const user = await User.findByIdAndUpdate(
+         userId,
+         { $unset: { pinnedTweet: '' } },
+         { new: true, select: '-password -email' }
+      );
+
+      res.json(user);
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ msg: 'Server Error' });
    }
 };
