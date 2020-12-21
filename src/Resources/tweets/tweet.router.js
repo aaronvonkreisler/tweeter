@@ -19,6 +19,7 @@ import {
    getTweetsLikedUsers,
    getTweetsRetweetUsers,
    getUsersLikedTweets,
+   getTweetsReplies,
 } from './tweet.getControllers';
 const router = Router();
 
@@ -65,6 +66,10 @@ router.delete('/comment/:tweet_id/:reply_id', deleteReply);
 // @route            GET api/tweets/:id
 // @description     Get a tweet by id
 router.get('/:id', getTweetById);
+
+// @route            GET api/tweets/:id/replies
+// @description     Get replies for a tweet
+router.get('/:id/replies', getTweetsReplies);
 
 // @route            GET api/tweets
 // @description     Get tweets for a users timeline

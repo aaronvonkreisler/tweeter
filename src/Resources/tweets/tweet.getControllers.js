@@ -53,6 +53,26 @@ export const getTimelineTweets = async (req, res) => {
    }
 };
 
+export const getTweetsReplies = async (req, res) => {
+   const tweetId = req.params.id;
+
+   try {
+      const replies = await Tweet.find({ in_reply_to: tweetId }).lean().exec();
+
+      if (!replies) {
+         res.status(404).json({ msg: 'No Replies for this tweet' });
+      }
+
+      res.json(replies);
+   } catch (err) {
+      console.error(err.message);
+      if (err.kind === 'ObjectId') {
+         return res.status(404).json({ msg: 'No Tweets found!' });
+      }
+      res.status(500).send('Server Error');
+   }
+};
+
 // export const getUsersTweets = async (req, res) => {
 //    try {
 //       const tweets = await Tweet.find({ user: req.params.id }).lean().exec();
