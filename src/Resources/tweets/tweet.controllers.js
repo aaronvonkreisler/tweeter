@@ -150,19 +150,12 @@ export const replytoTweet = async (req, res) => {
          in_reply_to: req.params.tweet_id,
       });
 
-      const tweet = await Tweet.findByIdAndUpdate(
-         req.params.tweet_id,
-         {
-            $push: { replies: { user: req.user.id, tweet: reply._id } },
-            $inc: { replies_count: 1 },
-         },
-         { new: true }
-      ).populate({
-         path: 'replies',
-         populate: { path: 'tweet' },
+      await Tweet.findByIdAndUpdate(req.params.tweet_id, {
+         $push: { replies: { user: req.user.id, tweet: reply._id } },
+         $inc: { replies_count: 1 },
       });
 
-      res.json(tweet.replies);
+      res.json(reply);
    } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');

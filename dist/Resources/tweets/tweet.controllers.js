@@ -354,7 +354,7 @@ exports.retweet = retweet;
 
 var replytoTweet = /*#__PURE__*/function () {
   var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(req, res) {
-    var errors, reply, tweet;
+    var errors, reply;
     return regeneratorRuntime.wrap(function _callee6$(_context6) {
       while (1) {
         switch (_context6.prev = _context6.next) {
@@ -392,33 +392,25 @@ var replytoTweet = /*#__PURE__*/function () {
               $inc: {
                 replies_count: 1
               }
-            }, {
-              new: true
-            }).populate({
-              path: 'replies',
-              populate: {
-                path: 'tweet'
-              }
             });
 
           case 9:
-            tweet = _context6.sent;
-            res.json(tweet.replies);
-            _context6.next = 17;
+            res.json(reply);
+            _context6.next = 16;
             break;
 
-          case 13:
-            _context6.prev = 13;
+          case 12:
+            _context6.prev = 12;
             _context6.t0 = _context6["catch"](3);
             console.error(_context6.t0.message);
             res.status(500).send('Server Error');
 
-          case 17:
+          case 16:
           case "end":
             return _context6.stop();
         }
       }
-    }, _callee6, null, [[3, 13]]);
+    }, _callee6, null, [[3, 12]]);
   }));
 
   return function replytoTweet(_x11, _x12) {
