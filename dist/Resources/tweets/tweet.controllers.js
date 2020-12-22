@@ -377,6 +377,9 @@ var replytoTweet = /*#__PURE__*/function () {
               user: req.user.id,
               content: req.body.content,
               in_reply_to: req.params.tweet_id
+            }).populate({
+              path: 'user',
+              select: 'avatar verified name screen_name'
             });
 
           case 6:
