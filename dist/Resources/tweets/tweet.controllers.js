@@ -130,23 +130,38 @@ var deleteTweet = /*#__PURE__*/function () {
             }));
 
           case 8:
-            _context2.next = 10;
+            if (!(tweet.in_reply_to !== null)) {
+              _context2.next = 11;
+              break;
+            }
+
+            _context2.next = 11;
+            return _tweet.Tweet.findByIdAndUpdate(tweet.in_reply_to, {
+              $pull: {
+                replies: {
+                  tweet: tweet._id
+                }
+              }
+            });
+
+          case 11:
+            _context2.next = 13;
             return tweet.remove();
 
-          case 10:
+          case 13:
             res.json({
               msg: 'Tweet successfully removed'
             });
-            _context2.next = 19;
+            _context2.next = 22;
             break;
 
-          case 13:
-            _context2.prev = 13;
+          case 16:
+            _context2.prev = 16;
             _context2.t0 = _context2["catch"](0);
             console.error(_context2.t0.message);
 
             if (!(_context2.t0.kind === 'ObjectId')) {
-              _context2.next = 18;
+              _context2.next = 21;
               break;
             }
 
@@ -154,15 +169,15 @@ var deleteTweet = /*#__PURE__*/function () {
               msg: 'Tweet not found!'
             }));
 
-          case 18:
+          case 21:
             res.status(500).send('Server Error');
 
-          case 19:
+          case 22:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[0, 13]]);
+    }, _callee2, null, [[0, 16]]);
   }));
 
   return function deleteTweet(_x3, _x4) {

@@ -41,6 +41,13 @@ export const deleteTweet = async (req, res) => {
             .status(401)
             .json({ msg: 'User not authorized to perform this action' });
       }
+
+      if (tweet.in_reply_to !== null) {
+         await Tweet.findByIdAndUpdate(tweet.in_reply_to, {
+            $pull: { replies: { tweet: tweet._id } },
+         });
+      }
+
       await tweet.remove();
       res.json({ msg: 'Tweet successfully removed' });
    } catch (err) {
