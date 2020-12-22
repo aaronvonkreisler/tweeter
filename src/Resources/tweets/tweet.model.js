@@ -63,8 +63,15 @@ TweetSchema.pre('find', async function () {
    });
 });
 
-TweetSchema.post('remove', async function (doc, next) {
-   await Tweet.updateMany({ retweet: doc._id }, { retweet: null });
+TweetSchema.pre('remove', async function (next) {
+   const tweetId = this.getQuery()['_id'];
+
+   try {
+      await Tweet.deleteMany({ retweetData: tweetId });
+      next();
+   } catch (err) {
+      next(err);
+   }
 });
 
 export const Tweet = mongoose.model('tweet', TweetSchema);
