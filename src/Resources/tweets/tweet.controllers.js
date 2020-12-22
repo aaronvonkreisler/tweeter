@@ -148,14 +148,21 @@ export const replytoTweet = async (req, res) => {
          user: req.user.id,
          content: req.body.content,
          in_reply_to: req.params.tweet_id,
-      }).populate({ path: 'user', select: 'avatar verified name screen_name' });
+      });
 
       await Tweet.findByIdAndUpdate(req.params.tweet_id, {
          $push: { replies: { user: req.user.id, tweet: reply._id } },
          $inc: { replies_count: 1 },
       });
 
-      res.json(reply);
+      // find the reply tweet and populate the user to send back
+
+      const tweetToSend = await Tweet.findById(reply._id).populate({
+         path: 'user',
+         select: 'avatar verified name screen_name',
+      });
+
+      res.json(tweetToSend);
    } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');

@@ -354,7 +354,7 @@ exports.retweet = retweet;
 
 var replytoTweet = /*#__PURE__*/function () {
   var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(req, res) {
-    var errors, reply;
+    var errors, reply, tweetToSend;
     return regeneratorRuntime.wrap(function _callee6$(_context6) {
       while (1) {
         switch (_context6.prev = _context6.next) {
@@ -377,9 +377,6 @@ var replytoTweet = /*#__PURE__*/function () {
               user: req.user.id,
               content: req.body.content,
               in_reply_to: req.params.tweet_id
-            }).populate({
-              path: 'user',
-              select: 'avatar verified name screen_name'
             });
 
           case 6:
@@ -398,22 +395,30 @@ var replytoTweet = /*#__PURE__*/function () {
             });
 
           case 9:
-            res.json(reply);
-            _context6.next = 16;
+            _context6.next = 11;
+            return _tweet.Tweet.findById(reply._id).populate({
+              path: 'user',
+              select: 'avatar verified name screen_name'
+            });
+
+          case 11:
+            tweetToSend = _context6.sent;
+            res.json(tweetToSend);
+            _context6.next = 19;
             break;
 
-          case 12:
-            _context6.prev = 12;
+          case 15:
+            _context6.prev = 15;
             _context6.t0 = _context6["catch"](3);
             console.error(_context6.t0.message);
             res.status(500).send('Server Error');
 
-          case 16:
+          case 19:
           case "end":
             return _context6.stop();
         }
       }
-    }, _callee6, null, [[3, 12]]);
+    }, _callee6, null, [[3, 15]]);
   }));
 
   return function replytoTweet(_x11, _x12) {
