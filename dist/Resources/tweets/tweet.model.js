@@ -83,38 +83,38 @@ TweetSchema.pre('find', /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/regenerator
   }, _callee, this);
 })));
 TweetSchema.pre('remove', /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(next) {
-    var tweetId;
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(doc, next) {
+    var tweet;
     return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            tweetId = this.getQuery()['_id'];
+            // Delete any tweets that are retweets of the tweet being deleted.
+            tweet = this;
             _context2.prev = 1;
             _context2.next = 4;
             return Tweet.deleteMany({
-              retweetData: tweetId
+              retweetData: tweet._id
             });
 
           case 4:
-            next();
-            _context2.next = 10;
+            _context2.next = 9;
             break;
 
-          case 7:
-            _context2.prev = 7;
+          case 6:
+            _context2.prev = 6;
             _context2.t0 = _context2["catch"](1);
             next(_context2.t0);
 
-          case 10:
+          case 9:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, this, [[1, 7]]);
+    }, _callee2, this, [[1, 6]]);
   }));
 
-  return function (_x) {
+  return function (_x, _x2) {
     return _ref2.apply(this, arguments);
   };
 }());

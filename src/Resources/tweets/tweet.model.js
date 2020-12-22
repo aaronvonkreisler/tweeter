@@ -63,12 +63,11 @@ TweetSchema.pre('find', async function () {
    });
 });
 
-TweetSchema.pre('remove', async function (next) {
-   const tweetId = this.getQuery()['_id'];
-
+TweetSchema.pre('remove', async function (doc, next) {
+   // Delete any tweets that are retweets of the tweet being deleted.
+   const tweet = this;
    try {
-      await Tweet.deleteMany({ retweetData: tweetId });
-      next();
+      await Tweet.deleteMany({ retweetData: tweet._id });
    } catch (err) {
       next(err);
    }
