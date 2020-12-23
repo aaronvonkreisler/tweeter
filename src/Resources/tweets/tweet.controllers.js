@@ -212,7 +212,10 @@ export const pinTweetToProfile = async (req, res) => {
    const userId = req.user.id;
 
    try {
-      const tweetToPin = await Tweet.findById(tweetId).lean().exec();
+      const tweetToPin = await Tweet.findById(tweetId).populate({
+         path: 'user',
+         select: 'name screen_name avatar verified',
+      });
 
       if (!tweetToPin) {
          res.status(404).json({ msg: 'No Tweet found by this ID' });
@@ -224,7 +227,7 @@ export const pinTweetToProfile = async (req, res) => {
          { new: true, select: '-password -email' }
       );
 
-      res.json(user);
+      res.json(tweetToPin);
    } catch (err) {
       console.error(err.message);
       res.status(500).json({ msg: 'Server Error' });
@@ -235,13 +238,9 @@ export const removePinnedTweet = async (req, res) => {
    const userId = req.user.id;
 
    try {
-      const user = await User.findByIdAndUpdate(
-         userId,
-         { $unset: { pinnedTweet: '' } },
-         { new: true, select: '-password -email' }
-      );
+      await User.findByIdAndUpdate(userId, { $unset: { pinnedTweet: '' } });
 
-      res.json(user);
+      res.json({ msg: 'Pinned Tweet Removed' });
    } catch (err) {
       console.error(err.message);
       res.status(500).json({ msg: 'Server Error' });

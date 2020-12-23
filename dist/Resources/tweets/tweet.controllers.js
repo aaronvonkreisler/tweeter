@@ -524,7 +524,10 @@ var pinTweetToProfile = /*#__PURE__*/function () {
             userId = req.user.id;
             _context8.prev = 2;
             _context8.next = 5;
-            return _tweet.Tweet.findById(tweetId).lean().exec();
+            return _tweet.Tweet.findById(tweetId).populate({
+              path: 'user',
+              select: 'name screen_name avatar verified'
+            });
 
           case 5:
             tweetToPin = _context8.sent;
@@ -545,7 +548,7 @@ var pinTweetToProfile = /*#__PURE__*/function () {
 
           case 9:
             user = _context8.sent;
-            res.json(user);
+            res.json(tweetToPin);
             _context8.next = 17;
             break;
 
@@ -574,7 +577,7 @@ exports.pinTweetToProfile = pinTweetToProfile;
 
 var removePinnedTweet = /*#__PURE__*/function () {
   var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(req, res) {
-    var userId, user;
+    var userId;
     return regeneratorRuntime.wrap(function _callee9$(_context9) {
       while (1) {
         switch (_context9.prev = _context9.next) {
@@ -586,31 +589,29 @@ var removePinnedTweet = /*#__PURE__*/function () {
               $unset: {
                 pinnedTweet: ''
               }
-            }, {
-              new: true,
-              select: '-password -email'
             });
 
           case 4:
-            user = _context9.sent;
-            res.json(user);
-            _context9.next = 12;
+            res.json({
+              msg: 'Pinned Tweet Removed'
+            });
+            _context9.next = 11;
             break;
 
-          case 8:
-            _context9.prev = 8;
+          case 7:
+            _context9.prev = 7;
             _context9.t0 = _context9["catch"](1);
             console.error(_context9.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
-          case 12:
+          case 11:
           case "end":
             return _context9.stop();
         }
       }
-    }, _callee9, null, [[1, 8]]);
+    }, _callee9, null, [[1, 7]]);
   }));
 
   return function removePinnedTweet(_x17, _x18) {
