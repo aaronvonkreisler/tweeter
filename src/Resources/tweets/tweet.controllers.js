@@ -14,6 +14,7 @@ export const createTweet = async (req, res) => {
       const newTweet = await Tweet.create({
          user: req.user.id,
          content: req.body.content,
+         image: req.body.image,
       });
 
       const tweet = await Tweet.findById(newTweet._id).populate({

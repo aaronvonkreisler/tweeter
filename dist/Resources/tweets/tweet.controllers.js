@@ -62,7 +62,8 @@ var createTweet = /*#__PURE__*/function () {
             _context.next = 6;
             return _tweet.Tweet.create({
               user: req.user.id,
-              content: req.body.content
+              content: req.body.content,
+              image: req.body.image
             });
 
           case 6:
