@@ -10,6 +10,7 @@ import {
    retweet,
    pinTweetToProfile,
    removePinnedTweet,
+   uploadImageForTweet,
 } from './tweet.controllers';
 import {
    getTweetById,
@@ -104,5 +105,10 @@ router.put('/pin-tweet/:id', pinTweetToProfile);
 // @description      Remove a pinned tweet
 
 router.put('/remove-pin/', removePinnedTweet);
+
+// @route            POST api/tweets/image
+// @description      Remove a pinned tweet
+
+router.post('/image', uploadImageForTweet);
 
 export default router;

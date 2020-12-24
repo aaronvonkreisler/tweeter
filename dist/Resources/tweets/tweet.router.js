@@ -64,6 +64,9 @@ router.get('/:tweet_id/retweets', _tweet2.getTweetsRetweetUsers); // @route     
 router.put('/pin-tweet/:id', _tweet.pinTweetToProfile); // @route            PUT api/tweets/remove-pin/:id
 // @description      Remove a pinned tweet
 
-router.put('/remove-pin/', _tweet.removePinnedTweet);
+router.put('/remove-pin/', _tweet.removePinnedTweet); // @route            POST api/tweets/image
+// @description      Remove a pinned tweet
+
+router.post('/image', _tweet.uploadImageForTweet);
 var _default = router;
 exports.default = _default;

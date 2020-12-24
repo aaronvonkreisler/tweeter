@@ -16,10 +16,12 @@ require("core-js/modules/es.regexp.exec");
 
 require("core-js/modules/es.regexp.to-string");
 
+require("core-js/modules/es.string.match");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.removePinnedTweet = exports.pinTweetToProfile = exports.deleteReply = exports.replytoTweet = exports.retweet = exports.removeFavorite = exports.favoriteTweet = exports.deleteTweet = exports.createTweet = void 0;
+exports.uploadImageForTweet = exports.removePinnedTweet = exports.pinTweetToProfile = exports.deleteReply = exports.replytoTweet = exports.retweet = exports.removeFavorite = exports.favoriteTweet = exports.deleteTweet = exports.createTweet = void 0;
 
 require("regenerator-runtime/runtime");
 
@@ -28,6 +30,8 @@ var _expressValidator = require("express-validator");
 var _tweet = require("./tweet.model");
 
 var _user = require("../user/user.model");
+
+var _imageUpload = require("../../services/imageUpload");
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -620,3 +624,60 @@ var removePinnedTweet = /*#__PURE__*/function () {
 }();
 
 exports.removePinnedTweet = removePinnedTweet;
+
+var uploadImageForTweet = /*#__PURE__*/function () {
+  var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(req, res) {
+    var files, regex, imageResponse;
+    return regeneratorRuntime.wrap(function _callee10$(_context10) {
+      while (1) {
+        switch (_context10.prev = _context10.next) {
+          case 0:
+            _context10.prev = 0;
+            files = req.files;
+            regex = /(image\/jpg)|(image\/jpeg)|(image\/png)/i;
+
+            if (files.image.mimetype.match(regex)) {
+              _context10.next = 7;
+              break;
+            }
+
+            res.status(422).json({
+              msg: 'Invalid file type. Please upload a JPG or PNG filetype.'
+            });
+            _context10.next = 11;
+            break;
+
+          case 7:
+            _context10.next = 9;
+            return (0, _imageUpload.uploadPhoto)(files);
+
+          case 9:
+            imageResponse = _context10.sent;
+            res.json(imageResponse.Location);
+
+          case 11:
+            _context10.next = 17;
+            break;
+
+          case 13:
+            _context10.prev = 13;
+            _context10.t0 = _context10["catch"](0);
+            console.error(_context10.t0.message);
+            res.status(500).json({
+              msg: 'Server Error'
+            });
+
+          case 17:
+          case "end":
+            return _context10.stop();
+        }
+      }
+    }, _callee10, null, [[0, 13]]);
+  }));
+
+  return function uploadImageForTweet(_x19, _x20) {
+    return _ref10.apply(this, arguments);
+  };
+}();
+
+exports.uploadImageForTweet = uploadImageForTweet;

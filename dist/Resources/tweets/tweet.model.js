@@ -27,6 +27,7 @@ var TweetSchema = new _mongoose.default.Schema({
   content: {
     type: String
   },
+  image: String,
   in_reply_to: {
     type: _mongoose.default.Schema.Types.ObjectId,
     ref: 'tweet'

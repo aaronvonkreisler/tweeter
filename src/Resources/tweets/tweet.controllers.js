@@ -1,6 +1,7 @@
 import { validationResult } from 'express-validator';
 import { Tweet } from './tweet.model';
 import { User } from '../user/user.model';
+import { uploadPhoto } from '../../services/imageUpload';
 
 export const createTweet = async (req, res) => {
    const errors = validationResult(req);
@@ -241,6 +242,25 @@ export const removePinnedTweet = async (req, res) => {
       await User.findByIdAndUpdate(userId, { $unset: { pinnedTweet: '' } });
 
       res.json({ msg: 'Pinned Tweet Removed' });
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ msg: 'Server Error' });
+   }
+};
+
+export const uploadImageForTweet = async (req, res) => {
+   try {
+      const { files } = req;
+      const regex = /(image\/jpg)|(image\/jpeg)|(image\/png)/i;
+      if (!files.image.mimetype.match(regex)) {
+         res.status(422).json({
+            msg: 'Invalid file type. Please upload a JPG or PNG filetype.',
+         });
+      } else {
+         const imageResponse = await uploadPhoto(files);
+
+         res.json(imageResponse.Location);
+      }
    } catch (err) {
       console.error(err.message);
       res.status(500).json({ msg: 'Server Error' });

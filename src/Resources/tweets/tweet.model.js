@@ -8,6 +8,7 @@ const TweetSchema = new mongoose.Schema({
    content: {
       type: String,
    },
+   image: String,
    in_reply_to: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'tweet',
