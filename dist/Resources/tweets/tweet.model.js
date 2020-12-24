@@ -90,7 +90,7 @@ TweetSchema.pre('remove', /*#__PURE__*/function () {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            // Delete any tweets that are retweets of the tweet being deleted.
+            // TODO -- remove tweet reference from bookmark model
             tweet = this;
             _context2.prev = 1;
             _context2.next = 4;

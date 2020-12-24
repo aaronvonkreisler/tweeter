@@ -7,6 +7,7 @@ import userRouter from './Resources/user/user.router';
 import authRouter from './Resources/auth/auth.router';
 import tweetRouter from './Resources/tweets/tweet.router';
 import profileRouter from './Resources/profile/profile.router';
+import bookmarksRouter from './Resources/bookmarks/bookmarks.router';
 
 const app = express();
 
@@ -38,7 +39,9 @@ app.use('/api', protect);
 app.use('/api/user', userRouter);
 app.use('/api/tweets', tweetRouter);
 app.use('/api/profile', profileRouter);
+app.use('/api/bookmarks', bookmarksRouter);
 
+// eslint-disable-next-line no-undef
 const PORT = process.env.PORT || 5000;
 
 export const start = async () => {

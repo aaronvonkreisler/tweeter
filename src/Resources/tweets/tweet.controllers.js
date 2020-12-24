@@ -125,7 +125,7 @@ export const retweet = async (req, res) => {
 
       // Insert retweet to user Schema
 
-      const user = await User.findByIdAndUpdate(
+      await User.findByIdAndUpdate(
          userId,
          { [option]: { retweets: retweet._id } },
          { new: true }
@@ -223,7 +223,7 @@ export const pinTweetToProfile = async (req, res) => {
          res.status(404).json({ msg: 'No Tweet found by this ID' });
       }
 
-      const user = await User.findByIdAndUpdate(
+      await User.findByIdAndUpdate(
          userId,
          { pinnedTweet: tweetToPin._id },
          { new: true, select: '-password -email' }

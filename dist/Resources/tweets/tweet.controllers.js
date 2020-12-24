@@ -286,7 +286,7 @@ exports.removeFavorite = removeFavorite;
 
 var retweet = /*#__PURE__*/function () {
   var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(req, res) {
-    var tweetId, userId, deletedTweet, option, _retweet, user, tweet;
+    var tweetId, userId, deletedTweet, option, _retweet, tweet;
 
     return regeneratorRuntime.wrap(function _callee5$(_context5) {
       while (1) {
@@ -334,8 +334,7 @@ var retweet = /*#__PURE__*/function () {
             });
 
           case 14:
-            user = _context5.sent;
-            _context5.next = 17;
+            _context5.next = 16;
             return _tweet.Tweet.findByIdAndUpdate(tweetId, _defineProperty({}, option, {
               retweetUsers: userId
             }), {
@@ -345,24 +344,24 @@ var retweet = /*#__PURE__*/function () {
               select: 'avatar screen_name verified name '
             });
 
-          case 17:
+          case 16:
             tweet = _context5.sent;
             res.json(tweet);
-            _context5.next = 25;
+            _context5.next = 24;
             break;
 
-          case 21:
-            _context5.prev = 21;
+          case 20:
+            _context5.prev = 20;
             _context5.t0 = _context5["catch"](0);
             console.error(_context5.t0.message);
             res.status(500).send('Server Error');
 
-          case 25:
+          case 24:
           case "end":
             return _context5.stop();
         }
       }
-    }, _callee5, null, [[0, 21]]);
+    }, _callee5, null, [[0, 20]]);
   }));
 
   return function retweet(_x9, _x10) {
@@ -520,7 +519,7 @@ exports.deleteReply = deleteReply;
 
 var pinTweetToProfile = /*#__PURE__*/function () {
   var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(req, res) {
-    var tweetId, userId, tweetToPin, user;
+    var tweetId, userId, tweetToPin;
     return regeneratorRuntime.wrap(function _callee8$(_context8) {
       while (1) {
         switch (_context8.prev = _context8.next) {
@@ -552,25 +551,24 @@ var pinTweetToProfile = /*#__PURE__*/function () {
             });
 
           case 9:
-            user = _context8.sent;
             res.json(tweetToPin);
-            _context8.next = 17;
+            _context8.next = 16;
             break;
 
-          case 13:
-            _context8.prev = 13;
+          case 12:
+            _context8.prev = 12;
             _context8.t0 = _context8["catch"](2);
             console.error(_context8.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
-          case 17:
+          case 16:
           case "end":
             return _context8.stop();
         }
       }
-    }, _callee8, null, [[2, 13]]);
+    }, _callee8, null, [[2, 12]]);
   }));
 
   return function pinTweetToProfile(_x15, _x16) {

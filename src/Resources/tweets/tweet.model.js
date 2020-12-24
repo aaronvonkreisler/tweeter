@@ -65,7 +65,7 @@ TweetSchema.pre('find', async function () {
 });
 
 TweetSchema.pre('remove', async function (doc, next) {
-   // Delete any tweets that are retweets of the tweet being deleted.
+   // TODO -- remove tweet reference from bookmark model
    const tweet = this;
    try {
       await Tweet.deleteMany({ retweetData: tweet._id });
