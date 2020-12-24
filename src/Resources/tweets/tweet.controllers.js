@@ -252,7 +252,7 @@ export const removePinnedTweet = async (req, res) => {
 export const uploadImageForTweet = async (req, res) => {
    try {
       const { files } = req;
-      const regex = /(image\/jpg)|(image\/jpeg)|(image\/png)/i;
+      const regex = /(image\/jpg)|(image\/jpeg)|(image\/png)|(image\/gif)/i;
       if (!files.image.mimetype.match(regex)) {
          res.status(422).json({
             msg: 'Invalid file type. Please upload a JPG or PNG filetype.',

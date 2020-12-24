@@ -635,7 +635,7 @@ var uploadImageForTweet = /*#__PURE__*/function () {
           case 0:
             _context10.prev = 0;
             files = req.files;
-            regex = /(image\/jpg)|(image\/jpeg)|(image\/png)/i;
+            regex = /(image\/jpg)|(image\/jpeg)|(image\/png)|(image\/gif)/i;
 
             if (files.image.mimetype.match(regex)) {
               _context10.next = 7;
