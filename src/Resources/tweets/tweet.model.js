@@ -38,7 +38,12 @@ const TweetSchema = new mongoose.Schema({
          },
       },
    ],
-
+   bookmarkedBy: [
+      {
+         type: mongoose.Schema.Types.ObjectId,
+         ref: 'user',
+      },
+   ],
    retweetUsers: [
       {
          type: mongoose.Schema.Types.ObjectId,
@@ -69,6 +74,12 @@ TweetSchema.pre('remove', async function (doc, next) {
    const tweet = this;
    try {
       await Tweet.deleteMany({ retweetData: tweet._id });
+      await mongoose
+         .model('bookmark')
+         .updateMany(
+            { tweets: { $in: [tweet._id] } },
+            { $pull: { tweets: tweet._id } }
+         );
    } catch (err) {
       next(err);
    }

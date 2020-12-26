@@ -4,6 +4,8 @@ require("core-js/modules/es.object.to-string");
 
 require("core-js/modules/es.promise");
 
+require("core-js/modules/es.regexp.exec");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -80,7 +82,11 @@ var addTweetToBookmarks = /*#__PURE__*/function () {
             tweetId = req.params.id;
             _context2.prev = 2;
             _context2.next = 5;
-            return _tweet.Tweet.findById(tweetId);
+            return _tweet.Tweet.findByIdAndUpdate(tweetId, {
+              $addToSet: {
+                bookmarkedBy: userId
+              }
+            }).exec();
 
           case 5:
             tweet = _context2.sent;
@@ -102,7 +108,7 @@ var addTweetToBookmarks = /*#__PURE__*/function () {
             }, {
               new: true,
               upsert: true
-            });
+            }).lean().exec();
 
           case 9:
             bookmarks = _context2.sent;
@@ -135,7 +141,7 @@ exports.addTweetToBookmarks = addTweetToBookmarks;
 
 var removeTweetFromBookmarks = /*#__PURE__*/function () {
   var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(req, res) {
-    var userId, tweetId, bookmarks;
+    var userId, tweetId, tweet, bookmarks;
     return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
@@ -144,6 +150,20 @@ var removeTweetFromBookmarks = /*#__PURE__*/function () {
             tweetId = req.params.id;
             _context3.prev = 2;
             _context3.next = 5;
+            return _tweet.Tweet.findByIdAndUpdate(tweetId, {
+              $pull: {
+                bookmarkedBy: userId
+              }
+            }).lean().exec();
+
+          case 5:
+            tweet = _context3.sent;
+
+            if (!tweet) {
+              res.status(400).send('Tweet no longer exists');
+            }
+
+            _context3.next = 9;
             return _bookmarks.Bookmark.findOneAndUpdate({
               user: userId
             }, {
@@ -152,28 +172,28 @@ var removeTweetFromBookmarks = /*#__PURE__*/function () {
               }
             }, {
               new: true
-            });
-
-          case 5:
-            bookmarks = _context3.sent;
-            res.json(bookmarks);
-            _context3.next = 13;
-            break;
+            }).lean().exec();
 
           case 9:
-            _context3.prev = 9;
+            bookmarks = _context3.sent;
+            res.json(bookmarks);
+            _context3.next = 17;
+            break;
+
+          case 13:
+            _context3.prev = 13;
             _context3.t0 = _context3["catch"](2);
             console.error(_context3.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
-          case 13:
+          case 17:
           case "end":
             return _context3.stop();
         }
       }
-    }, _callee3, null, [[2, 9]]);
+    }, _callee3, null, [[2, 13]]);
   }));
 
   return function removeTweetFromBookmarks(_x5, _x6) {

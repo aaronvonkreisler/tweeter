@@ -52,6 +52,10 @@ var TweetSchema = new _mongoose.default.Schema({
       default: Date.now
     }
   }],
+  bookmarkedBy: [{
+    type: _mongoose.default.Schema.Types.ObjectId,
+    ref: 'user'
+  }],
   retweetUsers: [{
     type: _mongoose.default.Schema.Types.ObjectId,
     ref: 'user'
@@ -99,20 +103,32 @@ TweetSchema.pre('remove', /*#__PURE__*/function () {
             });
 
           case 4:
-            _context2.next = 9;
-            break;
+            _context2.next = 6;
+            return _mongoose.default.model('bookmark').updateMany({
+              tweets: {
+                $in: [tweet._id]
+              }
+            }, {
+              $pull: {
+                tweets: tweet._id
+              }
+            });
 
           case 6:
-            _context2.prev = 6;
+            _context2.next = 11;
+            break;
+
+          case 8:
+            _context2.prev = 8;
             _context2.t0 = _context2["catch"](1);
             next(_context2.t0);
 
-          case 9:
+          case 11:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, this, [[1, 6]]);
+    }, _callee2, this, [[1, 8]]);
   }));
 
   return function (_x, _x2) {
