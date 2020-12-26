@@ -1,6 +1,6 @@
 import { User } from './user.model';
 import { uploadPhoto } from '../../services/imageUpload';
-import { Profile } from '../profile/profile.model';
+import normalize from 'normalize-url';
 
 export const fetchCurrentUser = async (req, res) => {
    try {
@@ -215,5 +215,37 @@ export const getPinnedTweet = async (req, res) => {
    } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
+   }
+};
+
+export const updateProfile = async (req, res) => {
+   const userId = req.user.id;
+
+   const { name, bio, website, location } = req.body;
+
+   const updateFields = {
+      name,
+      bio,
+      location,
+      website:
+         website && website !== ''
+            ? normalize(website, { forceHttps: true })
+            : '',
+   };
+
+   try {
+      const user = await User.findByIdAndUpdate(
+         userId,
+         { $set: updateFields },
+         { new: true }
+      )
+         .select('-password -email')
+         .lean()
+         .exec();
+
+      res.json(user);
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ msg: 'Server Error' });
    }
 };

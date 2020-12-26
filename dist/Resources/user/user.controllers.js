@@ -8,6 +8,8 @@ require("core-js/modules/es.array.map");
 
 require("core-js/modules/es.array.splice");
 
+require("core-js/modules/es.function.name");
+
 require("core-js/modules/es.object.to-string");
 
 require("core-js/modules/es.promise");
@@ -21,7 +23,7 @@ require("core-js/modules/es.string.match");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getPinnedTweet = exports.fetchUsersFollowing = exports.fetchUsersFollowers = exports.uploadUserBackgroundImage = exports.uploadUserAvatar = exports.unfollowUser = exports.followUser = exports.fetchUserByUsername = exports.fetchUserById = exports.fetchCurrentUser = void 0;
+exports.updateProfile = exports.getPinnedTweet = exports.fetchUsersFollowing = exports.fetchUsersFollowers = exports.uploadUserBackgroundImage = exports.uploadUserAvatar = exports.unfollowUser = exports.followUser = exports.fetchUserByUsername = exports.fetchUserById = exports.fetchCurrentUser = void 0;
 
 require("regenerator-runtime/runtime");
 
@@ -29,7 +31,9 @@ var _user = require("./user.model");
 
 var _imageUpload = require("../../services/imageUpload");
 
-var _profile = require("../profile/profile.model");
+var _normalizeUrl = _interopRequireDefault(require("normalize-url"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -588,3 +592,58 @@ var getPinnedTweet = /*#__PURE__*/function () {
 }();
 
 exports.getPinnedTweet = getPinnedTweet;
+
+var updateProfile = /*#__PURE__*/function () {
+  var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(req, res) {
+    var userId, _req$body, name, bio, website, location, updateFields, user;
+
+    return regeneratorRuntime.wrap(function _callee11$(_context11) {
+      while (1) {
+        switch (_context11.prev = _context11.next) {
+          case 0:
+            userId = req.user.id;
+            _req$body = req.body, name = _req$body.name, bio = _req$body.bio, website = _req$body.website, location = _req$body.location;
+            updateFields = {
+              name: name,
+              bio: bio,
+              location: location,
+              website: website && website !== '' ? (0, _normalizeUrl.default)(website, {
+                forceHttps: true
+              }) : ''
+            };
+            _context11.prev = 3;
+            _context11.next = 6;
+            return _user.User.findByIdAndUpdate(userId, {
+              $set: updateFields
+            }, {
+              new: true
+            }).select('-password -email').lean().exec();
+
+          case 6:
+            user = _context11.sent;
+            res.json(user);
+            _context11.next = 14;
+            break;
+
+          case 10:
+            _context11.prev = 10;
+            _context11.t0 = _context11["catch"](3);
+            console.error(_context11.t0.message);
+            res.status(500).json({
+              msg: 'Server Error'
+            });
+
+          case 14:
+          case "end":
+            return _context11.stop();
+        }
+      }
+    }, _callee11, null, [[3, 10]]);
+  }));
+
+  return function updateProfile(_x21, _x22) {
+    return _ref11.apply(this, arguments);
+  };
+}();
+
+exports.updateProfile = updateProfile;

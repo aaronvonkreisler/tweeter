@@ -9,6 +9,7 @@ import {
    uploadUserAvatar,
    uploadUserBackgroundImage,
    getPinnedTweet,
+   updateProfile,
 } from './user.controllers';
 
 const router = Router();
@@ -16,6 +17,10 @@ const router = Router();
 // @route            GET api/user/current
 // @description      Fetch the current user from database
 router.get('/current', fetchCurrentUser);
+
+// @route            PUT api/user/current
+// @description      Update a users profile - bio, location, website
+router.put('/current', updateProfile);
 
 // @route            GET api/user/:username
 // @description      Fetch the current user from database

@@ -29,7 +29,18 @@ const UserSchema = new mongoose.Schema({
          'https://tweeter-dev.s3.us-east-2.amazonaws.com/Profile_avatar_placeholder_large.png',
    },
    backgroundPicture: String,
-   bio: String,
+   bio: {
+      type: String,
+      trim: true,
+   },
+   website: {
+      type: String,
+      trim: true,
+   },
+   location: {
+      type: String,
+      trim: true,
+   },
    pinnedTweet: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'tweet',

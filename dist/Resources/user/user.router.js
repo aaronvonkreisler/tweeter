@@ -12,7 +12,10 @@ var _user = require("./user.controllers");
 var router = (0, _express.Router)(); // @route            GET api/user/current
 // @description      Fetch the current user from database
 
-router.get('/current', _user.fetchCurrentUser); // @route            GET api/user/:username
+router.get('/current', _user.fetchCurrentUser); // @route            PUT api/user/current
+// @description      Update a users profile - bio, location, website
+
+router.put('/current', _user.updateProfile); // @route            GET api/user/:username
 // @description      Fetch the current user from database
 
 router.get('/:username', _user.fetchUserByUsername); // @route            GET api/user/:id/followers
