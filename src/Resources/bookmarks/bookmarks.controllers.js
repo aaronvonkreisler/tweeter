@@ -70,6 +70,7 @@ export const removeTweetFromBookmarks = async (req, res) => {
          { $pull: { tweets: tweetId } },
          { new: true }
       )
+         .populate('tweets')
          .lean()
          .exec();
 

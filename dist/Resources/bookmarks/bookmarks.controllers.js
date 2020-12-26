@@ -172,7 +172,7 @@ var removeTweetFromBookmarks = /*#__PURE__*/function () {
               }
             }, {
               new: true
-            }).lean().exec();
+            }).populate('tweets').lean().exec();
 
           case 9:
             bookmarks = _context3.sent;
