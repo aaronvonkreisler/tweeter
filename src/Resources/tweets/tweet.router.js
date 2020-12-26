@@ -4,7 +4,6 @@ import {
    createTweet,
    replytoTweet,
    deleteTweet,
-   deleteReply,
    favoriteTweet,
    removeFavorite,
    retweet,
@@ -59,10 +58,6 @@ router.put('/unlike/:id', removeFavorite);
 // @route            DELETE api/tweets/:id
 // @description      Delete a tweet
 router.delete('/:id', deleteTweet);
-
-// @route            DELETE api/tweets/comment/:tweet_id/:reply_id
-// @description      Delete a reply to a tweet
-router.delete('/comment/:tweet_id/:reply_id', deleteReply);
 
 // @route            GET api/tweets/:id
 // @description     Get a tweet by id

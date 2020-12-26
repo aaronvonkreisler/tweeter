@@ -1,13 +1,5 @@
 "use strict";
 
-require("core-js/modules/es.array.find");
-
-require("core-js/modules/es.array.index-of");
-
-require("core-js/modules/es.array.map");
-
-require("core-js/modules/es.array.splice");
-
 require("core-js/modules/es.object.to-string");
 
 require("core-js/modules/es.promise");
@@ -21,7 +13,7 @@ require("core-js/modules/es.string.match");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.uploadImageForTweet = exports.removePinnedTweet = exports.pinTweetToProfile = exports.deleteReply = exports.replytoTweet = exports.retweet = exports.removeFavorite = exports.favoriteTweet = exports.deleteTweet = exports.createTweet = void 0;
+exports.uploadImageForTweet = exports.removePinnedTweet = exports.pinTweetToProfile = exports.replytoTweet = exports.retweet = exports.removeFavorite = exports.favoriteTweet = exports.deleteTweet = exports.createTweet = void 0;
 
 require("regenerator-runtime/runtime");
 
@@ -327,14 +319,6 @@ var retweet = /*#__PURE__*/function () {
 
           case 12:
             _context5.next = 14;
-            return _user.User.findByIdAndUpdate(userId, _defineProperty({}, option, {
-              retweets: _retweet._id
-            }), {
-              new: true
-            });
-
-          case 14:
-            _context5.next = 16;
             return _tweet.Tweet.findByIdAndUpdate(tweetId, _defineProperty({}, option, {
               retweetUsers: userId
             }), {
@@ -344,24 +328,24 @@ var retweet = /*#__PURE__*/function () {
               select: 'avatar screen_name verified name '
             });
 
-          case 16:
+          case 14:
             tweet = _context5.sent;
             res.json(tweet);
-            _context5.next = 24;
+            _context5.next = 22;
             break;
 
-          case 20:
-            _context5.prev = 20;
+          case 18:
+            _context5.prev = 18;
             _context5.t0 = _context5["catch"](0);
             console.error(_context5.t0.message);
             res.status(500).send('Server Error');
 
-          case 24:
+          case 22:
           case "end":
             return _context5.stop();
         }
       }
-    }, _callee5, null, [[0, 20]]);
+    }, _callee5, null, [[0, 18]]);
   }));
 
   return function retweet(_x9, _x10) {
@@ -401,43 +385,29 @@ var replytoTweet = /*#__PURE__*/function () {
           case 6:
             reply = _context6.sent;
             _context6.next = 9;
-            return _tweet.Tweet.findByIdAndUpdate(req.params.tweet_id, {
-              $push: {
-                replies: {
-                  user: req.user.id,
-                  tweet: reply._id
-                }
-              },
-              $inc: {
-                replies_count: 1
-              }
-            });
-
-          case 9:
-            _context6.next = 11;
             return _tweet.Tweet.findById(reply._id).populate({
               path: 'user',
               select: 'avatar verified name screen_name'
             });
 
-          case 11:
+          case 9:
             tweetToSend = _context6.sent;
             res.json(tweetToSend);
-            _context6.next = 19;
+            _context6.next = 17;
             break;
 
-          case 15:
-            _context6.prev = 15;
+          case 13:
+            _context6.prev = 13;
             _context6.t0 = _context6["catch"](3);
             console.error(_context6.t0.message);
             res.status(500).send('Server Error');
 
-          case 19:
+          case 17:
           case "end":
             return _context6.stop();
         }
       }
-    }, _callee6, null, [[3, 15]]);
+    }, _callee6, null, [[3, 13]]);
   }));
 
   return function replytoTweet(_x11, _x12) {
@@ -447,94 +417,24 @@ var replytoTweet = /*#__PURE__*/function () {
 
 exports.replytoTweet = replytoTweet;
 
-var deleteReply = /*#__PURE__*/function () {
+var pinTweetToProfile = /*#__PURE__*/function () {
   var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(req, res) {
-    var tweet, reply, removeIndex;
+    var tweetId, userId, tweetToPin;
     return regeneratorRuntime.wrap(function _callee7$(_context7) {
       while (1) {
         switch (_context7.prev = _context7.next) {
           case 0:
-            _context7.prev = 0;
-            _context7.next = 3;
-            return _tweet.Tweet.findById(req.params.tweet_id);
-
-          case 3:
-            tweet = _context7.sent;
-            reply = tweet.replies.find(function (reply) {
-              return reply.id === req.params.reply_id;
-            });
-
-            if (reply) {
-              _context7.next = 7;
-              break;
-            }
-
-            return _context7.abrupt("return", res.status(400).json({
-              msg: 'Reply does not exist'
-            }));
-
-          case 7:
-            if (!(reply.user.toString() !== req.user.id)) {
-              _context7.next = 9;
-              break;
-            }
-
-            return _context7.abrupt("return", res.status(401).json({
-              msg: 'Not authorized to perform this action'
-            }));
-
-          case 9:
-            removeIndex = tweet.replies.map(function (reply) {
-              return reply.user.toString().indexOf(req.user.id);
-            });
-            tweet.replies.splice(removeIndex, 1);
-            _context7.next = 13;
-            return tweet.save();
-
-          case 13:
-            res.json(tweet.replies);
-            _context7.next = 20;
-            break;
-
-          case 16:
-            _context7.prev = 16;
-            _context7.t0 = _context7["catch"](0);
-            console.error(_context7.t0.message);
-            res.status(500).send('Server Error');
-
-          case 20:
-          case "end":
-            return _context7.stop();
-        }
-      }
-    }, _callee7, null, [[0, 16]]);
-  }));
-
-  return function deleteReply(_x13, _x14) {
-    return _ref7.apply(this, arguments);
-  };
-}();
-
-exports.deleteReply = deleteReply;
-
-var pinTweetToProfile = /*#__PURE__*/function () {
-  var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(req, res) {
-    var tweetId, userId, tweetToPin;
-    return regeneratorRuntime.wrap(function _callee8$(_context8) {
-      while (1) {
-        switch (_context8.prev = _context8.next) {
-          case 0:
             tweetId = req.params.id;
             userId = req.user.id;
-            _context8.prev = 2;
-            _context8.next = 5;
+            _context7.prev = 2;
+            _context7.next = 5;
             return _tweet.Tweet.findById(tweetId).populate({
               path: 'user',
               select: 'name screen_name avatar verified'
             });
 
           case 5:
-            tweetToPin = _context8.sent;
+            tweetToPin = _context7.sent;
 
             if (!tweetToPin) {
               res.status(404).json({
@@ -542,7 +442,7 @@ var pinTweetToProfile = /*#__PURE__*/function () {
               });
             }
 
-            _context8.next = 9;
+            _context7.next = 9;
             return _user.User.findByIdAndUpdate(userId, {
               pinnedTweet: tweetToPin._id
             }, {
@@ -552,42 +452,42 @@ var pinTweetToProfile = /*#__PURE__*/function () {
 
           case 9:
             res.json(tweetToPin);
-            _context8.next = 16;
+            _context7.next = 16;
             break;
 
           case 12:
-            _context8.prev = 12;
-            _context8.t0 = _context8["catch"](2);
-            console.error(_context8.t0.message);
+            _context7.prev = 12;
+            _context7.t0 = _context7["catch"](2);
+            console.error(_context7.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
           case 16:
           case "end":
-            return _context8.stop();
+            return _context7.stop();
         }
       }
-    }, _callee8, null, [[2, 12]]);
+    }, _callee7, null, [[2, 12]]);
   }));
 
-  return function pinTweetToProfile(_x15, _x16) {
-    return _ref8.apply(this, arguments);
+  return function pinTweetToProfile(_x13, _x14) {
+    return _ref7.apply(this, arguments);
   };
 }();
 
 exports.pinTweetToProfile = pinTweetToProfile;
 
 var removePinnedTweet = /*#__PURE__*/function () {
-  var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(req, res) {
+  var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(req, res) {
     var userId;
-    return regeneratorRuntime.wrap(function _callee9$(_context9) {
+    return regeneratorRuntime.wrap(function _callee8$(_context8) {
       while (1) {
-        switch (_context9.prev = _context9.next) {
+        switch (_context8.prev = _context8.next) {
           case 0:
             userId = req.user.id;
-            _context9.prev = 1;
-            _context9.next = 4;
+            _context8.prev = 1;
+            _context8.next = 4;
             return _user.User.findByIdAndUpdate(userId, {
               $unset: {
                 pinnedTweet: ''
@@ -598,84 +498,84 @@ var removePinnedTweet = /*#__PURE__*/function () {
             res.json({
               msg: 'Pinned Tweet Removed'
             });
-            _context9.next = 11;
+            _context8.next = 11;
             break;
 
           case 7:
-            _context9.prev = 7;
-            _context9.t0 = _context9["catch"](1);
-            console.error(_context9.t0.message);
+            _context8.prev = 7;
+            _context8.t0 = _context8["catch"](1);
+            console.error(_context8.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
           case 11:
           case "end":
-            return _context9.stop();
+            return _context8.stop();
         }
       }
-    }, _callee9, null, [[1, 7]]);
+    }, _callee8, null, [[1, 7]]);
   }));
 
-  return function removePinnedTweet(_x17, _x18) {
-    return _ref9.apply(this, arguments);
+  return function removePinnedTweet(_x15, _x16) {
+    return _ref8.apply(this, arguments);
   };
 }();
 
 exports.removePinnedTweet = removePinnedTweet;
 
 var uploadImageForTweet = /*#__PURE__*/function () {
-  var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(req, res) {
+  var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(req, res) {
     var files, regex, imageResponse;
-    return regeneratorRuntime.wrap(function _callee10$(_context10) {
+    return regeneratorRuntime.wrap(function _callee9$(_context9) {
       while (1) {
-        switch (_context10.prev = _context10.next) {
+        switch (_context9.prev = _context9.next) {
           case 0:
-            _context10.prev = 0;
+            _context9.prev = 0;
             files = req.files;
             regex = /(image\/jpg)|(image\/jpeg)|(image\/png)|(image\/gif)/i;
 
             if (files.image.mimetype.match(regex)) {
-              _context10.next = 7;
+              _context9.next = 7;
               break;
             }
 
             res.status(422).json({
               msg: 'Invalid file type. Please upload a JPG or PNG filetype.'
             });
-            _context10.next = 11;
+            _context9.next = 11;
             break;
 
           case 7:
-            _context10.next = 9;
+            _context9.next = 9;
             return (0, _imageUpload.uploadPhoto)(files);
 
           case 9:
-            imageResponse = _context10.sent;
+            imageResponse = _context9.sent;
             res.json(imageResponse.Location);
 
           case 11:
-            _context10.next = 17;
+            _context9.next = 17;
             break;
 
           case 13:
-            _context10.prev = 13;
-            _context10.t0 = _context10["catch"](0);
-            console.error(_context10.t0.message);
+            _context9.prev = 13;
+            _context9.t0 = _context9["catch"](0);
+            console.error(_context9.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
           case 17:
           case "end":
-            return _context10.stop();
+            return _context9.stop();
         }
       }
-    }, _callee10, null, [[0, 13]]);
+    }, _callee9, null, [[0, 13]]);
   }));
 
-  return function uploadImageForTweet(_x19, _x20) {
-    return _ref10.apply(this, arguments);
+  return function uploadImageForTweet(_x17, _x18) {
+    return _ref9.apply(this, arguments);
   };
 }();
 

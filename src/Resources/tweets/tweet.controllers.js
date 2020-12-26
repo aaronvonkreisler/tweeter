@@ -123,14 +123,6 @@ export const retweet = async (req, res) => {
          });
       }
 
-      // Insert retweet to user Schema
-
-      await User.findByIdAndUpdate(
-         userId,
-         { [option]: { retweets: retweet._id } },
-         { new: true }
-      );
-
       //Add user to tweets retweet users
 
       const tweet = await Tweet.findByIdAndUpdate(
@@ -159,11 +151,6 @@ export const replytoTweet = async (req, res) => {
          in_reply_to: req.params.tweet_id,
       });
 
-      await Tweet.findByIdAndUpdate(req.params.tweet_id, {
-         $push: { replies: { user: req.user.id, tweet: reply._id } },
-         $inc: { replies_count: 1 },
-      });
-
       // find the reply tweet and populate the user to send back
 
       const tweetToSend = await Tweet.findById(reply._id).populate({
@@ -172,37 +159,6 @@ export const replytoTweet = async (req, res) => {
       });
 
       res.json(tweetToSend);
-   } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
-   }
-};
-
-export const deleteReply = async (req, res) => {
-   try {
-      const tweet = await Tweet.findById(req.params.tweet_id);
-
-      const reply = tweet.replies.find(
-         (reply) => reply.id === req.params.reply_id
-      );
-
-      if (!reply) {
-         return res.status(400).json({ msg: 'Reply does not exist' });
-      }
-
-      if (reply.user.toString() !== req.user.id) {
-         return res
-            .status(401)
-            .json({ msg: 'Not authorized to perform this action' });
-      }
-
-      const removeIndex = tweet.replies.map((reply) =>
-         reply.user.toString().indexOf(req.user.id)
-      );
-
-      tweet.replies.splice(removeIndex, 1);
-      await tweet.save();
-      res.json(tweet.replies);
    } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');

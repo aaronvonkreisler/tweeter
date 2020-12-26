@@ -31,10 +31,7 @@ router.put('/like/:id', _tweet.favoriteTweet); // @route            PUT api/twee
 router.put('/unlike/:id', _tweet.removeFavorite); // @route            DELETE api/tweets/:id
 // @description      Delete a tweet
 
-router.delete('/:id', _tweet.deleteTweet); // @route            DELETE api/tweets/comment/:tweet_id/:reply_id
-// @description      Delete a reply to a tweet
-
-router.delete('/comment/:tweet_id/:reply_id', _tweet.deleteReply); // @route            GET api/tweets/:id
+router.delete('/:id', _tweet.deleteTweet); // @route            GET api/tweets/:id
 // @description     Get a tweet by id
 
 router.get('/:id', _tweet2.getTweetById); // @route            GET api/tweets/:id/replies
