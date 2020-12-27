@@ -379,7 +379,8 @@ var replytoTweet = /*#__PURE__*/function () {
             return _tweet.Tweet.create({
               user: req.user.id,
               content: req.body.content,
-              in_reply_to: req.params.tweet_id
+              in_reply_to: req.params.tweet_id,
+              image: req.body.image
             });
 
           case 6:

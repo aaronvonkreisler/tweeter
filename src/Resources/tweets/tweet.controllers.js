@@ -149,6 +149,7 @@ export const replytoTweet = async (req, res) => {
          user: req.user.id,
          content: req.body.content,
          in_reply_to: req.params.tweet_id,
+         image: req.body.image,
       });
 
       // find the reply tweet and populate the user to send back
