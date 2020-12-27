@@ -9,7 +9,10 @@ var _express = require("express");
 
 var _user = require("./user.controllers");
 
-var router = (0, _express.Router)(); // @route            GET api/user/current
+var router = (0, _express.Router)(); // @route            GET api/user/suggested/:max?
+// @description     Get suggested users to follow
+
+router.get('/suggested/:max?', _user.getSuggestedUsers); // @route            GET api/user/current
 // @description      Fetch the current user from database
 
 router.get('/current', _user.fetchCurrentUser); // @route            PUT api/user/current

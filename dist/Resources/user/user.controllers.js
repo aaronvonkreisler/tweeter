@@ -10,6 +10,8 @@ require("core-js/modules/es.array.splice");
 
 require("core-js/modules/es.function.name");
 
+require("core-js/modules/es.number.constructor");
+
 require("core-js/modules/es.object.to-string");
 
 require("core-js/modules/es.promise");
@@ -23,7 +25,7 @@ require("core-js/modules/es.string.match");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateProfile = exports.getPinnedTweet = exports.fetchUsersFollowing = exports.fetchUsersFollowers = exports.uploadUserBackgroundImage = exports.uploadUserAvatar = exports.unfollowUser = exports.followUser = exports.fetchUserByUsername = exports.fetchUserById = exports.fetchCurrentUser = void 0;
+exports.getSuggestedUsers = exports.updateProfile = exports.getPinnedTweet = exports.fetchUsersFollowing = exports.fetchUsersFollowers = exports.uploadUserBackgroundImage = exports.uploadUserAvatar = exports.unfollowUser = exports.followUser = exports.fetchUserByUsername = exports.fetchUserById = exports.fetchCurrentUser = void 0;
 
 require("regenerator-runtime/runtime");
 
@@ -33,11 +35,15 @@ var _imageUpload = require("../../services/imageUpload");
 
 var _normalizeUrl = _interopRequireDefault(require("normalize-url"));
 
+var _mongoose = _interopRequireDefault(require("mongoose"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+var ObjectId = _mongoose.default.Types.ObjectId;
 
 var fetchCurrentUser = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
@@ -647,3 +653,70 @@ var updateProfile = /*#__PURE__*/function () {
 }();
 
 exports.updateProfile = updateProfile;
+
+var getSuggestedUsers = /*#__PURE__*/function () {
+  var _ref12 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12(req, res) {
+    var max, user, users;
+    return regeneratorRuntime.wrap(function _callee12$(_context12) {
+      while (1) {
+        switch (_context12.prev = _context12.next) {
+          case 0:
+            max = req.params.max;
+            _context12.next = 3;
+            return _user.User.findById(req.user.id);
+
+          case 3:
+            user = _context12.sent;
+            _context12.prev = 4;
+            _context12.next = 7;
+            return _user.User.aggregate([{
+              $match: {
+                _id: {
+                  $ne: ObjectId(user._id)
+                },
+                'followers.user': {
+                  $ne: ObjectId(user._id)
+                }
+              }
+            }, {
+              $project: {
+                screen_name: true,
+                name: true,
+                avatar: true,
+                verified: true,
+                followers: true
+              }
+            }, {
+              $sample: {
+                size: max ? Number(max) : 20
+              }
+            }]);
+
+          case 7:
+            users = _context12.sent;
+            res.send(users);
+            _context12.next = 15;
+            break;
+
+          case 11:
+            _context12.prev = 11;
+            _context12.t0 = _context12["catch"](4);
+            console.error(_context12.t0.message);
+            res.status(500).json({
+              msg: 'Server Error'
+            });
+
+          case 15:
+          case "end":
+            return _context12.stop();
+        }
+      }
+    }, _callee12, null, [[4, 11]]);
+  }));
+
+  return function getSuggestedUsers(_x23, _x24) {
+    return _ref12.apply(this, arguments);
+  };
+}();
+
+exports.getSuggestedUsers = getSuggestedUsers;

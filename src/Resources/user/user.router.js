@@ -10,9 +10,14 @@ import {
    uploadUserBackgroundImage,
    getPinnedTweet,
    updateProfile,
+   getSuggestedUsers,
 } from './user.controllers';
 
 const router = Router();
+
+// @route            GET api/user/suggested/:max?
+// @description     Get suggested users to follow
+router.get('/suggested/:max?', getSuggestedUsers);
 
 // @route            GET api/user/current
 // @description      Fetch the current user from database

@@ -1,6 +1,8 @@
 import { User } from './user.model';
 import { uploadPhoto } from '../../services/imageUpload';
 import normalize from 'normalize-url';
+import mongoose from 'mongoose';
+const ObjectId = mongoose.Types.ObjectId;
 
 export const fetchCurrentUser = async (req, res) => {
    try {
@@ -244,6 +246,42 @@ export const updateProfile = async (req, res) => {
          .exec();
 
       res.json(user);
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ msg: 'Server Error' });
+   }
+};
+
+export const getSuggestedUsers = async (req, res) => {
+   const { max } = req.params;
+   const user = await User.findById(req.user.id);
+
+   try {
+      const users = await User.aggregate([
+         {
+            $match: {
+               _id: { $ne: ObjectId(user._id) },
+               'followers.user': { $ne: ObjectId(user._id) },
+            },
+         },
+
+         {
+            $project: {
+               screen_name: true,
+               name: true,
+               avatar: true,
+               verified: true,
+               followers: true,
+            },
+         },
+         {
+            $sample: {
+               size: max ? Number(max) : 20,
+            },
+         },
+      ]);
+
+      res.send(users);
    } catch (err) {
       console.error(err.message);
       res.status(500).json({ msg: 'Server Error' });
