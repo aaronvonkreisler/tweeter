@@ -13,4 +13,17 @@ const BookmarkSchema = new mongoose.Schema({
    ],
 });
 
+BookmarkSchema.pre('findOneAndDelete', async function (next) {
+   try {
+      mongoose.model('tweet').updateMany(
+         { bookmarkedBy: { $in: [this.user] } },
+         {
+            $pull: { bookmarkedBy: this.user },
+         }
+      );
+   } catch (err) {
+      next(err);
+   }
+});
+
 export const Bookmark = mongoose.model('bookmark', BookmarkSchema);
