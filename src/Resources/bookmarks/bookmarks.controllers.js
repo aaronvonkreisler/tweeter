@@ -84,6 +84,15 @@ export const removeTweetFromBookmarks = async (req, res) => {
 export const removeAllBookmarks = async (req, res) => {
    const userId = req.user.id;
    try {
+      await Tweet.updateMany(
+         { bookmarkedBy: { $in: userId } },
+         {
+            $pull: { bookmarkedBy: userId },
+         }
+      )
+         .lean()
+         .exec();
+
       const bookmark = await Bookmark.findOneAndDelete({ user: userId })
          .lean()
          .exec();

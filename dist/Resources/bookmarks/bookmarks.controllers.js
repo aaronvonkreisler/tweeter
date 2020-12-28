@@ -213,11 +213,23 @@ var removeAllBookmarks = /*#__PURE__*/function () {
             userId = req.user.id;
             _context4.prev = 1;
             _context4.next = 4;
+            return _tweet.Tweet.updateMany({
+              bookmarkedBy: {
+                $in: userId
+              }
+            }, {
+              $pull: {
+                bookmarkedBy: userId
+              }
+            }).lean().exec();
+
+          case 4:
+            _context4.next = 6;
             return _bookmarks.Bookmark.findOneAndDelete({
               user: userId
             }).lean().exec();
 
-          case 4:
+          case 6:
             bookmark = _context4.sent;
 
             if (!bookmark) {
@@ -229,23 +241,23 @@ var removeAllBookmarks = /*#__PURE__*/function () {
             res.status(200).json({
               msg: 'All bookmarks removed'
             });
-            _context4.next = 13;
+            _context4.next = 15;
             break;
 
-          case 9:
-            _context4.prev = 9;
+          case 11:
+            _context4.prev = 11;
             _context4.t0 = _context4["catch"](1);
             console.error(_context4.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
-          case 13:
+          case 15:
           case "end":
             return _context4.stop();
         }
       }
-    }, _callee4, null, [[1, 9]]);
+    }, _callee4, null, [[1, 11]]);
   }));
 
   return function removeAllBookmarks(_x7, _x8) {
