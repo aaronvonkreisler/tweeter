@@ -18,6 +18,9 @@ router.get('/', _bookmarks.getAllBookmarks); // @route            POST api/bookm
 router.post('/:id', _bookmarks.addTweetToBookmarks); // @route            PUT api/bookmarks/:id
 // @description     Remove a tweet to a users bookmarks
 
-router.put('/:id', _bookmarks.removeTweetFromBookmarks);
+router.put('/:id', _bookmarks.removeTweetFromBookmarks); // @route            DELETE api/bookmarks
+// @description     Delete all of a  users bookmarks
+
+router.delete('/', _bookmarks.removeAllBookmarks);
 var _default = router;
 exports.default = _default;

@@ -3,6 +3,7 @@ import {
    addTweetToBookmarks,
    removeTweetFromBookmarks,
    getAllBookmarks,
+   removeAllBookmarks,
 } from './bookmarks.controllers';
 
 const router = Router();
@@ -20,5 +21,9 @@ router.post('/:id', addTweetToBookmarks);
 // @description     Remove a tweet to a users bookmarks
 
 router.put('/:id', removeTweetFromBookmarks);
+
+// @route            DELETE api/bookmarks
+// @description     Delete all of a  users bookmarks
+router.delete('/', removeAllBookmarks);
 
 export default router;

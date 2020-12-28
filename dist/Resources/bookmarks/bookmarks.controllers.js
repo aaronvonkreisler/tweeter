@@ -9,7 +9,7 @@ require("core-js/modules/es.regexp.exec");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.removeTweetFromBookmarks = exports.addTweetToBookmarks = exports.getAllBookmarks = void 0;
+exports.removeAllBookmarks = exports.removeTweetFromBookmarks = exports.addTweetToBookmarks = exports.getAllBookmarks = void 0;
 
 require("regenerator-runtime/runtime");
 
@@ -202,3 +202,55 @@ var removeTweetFromBookmarks = /*#__PURE__*/function () {
 }();
 
 exports.removeTweetFromBookmarks = removeTweetFromBookmarks;
+
+var removeAllBookmarks = /*#__PURE__*/function () {
+  var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(req, res) {
+    var userId, bookmark;
+    return regeneratorRuntime.wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            userId = req.user.id;
+            _context4.prev = 1;
+            _context4.next = 4;
+            return _bookmarks.Bookmark.findOneAndDelete({
+              user: userId
+            }).lean().exec();
+
+          case 4:
+            bookmark = _context4.sent;
+
+            if (!bookmark) {
+              res.status(404).json({
+                msg: 'No Bookmarks found for this user'
+              });
+            }
+
+            res.status(200).json({
+              msg: 'All bookmarks removed'
+            });
+            _context4.next = 13;
+            break;
+
+          case 9:
+            _context4.prev = 9;
+            _context4.t0 = _context4["catch"](1);
+            console.error(_context4.t0.message);
+            res.status(500).json({
+              msg: 'Server Error'
+            });
+
+          case 13:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4, null, [[1, 9]]);
+  }));
+
+  return function removeAllBookmarks(_x7, _x8) {
+    return _ref4.apply(this, arguments);
+  };
+}();
+
+exports.removeAllBookmarks = removeAllBookmarks;

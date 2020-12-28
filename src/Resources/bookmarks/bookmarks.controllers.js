@@ -80,3 +80,21 @@ export const removeTweetFromBookmarks = async (req, res) => {
       res.status(500).json({ msg: 'Server Error' });
    }
 };
+
+export const removeAllBookmarks = async (req, res) => {
+   const userId = req.user.id;
+   try {
+      const bookmark = await Bookmark.findOneAndDelete({ user: userId })
+         .lean()
+         .exec();
+
+      if (!bookmark) {
+         res.status(404).json({ msg: 'No Bookmarks found for this user' });
+      }
+
+      res.status(200).json({ msg: 'All bookmarks removed' });
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ msg: 'Server Error' });
+   }
+};
