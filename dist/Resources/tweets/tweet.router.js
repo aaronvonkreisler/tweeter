@@ -40,7 +40,10 @@ router.get('/:id', _tweet2.getTweetById); // @route            GET api/tweets/:i
 router.get('/:id/replies', _tweet2.getTweetsReplies); // @route            GET api/tweets
 // @description     Get tweets for a users timeline
 
-router.get('/', _tweet2.getTimelineTweets); // @route            GET api/tweets/user/:id
+router.get('/', _tweet2.getTimelineTweets); // @route            GET api/tweets/timeline/:offset
+// @description     Get paginated tweets for a users timeline
+
+router.get('/timeline/:offset', _tweet2.getPaginatedTimelineTweets); // @route            GET api/tweets/user/:id
 // @description     Get tweets for one user
 
 router.get('/user/:id', _tweet2.getUsersProfileTweets); // @route            GET api/tweets/user/:id/replies

@@ -1,6 +1,8 @@
-import { validationResult } from 'express-validator';
+import mongoose from 'mongoose';
+
 import { Tweet } from './tweet.model';
 import { User } from '../user/user.model';
+const ObjectId = mongoose.Types.ObjectId;
 
 export const getTweetById = async (req, res) => {
    try {
@@ -72,19 +74,6 @@ export const getTweetsReplies = async (req, res) => {
       res.status(500).send('Server Error');
    }
 };
-
-// export const getUsersTweets = async (req, res) => {
-//    try {
-//       const tweets = await Tweet.find({ user: req.params.id }).lean().exec();
-//       if (!tweets) {
-//          res.status(404).json({ msg: 'No tweets found for this user!' });
-//       }
-//       res.json(tweets);
-//    } catch (err) {
-//       console.error(err.message);
-//       res.status(500).send('Server Error');
-//    }
-// };
 
 export const getUsersProfileTweets = async (req, res) => {
    try {
@@ -197,6 +186,61 @@ export const getTweetsRetweetUsers = async (req, res) => {
       res.json(tweet);
    } catch (err) {
       console.error(err.message);
+      res.status(500).send('Server Error');
+   }
+};
+
+export const getPaginatedTimelineTweets = async (req, res) => {
+   const { offset } = req.params;
+   try {
+      const user = await User.findById(req.user.id).lean().exec();
+      const following = user.following.map((follow) => follow.user);
+
+      const unwantedUserFields = [
+         'user.password',
+         'user.email',
+         'user.retweets',
+         'user.backgroundPicture',
+         'user.pinnedTweet',
+         'user.following',
+         'user.followers',
+         'user.bio',
+         'user.location',
+         'user.website',
+         'user.createdAt',
+         'user.__v',
+      ];
+
+      const tweets = await Tweet.aggregate([
+         {
+            $match: {
+               in_reply_to: { $exists: false },
+               $or: [
+                  { user: { $in: following } },
+                  { user: ObjectId(user._id) },
+               ],
+            },
+         },
+         { $sort: { createdAt: -1 } },
+         { $skip: Number(offset) },
+         { $limit: 10 },
+         {
+            $lookup: {
+               from: 'users',
+               localField: 'user',
+               foreignField: '_id',
+               as: 'user',
+            },
+         },
+         { $unset: [...unwantedUserFields] },
+      ]);
+
+      res.json(tweets);
+   } catch (err) {
+      console.error(err.message);
+      if (err.kind === 'ObjectId') {
+         return res.status(404).json({ msg: 'No Tweets found!' });
+      }
       res.status(500).send('Server Error');
    }
 };

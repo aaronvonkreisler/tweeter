@@ -1,10 +1,14 @@
 "use strict";
 
+require("core-js/modules/es.array.concat");
+
 require("core-js/modules/es.array.find");
 
 require("core-js/modules/es.array.map");
 
 require("core-js/modules/es.array.sort");
+
+require("core-js/modules/es.number.constructor");
 
 require("core-js/modules/es.object.to-string");
 
@@ -15,19 +19,23 @@ require("core-js/modules/es.regexp.exec");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getTweetsRetweetUsers = exports.getTweetsLikedUsers = exports.getUsersLikedTweets = exports.getUsersReplies = exports.getUsersProfileTweets = exports.getTweetsReplies = exports.getTimelineTweets = exports.getTweetById = void 0;
+exports.getPaginatedTimelineTweets = exports.getTweetsRetweetUsers = exports.getTweetsLikedUsers = exports.getUsersLikedTweets = exports.getUsersReplies = exports.getUsersProfileTweets = exports.getTweetsReplies = exports.getTimelineTweets = exports.getTweetById = void 0;
 
 require("regenerator-runtime/runtime");
 
-var _expressValidator = require("express-validator");
+var _mongoose = _interopRequireDefault(require("mongoose"));
 
 var _tweet = require("./tweet.model");
 
 var _user = require("../user/user.model");
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+var ObjectId = _mongoose.default.Types.ObjectId;
 
 var getTweetById = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
@@ -214,19 +222,7 @@ var getTweetsReplies = /*#__PURE__*/function () {
   return function getTweetsReplies(_x5, _x6) {
     return _ref3.apply(this, arguments);
   };
-}(); // export const getUsersTweets = async (req, res) => {
-//    try {
-//       const tweets = await Tweet.find({ user: req.params.id }).lean().exec();
-//       if (!tweets) {
-//          res.status(404).json({ msg: 'No tweets found for this user!' });
-//       }
-//       res.json(tweets);
-//    } catch (err) {
-//       console.error(err.message);
-//       res.status(500).send('Server Error');
-//    }
-// };
-
+}();
 
 exports.getTweetsReplies = getTweetsReplies;
 
@@ -506,3 +502,92 @@ var getTweetsRetweetUsers = /*#__PURE__*/function () {
 }();
 
 exports.getTweetsRetweetUsers = getTweetsRetweetUsers;
+
+var getPaginatedTimelineTweets = /*#__PURE__*/function () {
+  var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(req, res) {
+    var offset, user, following, unwantedUserFields, tweets;
+    return regeneratorRuntime.wrap(function _callee9$(_context9) {
+      while (1) {
+        switch (_context9.prev = _context9.next) {
+          case 0:
+            offset = req.params.offset;
+            _context9.prev = 1;
+            _context9.next = 4;
+            return _user.User.findById(req.user.id).lean().exec();
+
+          case 4:
+            user = _context9.sent;
+            following = user.following.map(function (follow) {
+              return follow.user;
+            });
+            unwantedUserFields = ['user.password', 'user.email', 'user.retweets', 'user.backgroundPicture', 'user.pinnedTweet', 'user.following', 'user.followers', 'user.bio', 'user.location', 'user.website', 'user.createdAt', 'user.__v'];
+            _context9.next = 9;
+            return _tweet.Tweet.aggregate([{
+              $match: {
+                in_reply_to: {
+                  $exists: false
+                },
+                $or: [{
+                  user: {
+                    $in: following
+                  }
+                }, {
+                  user: ObjectId(user._id)
+                }]
+              }
+            }, {
+              $sort: {
+                createdAt: -1
+              }
+            }, {
+              $skip: Number(offset)
+            }, {
+              $limit: 10
+            }, {
+              $lookup: {
+                from: 'users',
+                localField: 'user',
+                foreignField: '_id',
+                as: 'user'
+              }
+            }, {
+              $unset: [].concat(unwantedUserFields)
+            }]);
+
+          case 9:
+            tweets = _context9.sent;
+            res.json(tweets);
+            _context9.next = 19;
+            break;
+
+          case 13:
+            _context9.prev = 13;
+            _context9.t0 = _context9["catch"](1);
+            console.error(_context9.t0.message);
+
+            if (!(_context9.t0.kind === 'ObjectId')) {
+              _context9.next = 18;
+              break;
+            }
+
+            return _context9.abrupt("return", res.status(404).json({
+              msg: 'No Tweets found!'
+            }));
+
+          case 18:
+            res.status(500).send('Server Error');
+
+          case 19:
+          case "end":
+            return _context9.stop();
+        }
+      }
+    }, _callee9, null, [[1, 13]]);
+  }));
+
+  return function getPaginatedTimelineTweets(_x17, _x18) {
+    return _ref9.apply(this, arguments);
+  };
+}();
+
+exports.getPaginatedTimelineTweets = getPaginatedTimelineTweets;

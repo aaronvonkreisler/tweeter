@@ -20,6 +20,7 @@ import {
    getTweetsRetweetUsers,
    getUsersLikedTweets,
    getTweetsReplies,
+   getPaginatedTimelineTweets,
 } from './tweet.getControllers';
 const router = Router();
 
@@ -70,6 +71,11 @@ router.get('/:id/replies', getTweetsReplies);
 // @route            GET api/tweets
 // @description     Get tweets for a users timeline
 router.get('/', getTimelineTweets);
+
+// @route            GET api/tweets/timeline/:offset
+// @description     Get paginated tweets for a users timeline
+
+router.get('/timeline/:offset', getPaginatedTimelineTweets);
 
 // @route            GET api/tweets/user/:id
 // @description     Get tweets for one user
