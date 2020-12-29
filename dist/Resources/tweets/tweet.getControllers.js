@@ -551,6 +551,8 @@ var getPaginatedTimelineTweets = /*#__PURE__*/function () {
                 as: 'user'
               }
             }, {
+              $unwind: '$user'
+            }, {
               $unset: [].concat(unwantedUserFields)
             }]);
 

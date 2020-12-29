@@ -232,6 +232,9 @@ export const getPaginatedTimelineTweets = async (req, res) => {
                as: 'user',
             },
          },
+         {
+            $unwind: '$user',
+         },
          { $unset: [...unwantedUserFields] },
       ]);
 
