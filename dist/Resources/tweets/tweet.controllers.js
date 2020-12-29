@@ -357,7 +357,7 @@ exports.retweet = retweet;
 
 var replytoTweet = /*#__PURE__*/function () {
   var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(req, res) {
-    var errors, reply, tweetToSend;
+    var errors, tweetId, originalTweet, reply, tweetToSend;
     return regeneratorRuntime.wrap(function _callee6$(_context6) {
       while (1) {
         switch (_context6.prev = _context6.next) {
@@ -375,40 +375,55 @@ var replytoTweet = /*#__PURE__*/function () {
 
           case 3:
             _context6.prev = 3;
-            _context6.next = 6;
+            tweetId = req.params.tweet_id;
+            _context6.next = 7;
+            return _tweet.Tweet.findByIdAndUpdate(tweetId, {
+              $push: {
+                replies: {
+                  user: req.user.id
+                }
+              }
+            }, {
+              new: true
+            });
+
+          case 7:
+            originalTweet = _context6.sent;
+            _context6.next = 10;
             return _tweet.Tweet.create({
               user: req.user.id,
               content: req.body.content,
-              in_reply_to: req.params.tweet_id,
+              in_reply_to: originalTweet._id,
+              replyingToUser: originalTweet.user.screen_name,
               image: req.body.image
             });
 
-          case 6:
+          case 10:
             reply = _context6.sent;
-            _context6.next = 9;
+            _context6.next = 13;
             return _tweet.Tweet.findById(reply._id).populate({
               path: 'user',
               select: 'avatar verified name screen_name'
             });
 
-          case 9:
+          case 13:
             tweetToSend = _context6.sent;
             res.json(tweetToSend);
-            _context6.next = 17;
+            _context6.next = 21;
             break;
 
-          case 13:
-            _context6.prev = 13;
+          case 17:
+            _context6.prev = 17;
             _context6.t0 = _context6["catch"](3);
             console.error(_context6.t0.message);
             res.status(500).send('Server Error');
 
-          case 17:
+          case 21:
           case "end":
             return _context6.stop();
         }
       }
-    }, _callee6, null, [[3, 13]]);
+    }, _callee6, null, [[3, 17]]);
   }));
 
   return function replytoTweet(_x11, _x12) {

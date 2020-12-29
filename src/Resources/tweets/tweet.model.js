@@ -13,6 +13,7 @@ const TweetSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'tweet',
    },
+   replyingToUser: String,
    favorites: [
       {
          user: {
@@ -27,10 +28,6 @@ const TweetSchema = new mongoose.Schema({
          user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'user',
-         },
-         tweet: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'tweet',
          },
          date: {
             type: Date,

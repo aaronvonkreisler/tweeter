@@ -145,10 +145,20 @@ export const replytoTweet = async (req, res) => {
    }
 
    try {
+      const tweetId = req.params.tweet_id;
+      const originalTweet = await Tweet.findByIdAndUpdate(
+         tweetId,
+         {
+            $push: { replies: { user: req.user.id } },
+         },
+         { new: true }
+      );
+
       const reply = await Tweet.create({
          user: req.user.id,
          content: req.body.content,
-         in_reply_to: req.params.tweet_id,
+         in_reply_to: originalTweet._id,
+         replyingToUser: originalTweet.user.screen_name,
          image: req.body.image,
       });
 
