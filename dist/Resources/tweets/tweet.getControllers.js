@@ -520,7 +520,7 @@ var getPaginatedTimelineTweets = /*#__PURE__*/function () {
             following = user.following.map(function (follow) {
               return follow.user;
             });
-            unwantedUserFields = ['user.password', 'user.email', 'user.retweets', 'user.backgroundPicture', 'user.pinnedTweet', 'user.following', 'user.followers', 'user.bio', 'user.location', 'user.website', 'user.createdAt', 'user.__v'];
+            unwantedUserFields = ['user.password', 'user.email', 'user.retweets', 'user.backgroundPicture', 'user.pinnedTweet', 'user.following', 'user.followers', 'user.bio', 'user.location', 'user.website', 'user.createdAt', 'user.__v', 'retweetUser.password', 'retweetUser.email', 'retweetUser.retweets', 'retweetUser.backgroundPicture', 'retweetUser.pinnedTweet', 'retweetUser.following', 'retweetUser.followers', 'retweetUser.bio', 'retweetUser.location', 'retweetUser.website', 'retweetUser.createdAt', 'retweetUser.__v'];
             _context9.next = 9;
             return _tweet.Tweet.aggregate([{
               $match: {
@@ -550,25 +550,54 @@ var getPaginatedTimelineTweets = /*#__PURE__*/function () {
                 foreignField: '_id',
                 as: 'user'
               }
-            }, {
+            }, // {
+            //    $lookup: {
+            //       from: 'tweets',
+            //       localField: 'retweetData',
+            //       foreignField: '_id',
+            //       as: 'retweetData',
+            //    },
+            // },
+            // {
+            //    $lookup: {
+            //       from: 'users',
+            //       localField: 'retweetData.user',
+            //       foreignField: '_id',
+            //       as: 'retweetUser',
+            //    },
+            // },
+            {
               $unwind: '$user'
-            }, {
+            }, // { $unwind: '$retweetData' },
+            // {
+            //    $unwind: {
+            //       path: '$reweetData',
+            //       preserveNullAndEmptyArrays: true,
+            //    },
+            // },
+            {
               $unset: [].concat(unwantedUserFields)
             }]);
 
           case 9:
             tweets = _context9.sent;
+            _context9.next = 12;
+            return _tweet.Tweet.populate(tweets, {
+              path: 'retweetData'
+            });
+
+          case 12:
             res.json(tweets);
-            _context9.next = 19;
+            _context9.next = 21;
             break;
 
-          case 13:
-            _context9.prev = 13;
+          case 15:
+            _context9.prev = 15;
             _context9.t0 = _context9["catch"](1);
             console.error(_context9.t0.message);
 
             if (!(_context9.t0.kind === 'ObjectId')) {
-              _context9.next = 18;
+              _context9.next = 20;
               break;
             }
 
@@ -576,15 +605,15 @@ var getPaginatedTimelineTweets = /*#__PURE__*/function () {
               msg: 'No Tweets found!'
             }));
 
-          case 18:
+          case 20:
             res.status(500).send('Server Error');
 
-          case 19:
+          case 21:
           case "end":
             return _context9.stop();
         }
       }
-    }, _callee9, null, [[1, 13]]);
+    }, _callee9, null, [[1, 15]]);
   }));
 
   return function getPaginatedTimelineTweets(_x17, _x18) {
