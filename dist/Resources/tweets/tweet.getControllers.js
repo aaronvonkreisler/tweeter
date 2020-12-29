@@ -537,7 +537,7 @@ var getPaginatedTimelineTweets = /*#__PURE__*/function () {
               }
             }, {
               $sort: {
-                createdAt: -1
+                created_at: -1
               }
             }, {
               $skip: Number(offset)

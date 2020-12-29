@@ -221,7 +221,7 @@ export const getPaginatedTimelineTweets = async (req, res) => {
                ],
             },
          },
-         { $sort: { createdAt: -1 } },
+         { $sort: { created_at: -1 } },
          { $skip: Number(offset) },
          { $limit: 10 },
          {
