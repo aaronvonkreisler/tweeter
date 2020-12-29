@@ -520,7 +520,7 @@ var getPaginatedTimelineTweets = /*#__PURE__*/function () {
             following = user.following.map(function (follow) {
               return follow.user;
             });
-            unwantedUserFields = ['user.password', 'user.email', 'user.retweets', 'user.backgroundPicture', 'user.pinnedTweet', 'user.following', 'user.followers', 'user.bio', 'user.location', 'user.website', 'user.createdAt', 'user.__v', 'retweetUser.password', 'retweetUser.email', 'retweetUser.retweets', 'retweetUser.backgroundPicture', 'retweetUser.pinnedTweet', 'retweetUser.following', 'retweetUser.followers', 'retweetUser.bio', 'retweetUser.location', 'retweetUser.website', 'retweetUser.createdAt', 'retweetUser.__v'];
+            unwantedUserFields = ['user.password', 'user.email', 'user.retweets', 'user.backgroundPicture', 'user.pinnedTweet', 'user.following', 'user.followers', 'user.bio', 'user.location', 'user.website', 'user.createdAt', 'user.__v'];
             _context9.next = 9;
             return _tweet.Tweet.aggregate([{
               $match: {
@@ -550,32 +550,9 @@ var getPaginatedTimelineTweets = /*#__PURE__*/function () {
                 foreignField: '_id',
                 as: 'user'
               }
-            }, // {
-            //    $lookup: {
-            //       from: 'tweets',
-            //       localField: 'retweetData',
-            //       foreignField: '_id',
-            //       as: 'retweetData',
-            //    },
-            // },
-            // {
-            //    $lookup: {
-            //       from: 'users',
-            //       localField: 'retweetData.user',
-            //       foreignField: '_id',
-            //       as: 'retweetUser',
-            //    },
-            // },
-            {
+            }, {
               $unwind: '$user'
-            }, // { $unwind: '$retweetData' },
-            // {
-            //    $unwind: {
-            //       path: '$reweetData',
-            //       preserveNullAndEmptyArrays: true,
-            //    },
-            // },
-            {
+            }, {
               $unset: [].concat(unwantedUserFields)
             }]);
 

@@ -209,18 +209,6 @@ export const getPaginatedTimelineTweets = async (req, res) => {
          'user.website',
          'user.createdAt',
          'user.__v',
-         'retweetUser.password',
-         'retweetUser.email',
-         'retweetUser.retweets',
-         'retweetUser.backgroundPicture',
-         'retweetUser.pinnedTweet',
-         'retweetUser.following',
-         'retweetUser.followers',
-         'retweetUser.bio',
-         'retweetUser.location',
-         'retweetUser.website',
-         'retweetUser.createdAt',
-         'retweetUser.__v',
       ];
 
       const tweets = await Tweet.aggregate([
@@ -244,36 +232,9 @@ export const getPaginatedTimelineTweets = async (req, res) => {
                as: 'user',
             },
          },
-         // {
-         //    $lookup: {
-         //       from: 'tweets',
-         //       localField: 'retweetData',
-         //       foreignField: '_id',
-         //       as: 'retweetData',
-         //    },
-         // },
-
-         // {
-         //    $lookup: {
-         //       from: 'users',
-         //       localField: 'retweetData.user',
-         //       foreignField: '_id',
-         //       as: 'retweetUser',
-         //    },
-         // },
-
          {
             $unwind: '$user',
          },
-         // { $unwind: '$retweetData' },
-
-         // {
-         //    $unwind: {
-         //       path: '$reweetData',
-         //       preserveNullAndEmptyArrays: true,
-         //    },
-         // },
-
          { $unset: [...unwantedUserFields] },
       ]);
 
