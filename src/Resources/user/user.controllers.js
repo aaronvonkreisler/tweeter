@@ -80,7 +80,7 @@ export const unfollowUser = async (req, res) => {
       await User.findByIdAndUpdate(
          req.user.id,
          { $pull: { following: { user: req.params.id } } },
-         function (err, user) {
+         function (err) {
             if (err) console.error(err.message);
          }
       );
@@ -281,7 +281,58 @@ export const getSuggestedUsers = async (req, res) => {
          },
       ]);
 
-      res.send(users);
+      res.json(users);
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ msg: 'Server Error' });
+   }
+};
+
+export const searchUsers = async (req, res) => {
+   const { searchTerm, offset } = req.params;
+
+   if (!searchTerm) {
+      return res
+         .status(400)
+         .json({ error: 'Please provide a user to search for.' });
+   }
+   try {
+      const users = await User.aggregate([
+         {
+            $match: {
+               $or: [
+                  { name: { $regex: new RegExp(searchTerm), $options: 'i' } },
+                  {
+                     screen_nameme: {
+                        $regex: new RegExp(searchTerm),
+                        $options: 'i',
+                     },
+                  },
+               ],
+            },
+         },
+         {
+            $skip: Number(offset),
+         },
+         {
+            $limit: 10,
+         },
+         {
+            $project: {
+               _id: true,
+               name: true,
+               screen_name: true,
+               avatar: true,
+               verified: true,
+            },
+         },
+      ]);
+
+      if (users.length === 0) {
+         return res.status(404).json({ msg: 'Could not find any users' });
+      }
+
+      res.json(users);
    } catch (err) {
       console.error(err.message);
       res.status(500).json({ msg: 'Server Error' });

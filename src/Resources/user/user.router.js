@@ -11,9 +11,14 @@ import {
    getPinnedTweet,
    updateProfile,
    getSuggestedUsers,
+   searchUsers,
 } from './user.controllers';
 
 const router = Router();
+
+// @route            GET api/user/:searchTerm/:offset/search
+// @description     Search for users
+router.get('/:searchTerm/:offset/search', searchUsers);
 
 // @route            GET api/user/suggested/:max?
 // @description     Get suggested users to follow

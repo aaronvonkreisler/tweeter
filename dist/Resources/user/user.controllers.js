@@ -16,6 +16,8 @@ require("core-js/modules/es.object.to-string");
 
 require("core-js/modules/es.promise");
 
+require("core-js/modules/es.regexp.constructor");
+
 require("core-js/modules/es.regexp.exec");
 
 require("core-js/modules/es.regexp.to-string");
@@ -25,7 +27,7 @@ require("core-js/modules/es.string.match");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getSuggestedUsers = exports.updateProfile = exports.getPinnedTweet = exports.fetchUsersFollowing = exports.fetchUsersFollowers = exports.uploadUserBackgroundImage = exports.uploadUserAvatar = exports.unfollowUser = exports.followUser = exports.fetchUserByUsername = exports.fetchUserById = exports.fetchCurrentUser = void 0;
+exports.searchUsers = exports.getSuggestedUsers = exports.updateProfile = exports.getPinnedTweet = exports.fetchUsersFollowing = exports.fetchUsersFollowers = exports.uploadUserBackgroundImage = exports.uploadUserAvatar = exports.unfollowUser = exports.followUser = exports.fetchUserByUsername = exports.fetchUserById = exports.fetchCurrentUser = void 0;
 
 require("regenerator-runtime/runtime");
 
@@ -264,7 +266,7 @@ var unfollowUser = /*#__PURE__*/function () {
                   user: req.params.id
                 }
               }
-            }, function (err, user) {
+            }, function (err) {
               if (err) console.error(err.message);
             });
 
@@ -694,7 +696,7 @@ var getSuggestedUsers = /*#__PURE__*/function () {
 
           case 7:
             users = _context12.sent;
-            res.send(users);
+            res.json(users);
             _context12.next = 15;
             break;
 
@@ -720,3 +722,93 @@ var getSuggestedUsers = /*#__PURE__*/function () {
 }();
 
 exports.getSuggestedUsers = getSuggestedUsers;
+
+var searchUsers = /*#__PURE__*/function () {
+  var _ref13 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(req, res) {
+    var _req$params, searchTerm, offset, users;
+
+    return regeneratorRuntime.wrap(function _callee13$(_context13) {
+      while (1) {
+        switch (_context13.prev = _context13.next) {
+          case 0:
+            _req$params = req.params, searchTerm = _req$params.searchTerm, offset = _req$params.offset;
+
+            if (searchTerm) {
+              _context13.next = 3;
+              break;
+            }
+
+            return _context13.abrupt("return", res.status(400).json({
+              error: 'Please provide a user to search for.'
+            }));
+
+          case 3:
+            _context13.prev = 3;
+            _context13.next = 6;
+            return _user.User.aggregate([{
+              $match: {
+                $or: [{
+                  name: {
+                    $regex: new RegExp(searchTerm),
+                    $options: 'i'
+                  }
+                }, {
+                  screen_nameme: {
+                    $regex: new RegExp(searchTerm),
+                    $options: 'i'
+                  }
+                }]
+              }
+            }, {
+              $skip: Number(offset)
+            }, {
+              $limit: 10
+            }, {
+              $project: {
+                _id: true,
+                name: true,
+                screen_name: true,
+                avatar: true,
+                verified: true
+              }
+            }]);
+
+          case 6:
+            users = _context13.sent;
+
+            if (!(users.length === 0)) {
+              _context13.next = 9;
+              break;
+            }
+
+            return _context13.abrupt("return", res.status(404).json({
+              msg: 'Could not find any users'
+            }));
+
+          case 9:
+            res.json(users);
+            _context13.next = 16;
+            break;
+
+          case 12:
+            _context13.prev = 12;
+            _context13.t0 = _context13["catch"](3);
+            console.error(_context13.t0.message);
+            res.status(500).json({
+              msg: 'Server Error'
+            });
+
+          case 16:
+          case "end":
+            return _context13.stop();
+        }
+      }
+    }, _callee13, null, [[3, 12]]);
+  }));
+
+  return function searchUsers(_x25, _x26) {
+    return _ref13.apply(this, arguments);
+  };
+}();
+
+exports.searchUsers = searchUsers;
