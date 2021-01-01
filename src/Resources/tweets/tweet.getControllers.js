@@ -10,7 +10,8 @@ export const getTweetById = async (req, res) => {
          .populate('retweet')
          .populate({
             path: 'user',
-            select: 'avatar verified name email screen_name',
+            select:
+               'avatar verified name email screen_name followers following',
          })
          .populate({
             path: 'replies',
