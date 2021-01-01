@@ -11,7 +11,7 @@ export const getTweetById = async (req, res) => {
          .populate({
             path: 'user',
             select:
-               'avatar verified name email screen_name followers following',
+               'avatar verified name email screen_name followers following bio',
          })
          .populate({
             path: 'replies',
