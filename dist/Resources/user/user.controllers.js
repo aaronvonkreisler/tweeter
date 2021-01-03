@@ -684,6 +684,7 @@ var getSuggestedUsers = /*#__PURE__*/function () {
               $project: {
                 screen_name: true,
                 name: true,
+                bio: true,
                 avatar: true,
                 verified: true,
                 followers: true

@@ -269,6 +269,7 @@ export const getSuggestedUsers = async (req, res) => {
             $project: {
                screen_name: true,
                name: true,
+               bio: true,
                avatar: true,
                verified: true,
                followers: true,
