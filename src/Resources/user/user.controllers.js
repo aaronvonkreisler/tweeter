@@ -304,7 +304,7 @@ export const searchUsers = async (req, res) => {
                $or: [
                   { name: { $regex: new RegExp(searchTerm), $options: 'i' } },
                   {
-                     screen_nameme: {
+                     screen_name: {
                         $regex: new RegExp(searchTerm),
                         $options: 'i',
                      },

@@ -754,7 +754,7 @@ var searchUsers = /*#__PURE__*/function () {
                     $options: 'i'
                   }
                 }, {
-                  screen_nameme: {
+                  screen_name: {
                     $regex: new RegExp(searchTerm),
                     $options: 'i'
                   }
