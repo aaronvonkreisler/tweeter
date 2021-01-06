@@ -44,11 +44,11 @@ export const deleteTweet = async (req, res) => {
             .json({ msg: 'User not authorized to perform this action' });
       }
 
-      // if (tweet.in_reply_to !== null) {
-      //    await Tweet.findByIdAndUpdate(tweet.in_reply_to, {
-      //       $pull: { replies: { tweet: tweet._id } },
-      //    });
-      // }
+      if (tweet.in_reply_to !== null) {
+         await Tweet.findByIdAndUpdate(tweet.in_reply_to, {
+            $pull: { replies: { tweet: tweet._id } },
+         });
+      }
 
       await tweet.remove();
       res.json({ msg: 'Tweet successfully removed' });
@@ -146,15 +146,13 @@ export const replytoTweet = async (req, res) => {
 
    try {
       const tweetId = req.params.tweet_id;
-      // const originalTweet = await Tweet.findByIdAndUpdate(
-      //    tweetId,
-      //    {
-      //       $push: { replies: { user: req.user.id } },
-      //    },
-      //    { new: true }
-      // );
-
-      const originalTweet = await Tweet.findById(tweetId).lean().exec();
+      const originalTweet = await Tweet.findByIdAndUpdate(
+         tweetId,
+         {
+            $push: { replies: { user: req.user.id } },
+         },
+         { new: true }
+      );
 
       const reply = await Tweet.create({
          user: req.user.id,

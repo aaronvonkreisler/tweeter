@@ -39,18 +39,16 @@ var TweetSchema = new _mongoose.default.Schema({
       ref: 'user'
     }
   }],
-  // replies: [
-  //    {
-  //       user: {
-  //          type: mongoose.Schema.Types.ObjectId,
-  //          ref: 'user',
-  //       },
-  //       date: {
-  //          type: Date,
-  //          default: Date.now,
-  //       },
-  //    },
-  // ],
+  replies: [{
+    user: {
+      type: _mongoose.default.Schema.Types.ObjectId,
+      ref: 'user'
+    },
+    date: {
+      type: Date,
+      default: Date.now
+    }
+  }],
   bookmarkedBy: [{
     type: _mongoose.default.Schema.Types.ObjectId,
     ref: 'user'
