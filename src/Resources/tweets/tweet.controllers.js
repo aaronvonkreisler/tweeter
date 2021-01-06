@@ -46,7 +46,7 @@ export const deleteTweet = async (req, res) => {
 
       if (tweet.in_reply_to !== null) {
          await Tweet.findByIdAndUpdate(tweet.in_reply_to, {
-            $pull: { replies: { tweet: tweet._id } },
+            $pull: { replies: { user: tweet.user } },
          });
       }
 

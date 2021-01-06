@@ -136,7 +136,7 @@ var deleteTweet = /*#__PURE__*/function () {
             return _tweet.Tweet.findByIdAndUpdate(tweet.in_reply_to, {
               $pull: {
                 replies: {
-                  tweet: tweet._id
+                  user: tweet.user
                 }
               }
             });
