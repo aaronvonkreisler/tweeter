@@ -33,18 +33,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 var createTweet = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
-    var user, _req$body, content, image, errors, imageUpload, newTweet, tweet;
-
+    var user, content, image, errors, imageUpload, newTweet, tweet;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             user = req.user.id;
-            _req$body = req.body, content = _req$body.content, image = _req$body.image;
+            content = req.body.content;
+            image = req.file;
             errors = (0, _expressValidator.validationResult)(req);
 
             if (errors.isEmpty()) {
-              _context.next = 5;
+              _context.next = 6;
               break;
             }
 
@@ -52,51 +52,60 @@ var createTweet = /*#__PURE__*/function () {
               errors: errors.array()
             }));
 
-          case 5:
-            _context.prev = 5;
-            _context.next = 8;
-            return (0, _imageUpload.uploadPhoto)(image);
+          case 6:
+            _context.prev = 6;
 
-          case 8:
-            imageUpload = _context.sent;
-
-            if (imageUpload !== null) {
-              imageUpload = imageUpload.Location;
+            if (!image) {
+              _context.next = 13;
+              break;
             }
 
-            _context.next = 12;
+            _context.next = 10;
+            return (0, _imageUpload.uploadPhoto)(image);
+
+          case 10:
+            _context.t0 = _context.sent;
+            _context.next = 14;
+            break;
+
+          case 13:
+            _context.t0 = null;
+
+          case 14:
+            imageUpload = _context.t0;
+            _context.next = 17;
             return _tweet.Tweet.create({
               user: user,
               content: content,
-              image: imageUpload
+              image: imageUpload === null ? imageUpload : imageUpload.location
             });
 
-          case 12:
+          case 17:
             newTweet = _context.sent;
-            _context.next = 15;
+            _context.next = 20;
             return _tweet.Tweet.findById(newTweet._id).populate({
               path: 'user',
               select: 'avatar name screen_name verified'
             });
 
-          case 15:
+          case 20:
             tweet = _context.sent;
             res.json(tweet);
-            _context.next = 23;
+            _context.next = 28;
             break;
 
-          case 19:
-            _context.prev = 19;
-            _context.t0 = _context["catch"](5);
-            console.error(_context.t0.message);
+          case 24:
+            _context.prev = 24;
+            _context.t1 = _context["catch"](6);
+            console.error(_context.t1.message);
             res.status(500).send('Server Error');
 
-          case 23:
+          case 28:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[5, 19]]);
+    }, _callee, null, [[6, 24]]);
   }));
 
   return function createTweet(_x, _x2) {
