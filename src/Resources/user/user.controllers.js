@@ -6,7 +6,9 @@ const ObjectId = mongoose.Types.ObjectId;
 
 export const fetchCurrentUser = async (req, res) => {
    try {
-      const user = await User.findById(req.user.id).select('-password').exec();
+      const user = await User.findById(req.user.id)
+         .select('-password -email')
+         .exec();
       res.json(user);
    } catch (err) {
       console.error(err.message);

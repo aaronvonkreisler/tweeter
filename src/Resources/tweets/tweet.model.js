@@ -23,18 +23,18 @@ const TweetSchema = new mongoose.Schema({
       },
    ],
 
-   replies: [
-      {
-         user: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'user',
-         },
-         date: {
-            type: Date,
-            default: Date.now,
-         },
-      },
-   ],
+   // replies: [
+   //    {
+   //       user: {
+   //          type: mongoose.Schema.Types.ObjectId,
+   //          ref: 'user',
+   //       },
+   //       date: {
+   //          type: Date,
+   //          default: Date.now,
+   //       },
+   //    },
+   // ],
    bookmarkedBy: [
       {
          type: mongoose.Schema.Types.ObjectId,

@@ -56,7 +56,7 @@ var fetchCurrentUser = /*#__PURE__*/function () {
           case 0:
             _context.prev = 0;
             _context.next = 3;
-            return _user.User.findById(req.user.id).select('-password').exec();
+            return _user.User.findById(req.user.id).select('-password -email').exec();
 
           case 3:
             user = _context.sent;

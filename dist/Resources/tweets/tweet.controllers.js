@@ -127,38 +127,23 @@ var deleteTweet = /*#__PURE__*/function () {
             }));
 
           case 8:
-            if (!(tweet.in_reply_to !== null)) {
-              _context2.next = 11;
-              break;
-            }
-
-            _context2.next = 11;
-            return _tweet.Tweet.findByIdAndUpdate(tweet.in_reply_to, {
-              $pull: {
-                replies: {
-                  tweet: tweet._id
-                }
-              }
-            });
-
-          case 11:
-            _context2.next = 13;
+            _context2.next = 10;
             return tweet.remove();
 
-          case 13:
+          case 10:
             res.json({
               msg: 'Tweet successfully removed'
             });
-            _context2.next = 22;
+            _context2.next = 19;
             break;
 
-          case 16:
-            _context2.prev = 16;
+          case 13:
+            _context2.prev = 13;
             _context2.t0 = _context2["catch"](0);
             console.error(_context2.t0.message);
 
             if (!(_context2.t0.kind === 'ObjectId')) {
-              _context2.next = 21;
+              _context2.next = 18;
               break;
             }
 
@@ -166,15 +151,15 @@ var deleteTweet = /*#__PURE__*/function () {
               msg: 'Tweet not found!'
             }));
 
-          case 21:
+          case 18:
             res.status(500).send('Server Error');
 
-          case 22:
+          case 19:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[0, 16]]);
+    }, _callee2, null, [[0, 13]]);
   }));
 
   return function deleteTweet(_x3, _x4) {
@@ -375,17 +360,16 @@ var replytoTweet = /*#__PURE__*/function () {
 
           case 3:
             _context6.prev = 3;
-            tweetId = req.params.tweet_id;
+            tweetId = req.params.tweet_id; // const originalTweet = await Tweet.findByIdAndUpdate(
+            //    tweetId,
+            //    {
+            //       $push: { replies: { user: req.user.id } },
+            //    },
+            //    { new: true }
+            // );
+
             _context6.next = 7;
-            return _tweet.Tweet.findByIdAndUpdate(tweetId, {
-              $push: {
-                replies: {
-                  user: req.user.id
-                }
-              }
-            }, {
-              new: true
-            });
+            return _tweet.Tweet.findById(tweetId).lean().exec();
 
           case 7:
             originalTweet = _context6.sent;

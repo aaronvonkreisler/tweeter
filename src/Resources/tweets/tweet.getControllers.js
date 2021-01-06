@@ -13,10 +13,6 @@ export const getTweetById = async (req, res) => {
             select:
                'avatar verified name email screen_name followers following bio',
          })
-         .populate({
-            path: 'replies',
-            populate: { path: 'tweet' },
-         })
          .exec();
       if (!tweet) {
          res.status(404).json({ msg: 'Tweet not found' });
