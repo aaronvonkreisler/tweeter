@@ -5,8 +5,7 @@ import { uploadPhoto } from '../../services/imageUpload';
 
 export const createTweet = async (req, res) => {
    const user = req.user.id;
-   const { content } = req.body;
-   const image = req.file;
+   const { content, image } = req.body;
 
    const errors = validationResult(req);
    if (!errors.isEmpty()) {
@@ -14,21 +13,10 @@ export const createTweet = async (req, res) => {
    }
 
    try {
-      const imageUpload = image ? await uploadPhoto(image) : null;
-
-      // if (req.file) {
-      //    const image = await uploadPhoto(req.file)
-      //    const newTweet = await Tweet.create({
-      //       user,
-      //       content,
-      //       image: imageUpload === null ? imageUpload : imageUpload.location,
-      //    });
-      // }
-
       const newTweet = await Tweet.create({
          user,
          content,
-         image: imageUpload === null ? imageUpload : imageUpload.location,
+         image,
       });
 
       const tweet = await Tweet.findById(newTweet._id).populate({
