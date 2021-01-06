@@ -44,6 +44,14 @@ var uploadPhoto = /*#__PURE__*/function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
+            if (!(files === undefined)) {
+              _context.next = 2;
+              break;
+            }
+
+            return _context.abrupt("return", null);
+
+          case 2:
             upload = new _awsSdk.default.S3.ManagedUpload({
               params: {
                 Body: files.image.data,
@@ -53,13 +61,13 @@ var uploadPhoto = /*#__PURE__*/function () {
               },
               service: s3
             });
-            _context.next = 3;
+            _context.next = 5;
             return upload.promise();
 
-          case 3:
+          case 5:
             return _context.abrupt("return", _context.sent);
 
-          case 4:
+          case 6:
           case "end":
             return _context.stop();
         }

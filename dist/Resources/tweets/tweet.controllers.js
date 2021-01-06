@@ -33,15 +33,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 var createTweet = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
-    var errors, newTweet, tweet;
+    var user, _req$body, content, image, errors, imageUpload, newTweet, tweet;
+
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
+            user = req.user.id;
+            _req$body = req.body, content = _req$body.content, image = _req$body.image;
             errors = (0, _expressValidator.validationResult)(req);
 
             if (errors.isEmpty()) {
-              _context.next = 3;
+              _context.next = 5;
               break;
             }
 
@@ -49,41 +52,51 @@ var createTweet = /*#__PURE__*/function () {
               errors: errors.array()
             }));
 
-          case 3:
-            _context.prev = 3;
-            _context.next = 6;
+          case 5:
+            _context.prev = 5;
+            _context.next = 8;
+            return (0, _imageUpload.uploadPhoto)(image);
+
+          case 8:
+            imageUpload = _context.sent;
+
+            if (imageUpload !== null) {
+              imageUpload = imageUpload.Location;
+            }
+
+            _context.next = 12;
             return _tweet.Tweet.create({
-              user: req.user.id,
-              content: req.body.content,
-              image: req.body.image
+              user: user,
+              content: content,
+              image: imageUpload
             });
 
-          case 6:
+          case 12:
             newTweet = _context.sent;
-            _context.next = 9;
+            _context.next = 15;
             return _tweet.Tweet.findById(newTweet._id).populate({
               path: 'user',
               select: 'avatar name screen_name verified'
             });
 
-          case 9:
+          case 15:
             tweet = _context.sent;
             res.json(tweet);
-            _context.next = 17;
+            _context.next = 23;
             break;
 
-          case 13:
-            _context.prev = 13;
-            _context.t0 = _context["catch"](3);
+          case 19:
+            _context.prev = 19;
+            _context.t0 = _context["catch"](5);
             console.error(_context.t0.message);
             res.status(500).send('Server Error');
 
-          case 17:
+          case 23:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[3, 13]]);
+    }, _callee, null, [[5, 19]]);
   }));
 
   return function createTweet(_x, _x2) {

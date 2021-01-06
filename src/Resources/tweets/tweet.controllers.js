@@ -4,17 +4,25 @@ import { User } from '../user/user.model';
 import { uploadPhoto } from '../../services/imageUpload';
 
 export const createTweet = async (req, res) => {
-   const errors = validationResult(req);
+   const user = req.user.id;
+   const { content, image } = req.body;
 
+   const errors = validationResult(req);
    if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
    }
 
    try {
+      let imageUpload = await uploadPhoto(image);
+
+      if (imageUpload !== null) {
+         imageUpload = imageUpload.Location;
+      }
+
       const newTweet = await Tweet.create({
-         user: req.user.id,
-         content: req.body.content,
-         image: req.body.image,
+         user,
+         content,
+         image: imageUpload,
       });
 
       const tweet = await Tweet.findById(newTweet._id).populate({

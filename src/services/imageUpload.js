@@ -12,6 +12,9 @@ aws.config.update({
 const s3 = new aws.S3({ params: { Bucket: 'tweeter-dev' } });
 
 export const uploadPhoto = async (files) => {
+   if (files === undefined) {
+      return null;
+   }
    const upload = new aws.S3.ManagedUpload({
       params: {
          Body: files.image.data,

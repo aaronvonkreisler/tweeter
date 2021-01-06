@@ -9,6 +9,12 @@ const TweetSchema = new mongoose.Schema({
       type: String,
    },
    image: String,
+   hashtags: [
+      {
+         type: String,
+         lowercase: true,
+      },
+   ],
    in_reply_to: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'tweet',

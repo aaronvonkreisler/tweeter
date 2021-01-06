@@ -28,6 +28,10 @@ var TweetSchema = new _mongoose.default.Schema({
     type: String
   },
   image: String,
+  hashtags: [{
+    type: String,
+    lowercase: true
+  }],
   in_reply_to: {
     type: _mongoose.default.Schema.Types.ObjectId,
     ref: 'tweet'
