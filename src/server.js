@@ -8,6 +8,7 @@ import authRouter from './Resources/auth/auth.router';
 import tweetRouter from './Resources/tweets/tweet.router';
 import profileRouter from './Resources/profile/profile.router';
 import bookmarksRouter from './Resources/bookmarks/bookmarks.router';
+import chatsRouter from './Resources/messages/chat/chat.router';
 
 const app = express();
 
@@ -23,7 +24,6 @@ app.use(
       abortOnLimit: true,
    })
 );
-// app.use(bodyParser.json());
 
 // Define Routes
 app.get('/', (req, res) => {
@@ -40,6 +40,7 @@ app.use('/api/user', userRouter);
 app.use('/api/tweets', tweetRouter);
 app.use('/api/profile', profileRouter);
 app.use('/api/bookmarks', bookmarksRouter);
+app.use('/api/chats', chatsRouter);
 
 // eslint-disable-next-line no-undef
 const PORT = process.env.PORT || 5000;

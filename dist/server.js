@@ -31,6 +31,8 @@ var _profile = _interopRequireDefault(require("./Resources/profile/profile.route
 
 var _bookmarks = _interopRequireDefault(require("./Resources/bookmarks/bookmarks.router"));
 
+var _chat = _interopRequireDefault(require("./Resources/messages/chat/chat.router"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -52,8 +54,7 @@ app.use((0, _expressFileupload.default)({
     fileSize: 50 * 1024 * 1024
   },
   abortOnLimit: true
-})); // app.use(bodyParser.json());
-// Define Routes
+})); // Define Routes
 
 app.get('/', function (req, res) {
   try {
@@ -68,7 +69,8 @@ app.use('/api', _auth.protect);
 app.use('/api/user', _user.default);
 app.use('/api/tweets', _tweet.default);
 app.use('/api/profile', _profile.default);
-app.use('/api/bookmarks', _bookmarks.default); // eslint-disable-next-line no-undef
+app.use('/api/bookmarks', _bookmarks.default);
+app.use('/api/chats', _chat.default); // eslint-disable-next-line no-undef
 
 var PORT = process.env.PORT || 5000;
 
