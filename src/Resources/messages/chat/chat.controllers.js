@@ -20,7 +20,12 @@ export const createNewChat = async (req, res) => {
          isGroupChat: true,
       });
 
-      res.json(newChat);
+      const populatedChat = await (await Chat.findById(newChat.id)).populated({
+         path: 'users',
+         select: 'name avatar verified screen_name',
+      });
+
+      res.json(populatedChat);
    } catch (err) {
       console.error(err.message);
       res.status(500).json({ msg: 'Server Error' });

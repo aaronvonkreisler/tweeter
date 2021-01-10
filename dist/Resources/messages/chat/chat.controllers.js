@@ -25,7 +25,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 var createNewChat = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
-    var users, requestingUserId, newChat;
+    var users, requestingUserId, newChat, populatedChat;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -61,24 +61,36 @@ var createNewChat = /*#__PURE__*/function () {
 
           case 10:
             newChat = _context.sent;
-            res.json(newChat);
-            _context.next = 18;
+            _context.next = 13;
+            return _chat.Chat.findById(newChat.id);
+
+          case 13:
+            _context.next = 15;
+            return _context.sent.populated({
+              path: 'users',
+              select: 'name avatar verified screen_name'
+            });
+
+          case 15:
+            populatedChat = _context.sent;
+            res.json(populatedChat);
+            _context.next = 23;
             break;
 
-          case 14:
-            _context.prev = 14;
+          case 19:
+            _context.prev = 19;
             _context.t0 = _context["catch"](6);
             console.error(_context.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
-          case 18:
+          case 23:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[6, 14]]);
+    }, _callee, null, [[6, 19]]);
   }));
 
   return function createNewChat(_x, _x2) {
