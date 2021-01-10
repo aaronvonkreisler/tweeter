@@ -20,9 +20,9 @@ export const createNewChat = async (req, res) => {
          isGroupChat: true,
       });
 
-      const populatedChat = await (await Chat.findById(newChat.id)).populated({
+      const populatedChat = await Chat.findById(newChat.id).populate({
          path: 'users',
-         select: 'name avatar verified screen_name',
+         select: 'name screen_name avatar verified',
       });
 
       res.json(populatedChat);

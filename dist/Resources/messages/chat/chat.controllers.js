@@ -62,35 +62,31 @@ var createNewChat = /*#__PURE__*/function () {
           case 10:
             newChat = _context.sent;
             _context.next = 13;
-            return _chat.Chat.findById(newChat.id);
-
-          case 13:
-            _context.next = 15;
-            return _context.sent.populated({
+            return _chat.Chat.findById(newChat.id).populate({
               path: 'users',
-              select: 'name avatar verified screen_name'
+              select: 'name screen_name avatar verified'
             });
 
-          case 15:
+          case 13:
             populatedChat = _context.sent;
             res.json(populatedChat);
-            _context.next = 23;
+            _context.next = 21;
             break;
 
-          case 19:
-            _context.prev = 19;
+          case 17:
+            _context.prev = 17;
             _context.t0 = _context["catch"](6);
             console.error(_context.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
-          case 23:
+          case 21:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[6, 19]]);
+    }, _callee, null, [[6, 17]]);
   }));
 
   return function createNewChat(_x, _x2) {
