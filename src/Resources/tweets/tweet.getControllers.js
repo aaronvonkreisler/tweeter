@@ -148,10 +148,10 @@ export const getTweetsLikedUsers = async (req, res) => {
             path: 'favorites',
             populate: {
                path: 'user',
-               select: '_id display_name screen_name name verified avatar',
+               select: 'name screen_name followers verified avatar',
             },
          })
-         .select('-_id')
+
          .lean()
          .exec();
       if (!tweet) {

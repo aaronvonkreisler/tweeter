@@ -410,9 +410,9 @@ var getTweetsLikedUsers = /*#__PURE__*/function () {
               path: 'favorites',
               populate: {
                 path: 'user',
-                select: '_id display_name screen_name name verified avatar'
+                select: 'name screen_name followers verified avatar'
               }
-            }).select('-_id').lean().exec();
+            }).lean().exec();
 
           case 3:
             tweet = _context7.sent;
