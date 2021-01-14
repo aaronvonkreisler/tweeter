@@ -11,21 +11,27 @@ require("core-js/modules/es.regexp.exec");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getChats = exports.createNewChat = void 0;
+exports.getChatByUserId = exports.getChats = exports.createNewChat = void 0;
 
 require("regenerator-runtime/runtime");
+
+var _mongoose = _interopRequireDefault(require("mongoose"));
 
 var _chat = require("./chat.model");
 
 var _user = require("../../user/user.model");
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+var ObjectId = _mongoose.default.Types.ObjectId;
+
 var createNewChat = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
-    var users, requestingUserId, newChat, populatedChat;
+    var users, requestingUserId, isGroupChat, newChat, populatedChat;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -53,40 +59,41 @@ var createNewChat = /*#__PURE__*/function () {
 
             _context.prev = 6;
             users.push(requestingUserId);
-            _context.next = 10;
+            isGroupChat = users.length > 2;
+            _context.next = 11;
             return _chat.Chat.create({
               users: users,
-              isGroupChat: true
+              isGroupChat: isGroupChat
             });
 
-          case 10:
+          case 11:
             newChat = _context.sent;
-            _context.next = 13;
+            _context.next = 14;
             return _chat.Chat.findById(newChat.id).populate({
               path: 'users',
               select: 'name screen_name avatar verified'
             });
 
-          case 13:
+          case 14:
             populatedChat = _context.sent;
             res.json(populatedChat);
-            _context.next = 21;
+            _context.next = 22;
             break;
 
-          case 17:
-            _context.prev = 17;
+          case 18:
+            _context.prev = 18;
             _context.t0 = _context["catch"](6);
             console.error(_context.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
-          case 21:
+          case 22:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[6, 17]]);
+    }, _callee, null, [[6, 18]]);
   }));
 
   return function createNewChat(_x, _x2) {
@@ -150,3 +157,69 @@ var getChats = /*#__PURE__*/function () {
 }();
 
 exports.getChats = getChats;
+
+var getChatByUserId = /*#__PURE__*/function () {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(req, res) {
+    var currentUser, otherUser, newChat;
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            currentUser = req.user.id;
+            otherUser = req.params.id;
+            _context3.prev = 2;
+            _context3.next = 5;
+            return _chat.Chat.findOneAndUpdate({
+              isGroupChat: false,
+              users: {
+                $size: 2,
+                $all: [{
+                  $elemMatch: {
+                    $eq: ObjectId(currentUser)
+                  }
+                }, {
+                  $elemMatch: {
+                    $eq: ObjectId(otherUser)
+                  }
+                }]
+              }
+            }, {
+              $setOnInsert: {
+                users: [currentUser, otherUser]
+              }
+            }, {
+              new: true,
+              upsert: true
+            }).populate({
+              path: 'users',
+              select: 'avatar name screen_name verified'
+            });
+
+          case 5:
+            newChat = _context3.sent;
+            res.json(newChat);
+            _context3.next = 13;
+            break;
+
+          case 9:
+            _context3.prev = 9;
+            _context3.t0 = _context3["catch"](2);
+            console.error(_context3.t0.message);
+            res.status(500).json({
+              msg: 'Server Error'
+            });
+
+          case 13:
+          case "end":
+            return _context3.stop();
+        }
+      }
+    }, _callee3, null, [[2, 9]]);
+  }));
+
+  return function getChatByUserId(_x5, _x6) {
+    return _ref3.apply(this, arguments);
+  };
+}();
+
+exports.getChatByUserId = getChatByUserId;

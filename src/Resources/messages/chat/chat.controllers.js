@@ -1,5 +1,7 @@
+import mongoose from 'mongoose';
 import { Chat } from './chat.model';
 import { User } from '../../user/user.model';
+const ObjectId = mongoose.Types.ObjectId;
 
 export const createNewChat = async (req, res) => {
    const { users } = req.body;
@@ -15,9 +17,12 @@ export const createNewChat = async (req, res) => {
    }
    try {
       users.push(requestingUserId);
+
+      const isGroupChat = users.length > 2;
+
       const newChat = await Chat.create({
          users,
-         isGroupChat: true,
+         isGroupChat,
       });
 
       const populatedChat = await Chat.findById(newChat.id).populate({
@@ -51,6 +56,37 @@ export const getChats = async (req, res) => {
       }
 
       res.json(chats);
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ msg: 'Server Error' });
+   }
+};
+
+export const getChatByUserId = async (req, res) => {
+   const currentUser = req.user.id;
+   const otherUser = req.params.id;
+
+   try {
+      const newChat = await Chat.findOneAndUpdate(
+         {
+            isGroupChat: false,
+            users: {
+               $size: 2,
+               $all: [
+                  { $elemMatch: { $eq: ObjectId(currentUser) } },
+                  { $elemMatch: { $eq: ObjectId(otherUser) } },
+               ],
+            },
+         },
+         {
+            $setOnInsert: {
+               users: [currentUser, otherUser],
+            },
+         },
+         { new: true, upsert: true }
+      ).populate({ path: 'users', select: 'avatar name screen_name verified' });
+
+      res.json(newChat);
    } catch (err) {
       console.error(err.message);
       res.status(500).json({ msg: 'Server Error' });
