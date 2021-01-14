@@ -48,6 +48,7 @@ export const getChats = async (req, res) => {
             path: 'users',
             select: 'name avatar screen_name verified',
          })
+         .sort({ updatedAt: -1 })
          .lean()
          .exec();
 

@@ -2,6 +2,8 @@
 
 require("core-js/modules/es.array.find");
 
+require("core-js/modules/es.array.sort");
+
 require("core-js/modules/es.object.to-string");
 
 require("core-js/modules/es.promise");
@@ -120,6 +122,8 @@ var getChats = /*#__PURE__*/function () {
             }).populate({
               path: 'users',
               select: 'name avatar screen_name verified'
+            }).sort({
+              updatedAt: -1
             }).lean().exec();
 
           case 4:
