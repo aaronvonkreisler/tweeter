@@ -17,6 +17,8 @@ require("regenerator-runtime/runtime");
 
 var _messages = require("./messages.model");
 
+var _chat = require("../chat/chat.model");
+
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
@@ -58,24 +60,30 @@ var sendMessage = /*#__PURE__*/function () {
 
           case 9:
             populatedMessage = _context.sent;
+            _context.next = 12;
+            return _chat.Chat.findByIdAndUpdate(chatId, {
+              latestMessage: message
+            });
+
+          case 12:
             res.json(populatedMessage);
-            _context.next = 17;
+            _context.next = 19;
             break;
 
-          case 13:
-            _context.prev = 13;
+          case 15:
+            _context.prev = 15;
             _context.t0 = _context["catch"](3);
             console.error(_context.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
-          case 17:
+          case 19:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[3, 13]]);
+    }, _callee, null, [[3, 15]]);
   }));
 
   return function sendMessage(_x, _x2) {

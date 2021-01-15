@@ -1,4 +1,5 @@
 import { Message } from './messages.model';
+import { Chat } from '../chat/chat.model';
 
 export const sendMessage = async (req, res) => {
    const { chatId, content, image } = req.body;
@@ -20,6 +21,8 @@ export const sendMessage = async (req, res) => {
       const populatedMessage = await message
          .populate({ path: 'sender', select: 'name avatar' })
          .execPopulate();
+
+      await Chat.findByIdAndUpdate(chatId, { latestMessage: message });
 
       res.json(populatedMessage);
    } catch (err) {
