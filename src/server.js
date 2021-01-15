@@ -9,6 +9,7 @@ import tweetRouter from './Resources/tweets/tweet.router';
 import profileRouter from './Resources/profile/profile.router';
 import bookmarksRouter from './Resources/bookmarks/bookmarks.router';
 import chatsRouter from './Resources/messages/chat/chat.router';
+import messagesRouter from './Resources/messages/message/messages.router';
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.use('/api/tweets', tweetRouter);
 app.use('/api/profile', profileRouter);
 app.use('/api/bookmarks', bookmarksRouter);
 app.use('/api/chats', chatsRouter);
+app.use('/api/messages', messagesRouter);
 
 // eslint-disable-next-line no-undef
 const PORT = process.env.PORT || 5000;

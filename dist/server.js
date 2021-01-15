@@ -33,6 +33,8 @@ var _bookmarks = _interopRequireDefault(require("./Resources/bookmarks/bookmarks
 
 var _chat = _interopRequireDefault(require("./Resources/messages/chat/chat.router"));
 
+var _messages = _interopRequireDefault(require("./Resources/messages/message/messages.router"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -70,7 +72,8 @@ app.use('/api/user', _user.default);
 app.use('/api/tweets', _tweet.default);
 app.use('/api/profile', _profile.default);
 app.use('/api/bookmarks', _bookmarks.default);
-app.use('/api/chats', _chat.default); // eslint-disable-next-line no-undef
+app.use('/api/chats', _chat.default);
+app.use('/api/messages', _messages.default); // eslint-disable-next-line no-undef
 
 var PORT = process.env.PORT || 5000;
 

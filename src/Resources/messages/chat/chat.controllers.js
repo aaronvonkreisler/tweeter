@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { Chat } from './chat.model';
-import { User } from '../../user/user.model';
+
 const ObjectId = mongoose.Types.ObjectId;
 
 export const createNewChat = async (req, res) => {
