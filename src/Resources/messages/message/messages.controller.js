@@ -23,3 +23,19 @@ export const sendMessage = async (req, res) => {
       res.status(500).json({ msg: 'Server Error' });
    }
 };
+
+export const getMessagesForChatRoom = async (req, res) => {
+   const chatId = req.params.chatId;
+
+   try {
+      const messages = await Message.find({ chat: chatId }).lean().exec();
+
+      if (!messages) {
+         res.status(400).json({ msg: 'No messages found' });
+      }
+      res.json(messages);
+   } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ msg: 'Server Error' });
+   }
+};

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { sendMessage } from './messages.controller';
+import { sendMessage, getMessagesForChatRoom } from './messages.controller';
 
 const router = Router();
 
@@ -7,4 +7,7 @@ const router = Router();
 // @description      Send a new Message
 router.post('/', sendMessage);
 
+// @route            GET api/messages/:chatId
+// @description     Get messages for a specific chat
+router.get('/:chatId', getMessagesForChatRoom);
 export default router;
