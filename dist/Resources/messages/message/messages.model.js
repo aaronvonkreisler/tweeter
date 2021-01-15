@@ -31,6 +31,6 @@ var MessageSchema = new _mongoose.default.Schema({
   timestamps: true
 });
 
-var Message = _mongoose.default.model('Message', MessageSchema);
+var Message = _mongoose.default.model('message', MessageSchema);
 
 exports.Message = Message;

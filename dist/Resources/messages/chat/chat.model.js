@@ -30,6 +30,6 @@ var ChatSchema = new _mongoose.default.Schema({
   timestamps: true
 });
 
-var Chat = _mongoose.default.model('Chat', ChatSchema);
+var Chat = _mongoose.default.model('chat', ChatSchema);
 
 exports.Chat = Chat;
