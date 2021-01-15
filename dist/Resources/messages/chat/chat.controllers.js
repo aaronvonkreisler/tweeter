@@ -158,7 +158,7 @@ var getChats = /*#__PURE__*/function () {
               path: 'users',
               select: 'name avatar screen_name verified'
             }).populate({
-              path: 'latestMessage',
+              path: 'lastMessage',
               select: 'content'
             }).sort({
               updatedAt: -1
