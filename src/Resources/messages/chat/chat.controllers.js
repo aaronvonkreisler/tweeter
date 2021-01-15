@@ -20,6 +20,26 @@ export const createNewChat = async (req, res) => {
 
       const isGroupChat = users.length > 2;
 
+      if (!isGroupChat) {
+         const existingMessage = await Chat.findOne({
+            isGroupChat: false,
+            users: {
+               $size: 2,
+               $all: [
+                  { $elemMatch: { $eq: ObjectId(requestingUserId) } },
+                  { $elemMatch: { $eq: ObjectId(users[0]) } },
+               ],
+            },
+         }).populate({
+            path: 'users',
+            select: 'name screen_name avatar verified',
+         });
+
+         if (existingMessage !== null) {
+            return res.json(existingMessage);
+         }
+      }
+
       const newChat = await Chat.create({
          users,
          isGroupChat,

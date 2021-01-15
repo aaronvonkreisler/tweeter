@@ -31,7 +31,7 @@ var ObjectId = _mongoose.default.Types.ObjectId;
 
 var createNewChat = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
-    var users, requestingUserId, isGroupChat, newChat, populatedChat;
+    var users, requestingUserId, isGroupChat, existingMessage, newChat, populatedChat;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -60,40 +60,77 @@ var createNewChat = /*#__PURE__*/function () {
             _context.prev = 6;
             users.push(requestingUserId);
             isGroupChat = users.length > 2;
-            _context.next = 11;
+
+            if (isGroupChat) {
+              _context.next = 15;
+              break;
+            }
+
+            _context.next = 12;
+            return _chat.Chat.findOne({
+              isGroupChat: false,
+              users: {
+                $size: 2,
+                $all: [{
+                  $elemMatch: {
+                    $eq: ObjectId(requestingUserId)
+                  }
+                }, {
+                  $elemMatch: {
+                    $eq: ObjectId(users[0])
+                  }
+                }]
+              }
+            }).populate({
+              path: 'users',
+              select: 'name screen_name avatar verified'
+            });
+
+          case 12:
+            existingMessage = _context.sent;
+
+            if (!(existingMessage !== null)) {
+              _context.next = 15;
+              break;
+            }
+
+            return _context.abrupt("return", res.json(existingMessage));
+
+          case 15:
+            _context.next = 17;
             return _chat.Chat.create({
               users: users,
               isGroupChat: isGroupChat
             });
 
-          case 11:
+          case 17:
             newChat = _context.sent;
-            _context.next = 14;
+            _context.next = 20;
             return _chat.Chat.findById(newChat.id).populate({
               path: 'users',
               select: 'name screen_name avatar verified'
             });
 
-          case 14:
+          case 20:
             populatedChat = _context.sent;
             res.json(populatedChat);
-            _context.next = 22;
+            _context.next = 28;
             break;
 
-          case 18:
-            _context.prev = 18;
+          case 24:
+            _context.prev = 24;
             _context.t0 = _context["catch"](6);
             console.error(_context.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
-          case 22:
+          case 28:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[6, 18]]);
+    }, _callee, null, [[6, 24]]);
   }));
 
   return function createNewChat(_x, _x2) {
