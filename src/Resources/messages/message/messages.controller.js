@@ -17,7 +17,15 @@ export const sendMessage = async (req, res) => {
          chat: chatId,
       });
 
-      res.json(message);
+      const populatedMessage = await Message.findById(message._id)
+         .populate({
+            path: 'sender',
+            select: 'name avatar',
+         })
+         .lean()
+         .exec();
+
+      res.json(populatedMessage);
    } catch (err) {
       console.error(err.message);
       res.status(500).json({ msg: 'Server Error' });
@@ -28,7 +36,13 @@ export const getMessagesForChatRoom = async (req, res) => {
    const chatId = req.params.chatId;
 
    try {
-      const messages = await Message.find({ chat: chatId }).lean().exec();
+      const messages = await Message.find({ chat: chatId })
+         .populate({
+            path: 'sender',
+            select: 'name avatar',
+         })
+         .lean()
+         .exec();
 
       if (!messages) {
          res.status(400).json({ msg: 'No messages found' });

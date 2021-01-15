@@ -23,7 +23,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 var sendMessage = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
-    var _req$body, chatId, content, image, sender, message;
+    var _req$body, chatId, content, image, sender, message, populatedMessage;
 
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
@@ -50,24 +50,32 @@ var sendMessage = /*#__PURE__*/function () {
 
           case 6:
             message = _context.sent;
-            res.json(message);
-            _context.next = 14;
+            _context.next = 9;
+            return _messages.Message.findById(message._id).populate({
+              path: 'sender',
+              select: 'name avatar'
+            }).lean().exec();
+
+          case 9:
+            populatedMessage = _context.sent;
+            res.json(populatedMessage);
+            _context.next = 17;
             break;
 
-          case 10:
-            _context.prev = 10;
+          case 13:
+            _context.prev = 13;
             _context.t0 = _context["catch"](3);
             console.error(_context.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
-          case 14:
+          case 17:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[3, 10]]);
+    }, _callee, null, [[3, 13]]);
   }));
 
   return function sendMessage(_x, _x2) {
@@ -89,6 +97,9 @@ var getMessagesForChatRoom = /*#__PURE__*/function () {
             _context2.next = 4;
             return _messages.Message.find({
               chat: chatId
+            }).populate({
+              path: 'sender',
+              select: 'name avatar'
             }).lean().exec();
 
           case 4:
