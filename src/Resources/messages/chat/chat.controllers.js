@@ -68,10 +68,6 @@ export const getChats = async (req, res) => {
             path: 'users',
             select: 'name avatar screen_name verified',
          })
-         .populate({
-            path: 'lastMessage',
-            select: 'content',
-         })
          .sort({ updatedAt: -1 })
          .lean()
          .exec();
