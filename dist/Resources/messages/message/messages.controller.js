@@ -62,7 +62,7 @@ var sendMessage = /*#__PURE__*/function () {
             populatedMessage = _context.sent;
             _context.next = 12;
             return _chat.Chat.findByIdAndUpdate(chatId, {
-              latestMessage: message
+              lastMessage: message
             });
 
           case 12:

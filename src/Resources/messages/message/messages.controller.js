@@ -22,7 +22,7 @@ export const sendMessage = async (req, res) => {
          .populate({ path: 'sender', select: 'name avatar' })
          .execPopulate();
 
-      await Chat.findByIdAndUpdate(chatId, { latestMessage: message });
+      await Chat.findByIdAndUpdate(chatId, { lastMessage: message });
 
       res.json(populatedMessage);
    } catch (err) {
