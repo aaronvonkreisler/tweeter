@@ -17,13 +17,9 @@ export const sendMessage = async (req, res) => {
          chat: chatId,
       });
 
-      const populatedMessage = await Message.findById(message._id)
-         .populate({
-            path: 'sender',
-            select: 'name avatar',
-         })
-         .lean()
-         .exec();
+      const populatedMessage = await message
+         .populate({ path: 'sender', select: 'name avatar' })
+         .execPopulate();
 
       res.json(populatedMessage);
    } catch (err) {

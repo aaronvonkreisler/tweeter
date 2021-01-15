@@ -51,10 +51,10 @@ var sendMessage = /*#__PURE__*/function () {
           case 6:
             message = _context.sent;
             _context.next = 9;
-            return _messages.Message.findById(message._id).populate({
+            return message.populate({
               path: 'sender',
               select: 'name avatar'
-            }).lean().exec();
+            }).execPopulate();
 
           case 9:
             populatedMessage = _context.sent;
