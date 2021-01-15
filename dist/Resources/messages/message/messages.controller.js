@@ -11,9 +11,7 @@ exports.sendMessage = void 0;
 
 require("regenerator-runtime/runtime");
 
-var _messages = _interopRequireDefault(require("./messages.controller"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _messages = require("./messages.model");
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -39,7 +37,7 @@ var sendMessage = /*#__PURE__*/function () {
 
             _context.prev = 3;
             _context.next = 6;
-            return _messages.default.create({
+            return _messages.Message.create({
               sender: sender,
               content: content,
               image: image,
