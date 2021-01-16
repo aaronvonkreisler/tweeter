@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { check } from 'express-validator';
 import {
    createTweet,
+   createTweetWithImage,
    replytoTweet,
    deleteTweet,
    favoriteTweet,
@@ -31,6 +32,10 @@ router.post(
    [check('content', 'Please enter some text').not().isEmpty()],
    createTweet
 );
+
+// @route            POST api/tweets/image
+// @description      Post a tweet that includes an imageResponse
+router.post('/image', createTweetWithImage);
 
 // @route            POST api/tweets/comment/:tweet_id
 // @description      Reply to a tweet

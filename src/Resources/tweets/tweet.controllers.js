@@ -1,7 +1,52 @@
 import { validationResult } from 'express-validator';
 import { Tweet } from './tweet.model';
 import { User } from '../user/user.model';
-import { uploadPhoto } from '../../services/imageUpload';
+import { uploadPhoto, uploadBufferPhoto } from '../../services/imageUpload';
+import sharp from 'sharp';
+
+export const createTweetWithImage = async (req, res) => {
+   const { content } = req.body;
+   const { files } = req;
+   const user = req.user.id;
+   let tweet = undefined;
+
+   if (!files) {
+      return res.status(400).json({ msg: 'This route requires a file' });
+   }
+   try {
+      const resizedBuffer = await sharp(files.image.data)
+         .resize(null, 280)
+         .webp()
+         .toBuffer();
+
+      const image = await uploadBufferPhoto(resizedBuffer);
+
+      tweet = new Tweet({
+         user,
+         content,
+         image: image.Location,
+      });
+
+      await tweet.save();
+
+      const populatedTweet = await tweet
+         .populate({
+            path: 'user',
+            select: 'avatar name screen_name verified',
+         })
+         .execPopulate();
+
+      res.json(populatedTweet);
+   } catch (err) {
+      console.error(err.message);
+
+      if (err.message === 'Input buffer contains unsupported image format') {
+         res.status(400).json({ msg: 'Unsupported image format' });
+      }
+
+      res.status(500).send('Server Error');
+   }
+};
 
 export const createTweet = async (req, res) => {
    const user = req.user.id;

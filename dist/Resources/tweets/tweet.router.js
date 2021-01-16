@@ -16,7 +16,10 @@ var _tweet2 = require("./tweet.getControllers");
 var router = (0, _express.Router)(); // @route            POST api/tweets/
 // @description      Post a tweet
 
-router.post('/', [(0, _expressValidator.check)('content', 'Please enter some text').not().isEmpty()], _tweet.createTweet); // @route            POST api/tweets/comment/:tweet_id
+router.post('/', [(0, _expressValidator.check)('content', 'Please enter some text').not().isEmpty()], _tweet.createTweet); // @route            POST api/tweets/image
+// @description      Post a tweet that includes an imageResponse
+
+router.post('/image', _tweet.createTweetWithImage); // @route            POST api/tweets/comment/:tweet_id
 // @description      Reply to a tweet
 
 router.post('/comment/:tweet_id', [(0, _expressValidator.check)('content', 'Please insert some text to send a reply').not().isEmpty()], _tweet.replytoTweet); // @route            POST api/tweets/retweet/:tweet_id
