@@ -4,6 +4,7 @@ import {
    createTweet,
    createTweetWithImage,
    replytoTweet,
+   replyToTweetWithImage,
    deleteTweet,
    favoriteTweet,
    removeFavorite,
@@ -48,6 +49,10 @@ router.post(
    ],
    replytoTweet
 );
+
+// @route            POST api/tweets/comment/:tweet_id/image
+// @description      Reply to a tweet with an image
+router.post('/comment/:tweet_id/image', replyToTweetWithImage);
 
 // @route            POST api/tweets/retweet/:tweet_id
 // @description      Post a retweet

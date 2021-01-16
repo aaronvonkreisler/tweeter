@@ -22,7 +22,10 @@ router.post('/', [(0, _expressValidator.check)('content', 'Please enter some tex
 router.post('/image', _tweet.createTweetWithImage); // @route            POST api/tweets/comment/:tweet_id
 // @description      Reply to a tweet
 
-router.post('/comment/:tweet_id', [(0, _expressValidator.check)('content', 'Please insert some text to send a reply').not().isEmpty()], _tweet.replytoTweet); // @route            POST api/tweets/retweet/:tweet_id
+router.post('/comment/:tweet_id', [(0, _expressValidator.check)('content', 'Please insert some text to send a reply').not().isEmpty()], _tweet.replytoTweet); // @route            POST api/tweets/comment/:tweet_id/image
+// @description      Reply to a tweet with an image
+
+router.post('/comment/:tweet_id/image', _tweet.replyToTweetWithImage); // @route            POST api/tweets/retweet/:tweet_id
 // @description      Post a retweet
 
 router.post('/:id/retweet', _tweet.retweet); // @route            PUT api/tweets/like/:id

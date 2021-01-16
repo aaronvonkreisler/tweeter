@@ -185,6 +185,58 @@ export const retweet = async (req, res) => {
    }
 };
 
+export const replyToTweetWithImage = async (req, res) => {
+   const tweetId = req.params.tweet_id;
+   const { content } = req.body;
+   const { files } = req;
+   let reply = undefined;
+
+   if (!files) {
+      return res.status(400).json({ msg: 'This route requires a file' });
+   }
+   try {
+      const originalTweet = await Tweet.findByIdAndUpdate(
+         tweetId,
+         {
+            $push: { replies: { user: req.user.id } },
+         },
+         { new: true }
+      );
+
+      const resizedBuffer = await sharp(files.image.data)
+         .resize(500, null)
+         .webp()
+         .toBuffer();
+
+      const image = await uploadBufferPhoto(resizedBuffer);
+
+      reply = new Tweet({
+         user: req.user.id,
+         content,
+         in_reply_to: originalTweet._id,
+         replyingToUser: originalTweet.user.screen_name,
+         image: image.Location,
+      });
+
+      await reply.save();
+
+      const populatedReply = await reply
+         .populate({
+            path: 'user',
+            select: 'avatar verified name screen_name',
+         })
+         .execPopulate();
+
+      res.json(populatedReply);
+   } catch (err) {
+      console.error(err.message);
+      if (err.message === 'Input buffer contains unsupported image format') {
+         res.status(400).json({ msg: 'Unsupported image format' });
+      }
+      res.status(500).send('Server Error');
+   }
+};
+
 export const replytoTweet = async (req, res) => {
    const errors = validationResult(req);
    if (!errors.isEmpty()) {

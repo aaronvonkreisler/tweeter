@@ -13,7 +13,7 @@ require("core-js/modules/es.string.match");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.uploadImageForTweet = exports.removePinnedTweet = exports.pinTweetToProfile = exports.replytoTweet = exports.retweet = exports.removeFavorite = exports.favoriteTweet = exports.deleteTweet = exports.createTweet = exports.createTweetWithImage = void 0;
+exports.uploadImageForTweet = exports.removePinnedTweet = exports.pinTweetToProfile = exports.replytoTweet = exports.replyToTweetWithImage = exports.retweet = exports.removeFavorite = exports.favoriteTweet = exports.deleteTweet = exports.createTweet = exports.createTweetWithImage = void 0;
 
 require("regenerator-runtime/runtime");
 
@@ -444,28 +444,125 @@ var retweet = /*#__PURE__*/function () {
 
 exports.retweet = retweet;
 
-var replytoTweet = /*#__PURE__*/function () {
+var replyToTweetWithImage = /*#__PURE__*/function () {
   var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(req, res) {
-    var errors, tweetId, originalTweet, reply, tweetToSend;
+    var tweetId, content, files, reply, originalTweet, resizedBuffer, image, populatedReply;
     return regeneratorRuntime.wrap(function _callee7$(_context7) {
       while (1) {
         switch (_context7.prev = _context7.next) {
           case 0:
-            errors = (0, _expressValidator.validationResult)(req);
+            tweetId = req.params.tweet_id;
+            content = req.body.content;
+            files = req.files;
+            reply = undefined;
 
-            if (errors.isEmpty()) {
-              _context7.next = 3;
+            if (files) {
+              _context7.next = 6;
               break;
             }
 
             return _context7.abrupt("return", res.status(400).json({
+              msg: 'This route requires a file'
+            }));
+
+          case 6:
+            _context7.prev = 6;
+            _context7.next = 9;
+            return _tweet.Tweet.findByIdAndUpdate(tweetId, {
+              $push: {
+                replies: {
+                  user: req.user.id
+                }
+              }
+            }, {
+              new: true
+            });
+
+          case 9:
+            originalTweet = _context7.sent;
+            _context7.next = 12;
+            return (0, _sharp.default)(files.image.data).resize(500, null).webp().toBuffer();
+
+          case 12:
+            resizedBuffer = _context7.sent;
+            _context7.next = 15;
+            return (0, _imageUpload.uploadBufferPhoto)(resizedBuffer);
+
+          case 15:
+            image = _context7.sent;
+            reply = new _tweet.Tweet({
+              user: req.user.id,
+              content: content,
+              in_reply_to: originalTweet._id,
+              replyingToUser: originalTweet.user.screen_name,
+              image: image.Location
+            });
+            _context7.next = 19;
+            return reply.save();
+
+          case 19:
+            _context7.next = 21;
+            return reply.populate({
+              path: 'user',
+              select: 'avatar verified name screen_name'
+            }).execPopulate();
+
+          case 21:
+            populatedReply = _context7.sent;
+            res.json(populatedReply);
+            _context7.next = 30;
+            break;
+
+          case 25:
+            _context7.prev = 25;
+            _context7.t0 = _context7["catch"](6);
+            console.error(_context7.t0.message);
+
+            if (_context7.t0.message === 'Input buffer contains unsupported image format') {
+              res.status(400).json({
+                msg: 'Unsupported image format'
+              });
+            }
+
+            res.status(500).send('Server Error');
+
+          case 30:
+          case "end":
+            return _context7.stop();
+        }
+      }
+    }, _callee7, null, [[6, 25]]);
+  }));
+
+  return function replyToTweetWithImage(_x13, _x14) {
+    return _ref7.apply(this, arguments);
+  };
+}();
+
+exports.replyToTweetWithImage = replyToTweetWithImage;
+
+var replytoTweet = /*#__PURE__*/function () {
+  var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(req, res) {
+    var errors, tweetId, originalTweet, reply, tweetToSend;
+    return regeneratorRuntime.wrap(function _callee8$(_context8) {
+      while (1) {
+        switch (_context8.prev = _context8.next) {
+          case 0:
+            errors = (0, _expressValidator.validationResult)(req);
+
+            if (errors.isEmpty()) {
+              _context8.next = 3;
+              break;
+            }
+
+            return _context8.abrupt("return", res.status(400).json({
               errors: errors.array()
             }));
 
           case 3:
-            _context7.prev = 3;
+            _context8.prev = 3;
             tweetId = req.params.tweet_id;
-            _context7.next = 7;
+            _context8.next = 7;
             return _tweet.Tweet.findByIdAndUpdate(tweetId, {
               $push: {
                 replies: {
@@ -477,8 +574,8 @@ var replytoTweet = /*#__PURE__*/function () {
             });
 
           case 7:
-            originalTweet = _context7.sent;
-            _context7.next = 10;
+            originalTweet = _context8.sent;
+            _context8.next = 10;
             return _tweet.Tweet.create({
               user: req.user.id,
               content: req.body.content,
@@ -488,58 +585,58 @@ var replytoTweet = /*#__PURE__*/function () {
             });
 
           case 10:
-            reply = _context7.sent;
-            _context7.next = 13;
+            reply = _context8.sent;
+            _context8.next = 13;
             return _tweet.Tweet.findById(reply._id).populate({
               path: 'user',
               select: 'avatar verified name screen_name'
             });
 
           case 13:
-            tweetToSend = _context7.sent;
+            tweetToSend = _context8.sent;
             res.json(tweetToSend);
-            _context7.next = 21;
+            _context8.next = 21;
             break;
 
           case 17:
-            _context7.prev = 17;
-            _context7.t0 = _context7["catch"](3);
-            console.error(_context7.t0.message);
+            _context8.prev = 17;
+            _context8.t0 = _context8["catch"](3);
+            console.error(_context8.t0.message);
             res.status(500).send('Server Error');
 
           case 21:
           case "end":
-            return _context7.stop();
+            return _context8.stop();
         }
       }
-    }, _callee7, null, [[3, 17]]);
+    }, _callee8, null, [[3, 17]]);
   }));
 
-  return function replytoTweet(_x13, _x14) {
-    return _ref7.apply(this, arguments);
+  return function replytoTweet(_x15, _x16) {
+    return _ref8.apply(this, arguments);
   };
 }();
 
 exports.replytoTweet = replytoTweet;
 
 var pinTweetToProfile = /*#__PURE__*/function () {
-  var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(req, res) {
+  var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(req, res) {
     var tweetId, userId, tweetToPin;
-    return regeneratorRuntime.wrap(function _callee8$(_context8) {
+    return regeneratorRuntime.wrap(function _callee9$(_context9) {
       while (1) {
-        switch (_context8.prev = _context8.next) {
+        switch (_context9.prev = _context9.next) {
           case 0:
             tweetId = req.params.id;
             userId = req.user.id;
-            _context8.prev = 2;
-            _context8.next = 5;
+            _context9.prev = 2;
+            _context9.next = 5;
             return _tweet.Tweet.findById(tweetId).populate({
               path: 'user',
               select: 'name screen_name avatar verified'
             });
 
           case 5:
-            tweetToPin = _context8.sent;
+            tweetToPin = _context9.sent;
 
             if (!tweetToPin) {
               res.status(404).json({
@@ -547,7 +644,7 @@ var pinTweetToProfile = /*#__PURE__*/function () {
               });
             }
 
-            _context8.next = 9;
+            _context9.next = 9;
             return _user.User.findByIdAndUpdate(userId, {
               pinnedTweet: tweetToPin._id
             }, {
@@ -557,42 +654,42 @@ var pinTweetToProfile = /*#__PURE__*/function () {
 
           case 9:
             res.json(tweetToPin);
-            _context8.next = 16;
+            _context9.next = 16;
             break;
 
           case 12:
-            _context8.prev = 12;
-            _context8.t0 = _context8["catch"](2);
-            console.error(_context8.t0.message);
+            _context9.prev = 12;
+            _context9.t0 = _context9["catch"](2);
+            console.error(_context9.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
           case 16:
           case "end":
-            return _context8.stop();
+            return _context9.stop();
         }
       }
-    }, _callee8, null, [[2, 12]]);
+    }, _callee9, null, [[2, 12]]);
   }));
 
-  return function pinTweetToProfile(_x15, _x16) {
-    return _ref8.apply(this, arguments);
+  return function pinTweetToProfile(_x17, _x18) {
+    return _ref9.apply(this, arguments);
   };
 }();
 
 exports.pinTweetToProfile = pinTweetToProfile;
 
 var removePinnedTweet = /*#__PURE__*/function () {
-  var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9(req, res) {
+  var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(req, res) {
     var userId;
-    return regeneratorRuntime.wrap(function _callee9$(_context9) {
+    return regeneratorRuntime.wrap(function _callee10$(_context10) {
       while (1) {
-        switch (_context9.prev = _context9.next) {
+        switch (_context10.prev = _context10.next) {
           case 0:
             userId = req.user.id;
-            _context9.prev = 1;
-            _context9.next = 4;
+            _context10.prev = 1;
+            _context10.next = 4;
             return _user.User.findByIdAndUpdate(userId, {
               $unset: {
                 pinnedTweet: ''
@@ -603,84 +700,84 @@ var removePinnedTweet = /*#__PURE__*/function () {
             res.json({
               msg: 'Pinned Tweet Removed'
             });
-            _context9.next = 11;
+            _context10.next = 11;
             break;
 
           case 7:
-            _context9.prev = 7;
-            _context9.t0 = _context9["catch"](1);
-            console.error(_context9.t0.message);
+            _context10.prev = 7;
+            _context10.t0 = _context10["catch"](1);
+            console.error(_context10.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
           case 11:
           case "end":
-            return _context9.stop();
+            return _context10.stop();
         }
       }
-    }, _callee9, null, [[1, 7]]);
+    }, _callee10, null, [[1, 7]]);
   }));
 
-  return function removePinnedTweet(_x17, _x18) {
-    return _ref9.apply(this, arguments);
+  return function removePinnedTweet(_x19, _x20) {
+    return _ref10.apply(this, arguments);
   };
 }();
 
 exports.removePinnedTweet = removePinnedTweet;
 
 var uploadImageForTweet = /*#__PURE__*/function () {
-  var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10(req, res) {
+  var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(req, res) {
     var files, regex, imageResponse;
-    return regeneratorRuntime.wrap(function _callee10$(_context10) {
+    return regeneratorRuntime.wrap(function _callee11$(_context11) {
       while (1) {
-        switch (_context10.prev = _context10.next) {
+        switch (_context11.prev = _context11.next) {
           case 0:
-            _context10.prev = 0;
+            _context11.prev = 0;
             files = req.files;
             regex = /(image\/jpg)|(image\/jpeg)|(image\/png)|(image\/gif)/i;
 
             if (files.image.mimetype.match(regex)) {
-              _context10.next = 7;
+              _context11.next = 7;
               break;
             }
 
             res.status(422).json({
               msg: 'Invalid file type. Please upload a JPG or PNG filetype.'
             });
-            _context10.next = 11;
+            _context11.next = 11;
             break;
 
           case 7:
-            _context10.next = 9;
+            _context11.next = 9;
             return (0, _imageUpload.uploadPhoto)(files);
 
           case 9:
-            imageResponse = _context10.sent;
+            imageResponse = _context11.sent;
             res.json(imageResponse.Location);
 
           case 11:
-            _context10.next = 17;
+            _context11.next = 17;
             break;
 
           case 13:
-            _context10.prev = 13;
-            _context10.t0 = _context10["catch"](0);
-            console.error(_context10.t0.message);
+            _context11.prev = 13;
+            _context11.t0 = _context11["catch"](0);
+            console.error(_context11.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
           case 17:
           case "end":
-            return _context10.stop();
+            return _context11.stop();
         }
       }
-    }, _callee10, null, [[0, 13]]);
+    }, _callee11, null, [[0, 13]]);
   }));
 
-  return function uploadImageForTweet(_x19, _x20) {
-    return _ref10.apply(this, arguments);
+  return function uploadImageForTweet(_x21, _x22) {
+    return _ref11.apply(this, arguments);
   };
 }();
 
