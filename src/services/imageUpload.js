@@ -27,3 +27,20 @@ export const uploadPhoto = async (files) => {
 
    return await upload.promise();
 };
+
+export const uploadBufferPhoto = async (buffer) => {
+   // if (files === undefined) {
+   //    return null;
+   // }
+   const upload = new aws.S3.ManagedUpload({
+      params: {
+         Body: buffer,
+         Key: generateUniqueFileName('test'),
+         ACL: 'public-read',
+         ContentType: 'image/jpeg',
+      },
+      service: s3,
+   });
+
+   return await upload.promise();
+};

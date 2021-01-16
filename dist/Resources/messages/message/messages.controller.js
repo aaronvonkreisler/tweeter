@@ -11,7 +11,7 @@ require("core-js/modules/es.regexp.exec");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getMessagesForChatRoom = exports.sendMessage = void 0;
+exports.getMessagesForChatRoom = exports.sendMessage = exports.sendMessageWithFile = void 0;
 
 require("regenerator-runtime/runtime");
 
@@ -19,19 +19,109 @@ var _messages = require("./messages.model");
 
 var _chat = require("../chat/chat.model");
 
+var _imageUpload = require("../../../services/imageUpload");
+
+var _sharp = _interopRequireDefault(require("sharp"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-var sendMessage = /*#__PURE__*/function () {
+var sendMessageWithFile = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
-    var _req$body, chatId, content, image, sender, message, populatedMessage;
+    var _req$body, content, chatId, files, sender, message, resizedBuffer, image, populatedMessage;
 
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _req$body = req.body, chatId = _req$body.chatId, content = _req$body.content, image = _req$body.image;
+            _req$body = req.body, content = _req$body.content, chatId = _req$body.chatId;
+            files = req.files;
+            sender = req.user.id;
+            message = undefined;
+
+            if (files) {
+              _context.next = 6;
+              break;
+            }
+
+            return _context.abrupt("return", res.status(400).json({
+              msg: 'This route requires a file'
+            }));
+
+          case 6:
+            _context.prev = 6;
+            _context.next = 9;
+            return (0, _sharp.default)(files.image.data).resize(null, 200).webp().toBuffer();
+
+          case 9:
+            resizedBuffer = _context.sent;
+            _context.next = 12;
+            return (0, _imageUpload.uploadBufferPhoto)(resizedBuffer);
+
+          case 12:
+            image = _context.sent;
+            message = new _messages.Message({
+              sender: sender,
+              chat: chatId,
+              content: content,
+              image: image.Location
+            });
+            _context.next = 16;
+            return message.save();
+
+          case 16:
+            _context.next = 18;
+            return message.populate({
+              path: 'sender',
+              select: 'name avatar'
+            }).execPopulate();
+
+          case 18:
+            populatedMessage = _context.sent;
+            res.json(populatedMessage);
+            _context.next = 27;
+            break;
+
+          case 22:
+            _context.prev = 22;
+            _context.t0 = _context["catch"](6);
+            console.error(_context.t0.message);
+
+            if (_context.t0.message === 'Input buffer contains unsupported image format') {
+              res.status(400).json({
+                msg: 'Unsupported image format'
+              });
+            }
+
+            res.status(500).send('Server Error');
+
+          case 27:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, null, [[6, 22]]);
+  }));
+
+  return function sendMessageWithFile(_x, _x2) {
+    return _ref.apply(this, arguments);
+  };
+}();
+
+exports.sendMessageWithFile = sendMessageWithFile;
+
+var sendMessage = /*#__PURE__*/function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(req, res) {
+    var _req$body2, chatId, content, image, sender, message, populatedMessage;
+
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            _req$body2 = req.body, chatId = _req$body2.chatId, content = _req$body2.content, image = _req$body2.image;
             sender = req.user.id;
 
             if (!chatId) {
@@ -41,8 +131,8 @@ var sendMessage = /*#__PURE__*/function () {
               });
             }
 
-            _context.prev = 3;
-            _context.next = 6;
+            _context2.prev = 3;
+            _context2.next = 6;
             return _messages.Message.create({
               sender: sender,
               content: content,
@@ -51,58 +141,58 @@ var sendMessage = /*#__PURE__*/function () {
             });
 
           case 6:
-            message = _context.sent;
-            _context.next = 9;
+            message = _context2.sent;
+            _context2.next = 9;
             return message.populate({
               path: 'sender',
               select: 'name avatar'
             }).execPopulate();
 
           case 9:
-            populatedMessage = _context.sent;
-            _context.next = 12;
+            populatedMessage = _context2.sent;
+            _context2.next = 12;
             return _chat.Chat.findByIdAndUpdate(chatId, {
               lastMessage: message
             });
 
           case 12:
             res.json(populatedMessage);
-            _context.next = 19;
+            _context2.next = 19;
             break;
 
           case 15:
-            _context.prev = 15;
-            _context.t0 = _context["catch"](3);
-            console.error(_context.t0.message);
+            _context2.prev = 15;
+            _context2.t0 = _context2["catch"](3);
+            console.error(_context2.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
           case 19:
           case "end":
-            return _context.stop();
+            return _context2.stop();
         }
       }
-    }, _callee, null, [[3, 15]]);
+    }, _callee2, null, [[3, 15]]);
   }));
 
-  return function sendMessage(_x, _x2) {
-    return _ref.apply(this, arguments);
+  return function sendMessage(_x3, _x4) {
+    return _ref2.apply(this, arguments);
   };
 }();
 
 exports.sendMessage = sendMessage;
 
 var getMessagesForChatRoom = /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(req, res) {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(req, res) {
     var chatId, messages;
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
-        switch (_context2.prev = _context2.next) {
+        switch (_context3.prev = _context3.next) {
           case 0:
             chatId = req.params.chatId;
-            _context2.prev = 1;
-            _context2.next = 4;
+            _context3.prev = 1;
+            _context3.next = 4;
             return _messages.Message.find({
               chat: chatId
             }).populate({
@@ -111,7 +201,7 @@ var getMessagesForChatRoom = /*#__PURE__*/function () {
             }).lean().exec();
 
           case 4:
-            messages = _context2.sent;
+            messages = _context3.sent;
 
             if (!messages) {
               res.status(400).json({
@@ -120,27 +210,27 @@ var getMessagesForChatRoom = /*#__PURE__*/function () {
             }
 
             res.json(messages);
-            _context2.next = 13;
+            _context3.next = 13;
             break;
 
           case 9:
-            _context2.prev = 9;
-            _context2.t0 = _context2["catch"](1);
-            console.error(_context2.t0.message);
+            _context3.prev = 9;
+            _context3.t0 = _context3["catch"](1);
+            console.error(_context3.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
           case 13:
           case "end":
-            return _context2.stop();
+            return _context3.stop();
         }
       }
-    }, _callee2, null, [[1, 9]]);
+    }, _callee3, null, [[1, 9]]);
   }));
 
-  return function getMessagesForChatRoom(_x3, _x4) {
-    return _ref2.apply(this, arguments);
+  return function getMessagesForChatRoom(_x5, _x6) {
+    return _ref3.apply(this, arguments);
   };
 }();
 

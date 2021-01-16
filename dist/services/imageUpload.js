@@ -9,7 +9,7 @@ require("core-js/modules/es.promise");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.uploadPhoto = void 0;
+exports.uploadBufferPhoto = exports.uploadPhoto = void 0;
 
 require("regenerator-runtime/runtime");
 
@@ -81,3 +81,43 @@ var uploadPhoto = /*#__PURE__*/function () {
 }();
 
 exports.uploadPhoto = uploadPhoto;
+
+var uploadBufferPhoto = /*#__PURE__*/function () {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(buffer) {
+    var upload;
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            // if (files === undefined) {
+            //    return null;
+            // }
+            upload = new _awsSdk.default.S3.ManagedUpload({
+              params: {
+                Body: buffer,
+                Key: (0, _images.generateUniqueFileName)('test'),
+                ACL: 'public-read',
+                ContentType: 'image/jpeg'
+              },
+              service: s3
+            });
+            _context2.next = 3;
+            return upload.promise();
+
+          case 3:
+            return _context2.abrupt("return", _context2.sent);
+
+          case 4:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2);
+  }));
+
+  return function uploadBufferPhoto(_x2) {
+    return _ref2.apply(this, arguments);
+  };
+}();
+
+exports.uploadBufferPhoto = uploadBufferPhoto;

@@ -1,5 +1,50 @@
 import { Message } from './messages.model';
 import { Chat } from '../chat/chat.model';
+import { uploadBufferPhoto } from '../../../services/imageUpload';
+import sharp from 'sharp';
+
+export const sendMessageWithFile = async (req, res) => {
+   const { content, chatId } = req.body;
+   const { files } = req;
+   const sender = req.user.id;
+   let message = undefined;
+
+   if (!files) {
+      return res.status(400).json({ msg: 'This route requires a file' });
+   }
+
+   try {
+      const resizedBuffer = await sharp(files.image.data)
+         .resize(null, 200)
+         .webp()
+         .toBuffer();
+
+      const image = await uploadBufferPhoto(resizedBuffer);
+
+      message = new Message({
+         sender,
+         chat: chatId,
+         content,
+         image: image.Location,
+      });
+
+      await message.save();
+
+      const populatedMessage = await message
+         .populate({ path: 'sender', select: 'name avatar' })
+         .execPopulate();
+
+      res.json(populatedMessage);
+   } catch (err) {
+      console.error(err.message);
+
+      if (err.message === 'Input buffer contains unsupported image format') {
+         res.status(400).json({ msg: 'Unsupported image format' });
+      }
+
+      res.status(500).send('Server Error');
+   }
+};
 
 export const sendMessage = async (req, res) => {
    const { chatId, content, image } = req.body;
