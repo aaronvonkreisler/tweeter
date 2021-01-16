@@ -59,7 +59,7 @@ var createTweetWithImage = /*#__PURE__*/function () {
           case 6:
             _context.prev = 6;
             _context.next = 9;
-            return (0, _sharp.default)(files.image.data).resize(null, 280).webp().toBuffer();
+            return (0, _sharp.default)(files.image.data).resize(500, null).webp().toBuffer();
 
           case 9:
             resizedBuffer = _context.sent;

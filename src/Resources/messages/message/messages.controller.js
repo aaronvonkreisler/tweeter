@@ -15,7 +15,7 @@ export const sendMessageWithFile = async (req, res) => {
 
    try {
       const resizedBuffer = await sharp(files.image.data)
-         .resize(null, 200)
+         .resize(300, null)
          .webp()
          .toBuffer();
 
