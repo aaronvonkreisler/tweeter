@@ -40,7 +40,7 @@ var socketHandler = require('../../../handlers/socketHandler');
 
 var sendMessageWithFile = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
-    var _req$body, content, chatId, files, sender, message, resizedBuffer, image, populatedMessage;
+    var _req$body, content, chatId, files, sender, message, resizedBuffer, image, populatedMessage, chat;
 
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
@@ -90,12 +90,26 @@ var sendMessageWithFile = /*#__PURE__*/function () {
 
           case 18:
             populatedMessage = _context.sent;
+            _context.next = 21;
+            return _chat.Chat.findById(chatId);
+
+          case 21:
+            chat = _context.sent;
+            chat.users.forEach(function (user) {
+              var userId = user.toString();
+
+              if (userId === sender) {
+                return;
+              }
+
+              socketHandler.sendSocketMessage(req, populatedMessage, userId);
+            });
             res.json(populatedMessage);
-            _context.next = 27;
+            _context.next = 31;
             break;
 
-          case 22:
-            _context.prev = 22;
+          case 26:
+            _context.prev = 26;
             _context.t0 = _context["catch"](6);
             console.error(_context.t0.message);
 
@@ -107,12 +121,12 @@ var sendMessageWithFile = /*#__PURE__*/function () {
 
             res.status(500).send('Server Error');
 
-          case 27:
+          case 31:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[6, 22]]);
+    }, _callee, null, [[6, 26]]);
   }));
 
   return function sendMessageWithFile(_x, _x2) {

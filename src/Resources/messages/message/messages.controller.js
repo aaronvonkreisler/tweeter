@@ -36,6 +36,17 @@ export const sendMessageWithFile = async (req, res) => {
          .populate({ path: 'sender', select: 'name avatar' })
          .execPopulate();
 
+      const chat = await Chat.findById(chatId);
+
+      chat.users.forEach((user) => {
+         const userId = user.toString();
+         if (userId === sender) {
+            return;
+         }
+
+         socketHandler.sendSocketMessage(req, populatedMessage, userId);
+      });
+
       res.json(populatedMessage);
    } catch (err) {
       console.error(err.message);
