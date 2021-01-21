@@ -15,7 +15,7 @@ export const createTweetWithImage = async (req, res) => {
    }
    try {
       const resizedBuffer = await sharp(files.image.data)
-         .resize(500, null)
+         .resize(560, null)
          .webp()
          .toBuffer();
 
@@ -204,7 +204,7 @@ export const replyToTweetWithImage = async (req, res) => {
       );
 
       const resizedBuffer = await sharp(files.image.data)
-         .resize(500, null)
+         .resize(560, null)
          .webp()
          .toBuffer();
 

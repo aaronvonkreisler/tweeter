@@ -59,7 +59,7 @@ var createTweetWithImage = /*#__PURE__*/function () {
           case 6:
             _context.prev = 6;
             _context.next = 9;
-            return (0, _sharp.default)(files.image.data).resize(500, null).webp().toBuffer();
+            return (0, _sharp.default)(files.image.data).resize(560, null).webp().toBuffer();
 
           case 9:
             resizedBuffer = _context.sent;
@@ -481,7 +481,7 @@ var replyToTweetWithImage = /*#__PURE__*/function () {
           case 9:
             originalTweet = _context7.sent;
             _context7.next = 12;
-            return (0, _sharp.default)(files.image.data).resize(500, null).webp().toBuffer();
+            return (0, _sharp.default)(files.image.data).resize(560, null).webp().toBuffer();
 
           case 12:
             resizedBuffer = _context7.sent;
