@@ -1,5 +1,7 @@
 "use strict";
 
+require("core-js/modules/es.array.join");
+
 require("core-js/modules/es.object.to-string");
 
 require("core-js/modules/es.promise");
@@ -11,6 +13,10 @@ var _express = _interopRequireDefault(require("express"));
 var _expressFileupload = _interopRequireDefault(require("express-fileupload"));
 
 var _cors = _interopRequireDefault(require("cors"));
+
+var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
+
+var _keys = _interopRequireDefault(require("./config/keys"));
 
 var _db = require("./utils/db");
 
@@ -39,9 +45,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 // eslint-disable-next-line no-undef
 var socketio = require('socket.io');
 
-var app = (0, _express.default)(); // eslint-disable-next-line no-undef
-// eslint-disable-next-line no-undef
-
+var app = (0, _express.default)();
 app.disable('x-powered-by'); //Middleware
 
 app.use((0, _cors.default)());
@@ -107,8 +111,54 @@ var expressServer = app.listen(PORT, function () {
   return console.log("Server started on port ".concat(PORT));
 });
 var io = socketio(expressServer, {
-  pingTimeout: 60000
+  pingTimeout: 60000,
+  cors: {
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST']
+  }
 });
-io.on('connection', function (socket) {
-  console.log('socket connected');
+app.set('socketio', io);
+io.use(function (socket, next) {
+  var token = socket.handshake.query.token;
+
+  if (token) {
+    try {
+      var user = _jsonwebtoken.default.decode(token, _keys.default.jwt);
+
+      if (!user) {
+        return next(new Error('Not authorized'));
+      }
+
+      socket.user = user;
+      return next();
+    } catch (err) {
+      next(err);
+    }
+  } else {
+    return next(new Error('Not authorized'));
+  }
+}).on('connection', function (socket) {
+  socket.join(socket.user.user.id);
+  console.log('socket connected', socket.id);
+  socket.on('join room', function (chatId) {
+    socket.join(chatId);
+    console.log('joined room', chatId);
+  });
+  socket.on('typing', function (chatId) {
+    socket.in(chatId).emit('typing');
+  });
+  socket.on('stop typing', function (chatId) {
+    socket.in(chatId).emit('stop typing');
+  }); // socket.on('new message', (chat) => {
+  //    const sender = socket.user.user.id;
+  //    if (!chat.users) {
+  //       return console.log('chat.users not defined');
+  //    }
+  //    chat.users.forEach((user) => {
+  //       if (user._id !== sender) {
+  //          socket.in(user._id).emit('message received', chat);
+  //          console.log('sent message');
+  //       }
+  //    });
+  // });
 });

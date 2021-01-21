@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import keys from '../config/keys';
-import { User } from '../Resources/user/user.model';
 
 export const newToken = (user) => {
    return jwt.sign({ user: { id: user.id } }, keys.jwt, {

@@ -1,7 +1,8 @@
 import express from 'express';
 import fileUpload from 'express-fileupload';
 import cors from 'cors';
-
+import jwt from 'jsonwebtoken';
+import keys from './config/keys';
 import { connectDB } from './utils/db';
 import { protect } from './utils/auth';
 import userRouter from './Resources/user/user.router';
@@ -15,10 +16,6 @@ import messagesRouter from './Resources/messages/message/messages.router';
 const socketio = require('socket.io');
 
 const app = express();
-// eslint-disable-next-line no-undef
-
-// eslint-disable-next-line no-undef
-
 app.disable('x-powered-by');
 
 //Middleware
@@ -65,8 +62,58 @@ const expressServer = app.listen(PORT, () =>
    console.log(`Server started on port ${PORT}`)
 );
 
-const io = socketio(expressServer, { pingTimeout: 60000 });
+const io = socketio(expressServer, {
+   pingTimeout: 60000,
+   cors: {
+      origin: 'http://localhost:3000',
+      methods: ['GET', 'POST'],
+   },
+});
+app.set('socketio', io);
 
-io.on('connection', (socket) => {
-   console.log('socket connected');
+io.use((socket, next) => {
+   const token = socket.handshake.query.token;
+   if (token) {
+      try {
+         const user = jwt.decode(token, keys.jwt);
+
+         if (!user) {
+            return next(new Error('Not authorized'));
+         }
+         socket.user = user;
+         return next();
+      } catch (err) {
+         next(err);
+      }
+   } else {
+      return next(new Error('Not authorized'));
+   }
+}).on('connection', (socket) => {
+   socket.join(socket.user.user.id);
+   console.log('socket connected', socket.id);
+
+   socket.on('join room', (chatId) => {
+      socket.join(chatId);
+      console.log('joined room', chatId);
+   });
+   socket.on('typing', (chatId) => {
+      socket.in(chatId).emit('typing');
+   });
+   socket.on('stop typing', (chatId) => {
+      socket.in(chatId).emit('stop typing');
+   });
+
+   // socket.on('new message', (chat) => {
+   //    const sender = socket.user.user.id;
+   //    if (!chat.users) {
+   //       return console.log('chat.users not defined');
+   //    }
+
+   //    chat.users.forEach((user) => {
+   //       if (user._id !== sender) {
+   //          socket.in(user._id).emit('message received', chat);
+   //          console.log('sent message');
+   //       }
+   //    });
+   // });
 });

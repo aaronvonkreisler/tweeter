@@ -1,7 +1,9 @@
+import sharp from 'sharp';
 import { Message } from './messages.model';
 import { Chat } from '../chat/chat.model';
 import { uploadBufferPhoto } from '../../../services/imageUpload';
-import sharp from 'sharp';
+// eslint-disable-next-line no-undef
+const socketHandler = require('../../../handlers/socketHandler');
 
 export const sendMessageWithFile = async (req, res) => {
    const { content, chatId } = req.body;
@@ -67,7 +69,18 @@ export const sendMessage = async (req, res) => {
          .populate({ path: 'sender', select: 'name avatar' })
          .execPopulate();
 
-      await Chat.findByIdAndUpdate(chatId, { lastMessage: message });
+      const chat = await Chat.findByIdAndUpdate(chatId, {
+         lastMessage: message,
+      });
+
+      chat.users.forEach((user) => {
+         const userId = user.toString();
+         if (userId === sender) {
+            return;
+         }
+
+         socketHandler.sendSocketMessage(req, populatedMessage, userId);
+      });
 
       res.json(populatedMessage);
    } catch (err) {
