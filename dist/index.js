@@ -149,16 +149,5 @@ io.use(function (socket, next) {
   });
   socket.on('stop typing', function (chatId) {
     socket.in(chatId).emit('stop typing');
-  }); // socket.on('new message', (chat) => {
-  //    const sender = socket.user.user.id;
-  //    if (!chat.users) {
-  //       return console.log('chat.users not defined');
-  //    }
-  //    chat.users.forEach((user) => {
-  //       if (user._id !== sender) {
-  //          socket.in(user._id).emit('message received', chat);
-  //          console.log('sent message');
-  //       }
-  //    });
-  // });
+  });
 });
