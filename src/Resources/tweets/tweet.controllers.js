@@ -1,8 +1,8 @@
 import { validationResult } from 'express-validator';
 import { Tweet } from './tweet.model';
 import { User } from '../user/user.model';
-import { uploadPhoto, uploadBufferPhoto } from '../../services/imageUpload';
-import sharp from 'sharp';
+import { uploadImageToS3 } from '../../services/imageUpload';
+import { resizeImage } from '../../utils/images';
 
 export const createTweetWithImage = async (req, res) => {
    const { content } = req.body;
@@ -14,12 +14,9 @@ export const createTweetWithImage = async (req, res) => {
       return res.status(400).json({ msg: 'This route requires a file' });
    }
    try {
-      const resizedBuffer = await sharp(files.image.data)
-         .resize(560, null)
-         .webp()
-         .toBuffer();
+      const resizedImage = await resizeImage(560, null, files.image.data);
 
-      const image = await uploadBufferPhoto(resizedBuffer);
+      const image = await uploadImageToS3(resizedImage);
 
       tweet = new Tweet({
          user,
@@ -203,12 +200,9 @@ export const replyToTweetWithImage = async (req, res) => {
          { new: true }
       );
 
-      const resizedBuffer = await sharp(files.image.data)
-         .resize(560, null)
-         .webp()
-         .toBuffer();
+      const resizedImage = await resizeImage(560, null, files.image.data);
 
-      const image = await uploadBufferPhoto(resizedBuffer);
+      const image = await uploadImageToS3(resizedImage);
 
       reply = new Tweet({
          user: req.user.id,
@@ -309,25 +303,6 @@ export const removePinnedTweet = async (req, res) => {
       await User.findByIdAndUpdate(userId, { $unset: { pinnedTweet: '' } });
 
       res.json({ msg: 'Pinned Tweet Removed' });
-   } catch (err) {
-      console.error(err.message);
-      res.status(500).json({ msg: 'Server Error' });
-   }
-};
-
-export const uploadImageForTweet = async (req, res) => {
-   try {
-      const { files } = req;
-      const regex = /(image\/jpg)|(image\/jpeg)|(image\/png)|(image\/gif)/i;
-      if (!files.image.mimetype.match(regex)) {
-         res.status(422).json({
-            msg: 'Invalid file type. Please upload a JPG or PNG filetype.',
-         });
-      } else {
-         const imageResponse = await uploadPhoto(files);
-
-         res.json(imageResponse.Location);
-      }
    } catch (err) {
       console.error(err.message);
       res.status(500).json({ msg: 'Server Error' });

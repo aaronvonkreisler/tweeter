@@ -1,4 +1,5 @@
 import path from 'path';
+import sharp from 'sharp';
 
 export const generateUniqueFileName = (filename) => {
    const extension = path.extname(filename);
@@ -14,4 +15,12 @@ export const generateUniqueFileName = (filename) => {
    });
 
    return `${randomHash}-${date}${extension}`;
+};
+
+export const resizeImage = async (width, height, buffer) => {
+   const resizedBuffer = await sharp(buffer)
+      .resize(width, height)
+      .webp()
+      .toBuffer();
+   return resizedBuffer;
 };

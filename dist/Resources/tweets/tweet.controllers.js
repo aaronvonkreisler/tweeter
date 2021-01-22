@@ -8,12 +8,10 @@ require("core-js/modules/es.regexp.exec");
 
 require("core-js/modules/es.regexp.to-string");
 
-require("core-js/modules/es.string.match");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.uploadImageForTweet = exports.removePinnedTweet = exports.pinTweetToProfile = exports.replytoTweet = exports.replyToTweetWithImage = exports.retweet = exports.removeFavorite = exports.favoriteTweet = exports.deleteTweet = exports.createTweet = exports.createTweetWithImage = void 0;
+exports.removePinnedTweet = exports.pinTweetToProfile = exports.replytoTweet = exports.replyToTweetWithImage = exports.retweet = exports.removeFavorite = exports.favoriteTweet = exports.deleteTweet = exports.createTweet = exports.createTweetWithImage = void 0;
 
 require("regenerator-runtime/runtime");
 
@@ -25,9 +23,7 @@ var _user = require("../user/user.model");
 
 var _imageUpload = require("../../services/imageUpload");
 
-var _sharp = _interopRequireDefault(require("sharp"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _images = require("../../utils/images");
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -37,7 +33,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 var createTweetWithImage = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
-    var content, files, user, tweet, resizedBuffer, image, populatedTweet;
+    var content, files, user, tweet, resizedImage, image, populatedTweet;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -59,12 +55,12 @@ var createTweetWithImage = /*#__PURE__*/function () {
           case 6:
             _context.prev = 6;
             _context.next = 9;
-            return (0, _sharp.default)(files.image.data).resize(560, null).webp().toBuffer();
+            return (0, _images.resizeImage)(560, null, files.image.data);
 
           case 9:
-            resizedBuffer = _context.sent;
+            resizedImage = _context.sent;
             _context.next = 12;
-            return (0, _imageUpload.uploadBufferPhoto)(resizedBuffer);
+            return (0, _imageUpload.uploadImageToS3)(resizedImage);
 
           case 12:
             image = _context.sent;
@@ -446,7 +442,7 @@ exports.retweet = retweet;
 
 var replyToTweetWithImage = /*#__PURE__*/function () {
   var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(req, res) {
-    var tweetId, content, files, reply, originalTweet, resizedBuffer, image, populatedReply;
+    var tweetId, content, files, reply, originalTweet, resizedImage, image, populatedReply;
     return regeneratorRuntime.wrap(function _callee7$(_context7) {
       while (1) {
         switch (_context7.prev = _context7.next) {
@@ -481,12 +477,12 @@ var replyToTweetWithImage = /*#__PURE__*/function () {
           case 9:
             originalTweet = _context7.sent;
             _context7.next = 12;
-            return (0, _sharp.default)(files.image.data).resize(560, null).webp().toBuffer();
+            return (0, _images.resizeImage)(560, null, files.image.data);
 
           case 12:
-            resizedBuffer = _context7.sent;
+            resizedImage = _context7.sent;
             _context7.next = 15;
-            return (0, _imageUpload.uploadBufferPhoto)(resizedBuffer);
+            return (0, _imageUpload.uploadImageToS3)(resizedImage);
 
           case 15:
             image = _context7.sent;
@@ -725,60 +721,3 @@ var removePinnedTweet = /*#__PURE__*/function () {
 }();
 
 exports.removePinnedTweet = removePinnedTweet;
-
-var uploadImageForTweet = /*#__PURE__*/function () {
-  var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11(req, res) {
-    var files, regex, imageResponse;
-    return regeneratorRuntime.wrap(function _callee11$(_context11) {
-      while (1) {
-        switch (_context11.prev = _context11.next) {
-          case 0:
-            _context11.prev = 0;
-            files = req.files;
-            regex = /(image\/jpg)|(image\/jpeg)|(image\/png)|(image\/gif)/i;
-
-            if (files.image.mimetype.match(regex)) {
-              _context11.next = 7;
-              break;
-            }
-
-            res.status(422).json({
-              msg: 'Invalid file type. Please upload a JPG or PNG filetype.'
-            });
-            _context11.next = 11;
-            break;
-
-          case 7:
-            _context11.next = 9;
-            return (0, _imageUpload.uploadPhoto)(files);
-
-          case 9:
-            imageResponse = _context11.sent;
-            res.json(imageResponse.Location);
-
-          case 11:
-            _context11.next = 17;
-            break;
-
-          case 13:
-            _context11.prev = 13;
-            _context11.t0 = _context11["catch"](0);
-            console.error(_context11.t0.message);
-            res.status(500).json({
-              msg: 'Server Error'
-            });
-
-          case 17:
-          case "end":
-            return _context11.stop();
-        }
-      }
-    }, _callee11, null, [[0, 13]]);
-  }));
-
-  return function uploadImageForTweet(_x21, _x22) {
-    return _ref11.apply(this, arguments);
-  };
-}();
-
-exports.uploadImageForTweet = uploadImageForTweet;

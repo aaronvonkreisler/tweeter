@@ -1,7 +1,5 @@
 "use strict";
 
-require("core-js/modules/es.function.name");
-
 require("core-js/modules/es.object.to-string");
 
 require("core-js/modules/es.promise");
@@ -9,7 +7,7 @@ require("core-js/modules/es.promise");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.uploadBufferPhoto = exports.uploadPhoto = void 0;
+exports.uploadImageToS3 = void 0;
 
 require("regenerator-runtime/runtime");
 
@@ -37,61 +35,13 @@ var s3 = new _awsSdk.default.S3({
   }
 });
 
-var uploadPhoto = /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(files) {
+var uploadImageToS3 = /*#__PURE__*/function () {
+  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(buffer) {
     var upload;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            if (!(files === undefined)) {
-              _context.next = 2;
-              break;
-            }
-
-            return _context.abrupt("return", null);
-
-          case 2:
-            upload = new _awsSdk.default.S3.ManagedUpload({
-              params: {
-                Body: files.image.data,
-                Key: (0, _images.generateUniqueFileName)(files.image.name),
-                ACL: 'public-read',
-                ContentType: 'image/jpeg'
-              },
-              service: s3
-            });
-            _context.next = 5;
-            return upload.promise();
-
-          case 5:
-            return _context.abrupt("return", _context.sent);
-
-          case 6:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee);
-  }));
-
-  return function uploadPhoto(_x) {
-    return _ref.apply(this, arguments);
-  };
-}();
-
-exports.uploadPhoto = uploadPhoto;
-
-var uploadBufferPhoto = /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(buffer) {
-    var upload;
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            // if (files === undefined) {
-            //    return null;
-            // }
             upload = new _awsSdk.default.S3.ManagedUpload({
               params: {
                 Body: buffer,
@@ -101,23 +51,23 @@ var uploadBufferPhoto = /*#__PURE__*/function () {
               },
               service: s3
             });
-            _context2.next = 3;
+            _context.next = 3;
             return upload.promise();
 
           case 3:
-            return _context2.abrupt("return", _context2.sent);
+            return _context.abrupt("return", _context.sent);
 
           case 4:
           case "end":
-            return _context2.stop();
+            return _context.stop();
         }
       }
-    }, _callee2);
+    }, _callee);
   }));
 
-  return function uploadBufferPhoto(_x2) {
-    return _ref2.apply(this, arguments);
+  return function uploadImageToS3(_x) {
+    return _ref.apply(this, arguments);
   };
 }();
 
-exports.uploadBufferPhoto = uploadBufferPhoto;
+exports.uploadImageToS3 = uploadImageToS3;
