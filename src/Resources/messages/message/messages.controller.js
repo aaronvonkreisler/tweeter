@@ -1,4 +1,3 @@
-import sharp from 'sharp';
 import { Message } from './messages.model';
 import { Chat } from '../chat/chat.model';
 import { uploadImageToS3 } from '../../../services/imageUpload';
