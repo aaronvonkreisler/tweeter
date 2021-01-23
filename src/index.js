@@ -58,8 +58,8 @@ app.use('/api/messages', messagesRouter);
 // eslint-disable-next-line no-undef
 const PORT = process.env.PORT || 5000;
 
-// eslint-disable-next-line no-undef
 const clientOrigin =
+   // eslint-disable-next-line no-undef
    process.env.NODE_ENV === 'production'
       ? keys.clientHost
       : 'http://localhost:3000';
