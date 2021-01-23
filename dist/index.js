@@ -106,14 +106,16 @@ _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
 }))(); // eslint-disable-next-line no-undef
 
 
-var PORT = process.env.PORT || 5000;
+var PORT = process.env.PORT || 5000; // eslint-disable-next-line no-undef
+
+var clientOrigin = process.env.NODE_ENV === 'production' ? _keys.default.clientHost : 'http://localhost:3000';
 var expressServer = app.listen(PORT, function () {
   return console.log("Server started on port ".concat(PORT));
 });
 var io = socketio(expressServer, {
   pingTimeout: 60000,
   cors: {
-    origin: 'http://localhost:3000',
+    origin: clientOrigin,
     methods: ['GET', 'POST']
   }
 });
