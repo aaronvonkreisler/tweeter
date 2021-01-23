@@ -14,8 +14,6 @@ var _expressFileupload = _interopRequireDefault(require("express-fileupload"));
 
 var _cors = _interopRequireDefault(require("cors"));
 
-var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
-
 var _keys = _interopRequireDefault(require("./config/keys"));
 
 var _db = require("./utils/db");
@@ -120,28 +118,11 @@ var io = socketio(expressServer, {
   }
 });
 app.set('socketio', io);
-io.use(function (socket, next) {
-  var token = socket.handshake.query.token;
-
-  if (token) {
-    try {
-      var user = _jsonwebtoken.default.decode(token, _keys.default.jwt);
-
-      if (!user) {
-        return next(new Error('Not authorized'));
-      }
-
-      socket.user = user;
-      return next();
-    } catch (err) {
-      next(err);
-    }
-  } else {
-    return next(new Error('Not authorized'));
-  }
-}).on('connection', function (socket) {
-  socket.join(socket.user.user.id);
-  console.log('socket connected', socket.id);
+io.on('connection', function (socket) {
+  socket.on('setup', function (userId) {
+    socket.join(userId);
+    console.log('socket ', socket.id, 'connected to user ', userId);
+  });
   socket.on('join room', function (chatId) {
     socket.join(chatId);
     console.log('joined room', chatId);

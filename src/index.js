@@ -1,7 +1,6 @@
 import express from 'express';
 import fileUpload from 'express-fileupload';
 import cors from 'cors';
-import jwt from 'jsonwebtoken';
 import keys from './config/keys';
 import { connectDB } from './utils/db';
 import { protect } from './utils/auth';
@@ -77,26 +76,11 @@ const io = socketio(expressServer, {
 });
 app.set('socketio', io);
 
-io.use((socket, next) => {
-   const token = socket.handshake.query.token;
-   if (token) {
-      try {
-         const user = jwt.decode(token, keys.jwt);
-
-         if (!user) {
-            return next(new Error('Not authorized'));
-         }
-         socket.user = user;
-         return next();
-      } catch (err) {
-         next(err);
-      }
-   } else {
-      return next(new Error('Not authorized'));
-   }
-}).on('connection', (socket) => {
-   socket.join(socket.user.user.id);
-   console.log('socket connected', socket.id);
+io.on('connection', (socket) => {
+   socket.on('setup', (userId) => {
+      socket.join(userId);
+      console.log('socket ', socket.id, 'connected to user ', userId);
+   });
 
    socket.on('join room', (chatId) => {
       socket.join(chatId);

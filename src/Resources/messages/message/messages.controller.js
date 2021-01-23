@@ -1,7 +1,8 @@
 import sharp from 'sharp';
 import { Message } from './messages.model';
 import { Chat } from '../chat/chat.model';
-import { uploadBufferPhoto } from '../../../services/imageUpload';
+import { uploadImageToS3 } from '../../../services/imageUpload';
+import { resizeImage } from '../../../utils/images';
 // eslint-disable-next-line no-undef
 const socketHandler = require('../../../handlers/socketHandler');
 
@@ -16,12 +17,9 @@ export const sendMessageWithFile = async (req, res) => {
    }
 
    try {
-      const resizedBuffer = await sharp(files.image.data)
-         .resize(300, null)
-         .webp()
-         .toBuffer();
+      const resizedImage = await resizeImage(300, null, files.image.data);
 
-      const image = await uploadBufferPhoto(resizedBuffer);
+      const image = await uploadImageToS3(resizedImage);
 
       message = new Message({
          sender,

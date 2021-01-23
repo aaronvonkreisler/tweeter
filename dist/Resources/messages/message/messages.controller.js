@@ -29,6 +29,8 @@ var _chat = require("../chat/chat.model");
 
 var _imageUpload = require("../../../services/imageUpload");
 
+var _images = require("../../../utils/images");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -40,7 +42,7 @@ var socketHandler = require('../../../handlers/socketHandler');
 
 var sendMessageWithFile = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
-    var _req$body, content, chatId, files, sender, message, resizedBuffer, image, populatedMessage, chat;
+    var _req$body, content, chatId, files, sender, message, resizedImage, image, populatedMessage, chat;
 
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
@@ -63,12 +65,12 @@ var sendMessageWithFile = /*#__PURE__*/function () {
           case 6:
             _context.prev = 6;
             _context.next = 9;
-            return (0, _sharp.default)(files.image.data).resize(300, null).webp().toBuffer();
+            return (0, _images.resizeImage)(300, null, files.image.data);
 
           case 9:
-            resizedBuffer = _context.sent;
+            resizedImage = _context.sent;
             _context.next = 12;
-            return (0, _imageUpload.uploadBufferPhoto)(resizedBuffer);
+            return (0, _imageUpload.uploadImageToS3)(resizedImage);
 
           case 12:
             image = _context.sent;
