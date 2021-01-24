@@ -79,6 +79,7 @@ app.set('socketio', io);
 io.on('connection', (socket) => {
    socket.on('setup', (userId) => {
       socket.join(userId);
+      socket.emit('successful setup');
       console.log('socket ', socket.id, 'connected to user ', userId);
    });
 
