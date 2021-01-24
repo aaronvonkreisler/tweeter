@@ -121,6 +121,7 @@ app.set('socketio', io);
 io.on('connection', function (socket) {
   socket.on('setup', function (userId) {
     socket.join(userId);
+    socket.emit('successful setup');
     console.log('socket ', socket.id, 'connected to user ', userId);
   });
   socket.on('join room', function (chatId) {
