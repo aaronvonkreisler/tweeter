@@ -31,13 +31,15 @@ exports.searchUsers = exports.getSuggestedUsers = exports.updateProfile = export
 
 require("regenerator-runtime/runtime");
 
-var _user = require("./user.model");
-
-var _imageUpload = require("../../services/imageUpload");
-
 var _normalizeUrl = _interopRequireDefault(require("normalize-url"));
 
 var _mongoose = _interopRequireDefault(require("mongoose"));
+
+var _user = require("./user.model");
+
+var _notification = require("../notifications/notification.model");
+
+var _imageUpload = require("../../services/imageUpload");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -177,27 +179,29 @@ exports.fetchUserByUsername = fetchUserByUsername;
 
 var followUser = /*#__PURE__*/function () {
   var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(req, res) {
-    var user, userToBeFollowed;
+    var userId, userToFollowId, user, userToBeFollowed, notification;
     return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
-            _context4.prev = 0;
-            _context4.next = 3;
-            return _user.User.findById(req.user.id).select('-password');
+            userId = req.user.id;
+            userToFollowId = req.params.id;
+            _context4.prev = 2;
+            _context4.next = 5;
+            return _user.User.findById(userId).select('-password');
 
-          case 3:
+          case 5:
             user = _context4.sent;
-            _context4.next = 6;
-            return _user.User.findById(req.params.id);
+            _context4.next = 8;
+            return _user.User.findById(userToFollowId);
 
-          case 6:
+          case 8:
             userToBeFollowed = _context4.sent;
 
             if (!(userToBeFollowed.followers.filter(function (follower) {
               return follower.user.toString() === req.user.id;
             }).length > 0)) {
-              _context4.next = 9;
+              _context4.next = 11;
               break;
             }
 
@@ -205,38 +209,47 @@ var followUser = /*#__PURE__*/function () {
               msg: 'User is already followed'
             }));
 
-          case 9:
+          case 11:
             userToBeFollowed.followers.unshift({
-              user: req.user.id
+              user: userId
             });
             user.following.unshift({
-              user: req.params.id
+              user: userToFollowId
             });
-            _context4.next = 13;
+            _context4.next = 15;
             return userToBeFollowed.save();
 
-          case 13:
-            _context4.next = 15;
+          case 15:
+            _context4.next = 17;
             return user.save();
 
-          case 15:
+          case 17:
+            notification = new _notification.Notification({
+              notificationType: 'follow',
+              sender: user._id,
+              receiver: userToBeFollowed._id
+            });
+            _context4.next = 20;
+            return notification.save();
+
+          case 20:
             // Return the followers of the user who is being followed.
             res.json(userToBeFollowed.followers);
-            _context4.next = 22;
+            _context4.next = 27;
             break;
 
-          case 18:
-            _context4.prev = 18;
-            _context4.t0 = _context4["catch"](0);
+          case 23:
+            _context4.prev = 23;
+            _context4.t0 = _context4["catch"](2);
             console.error(_context4.t0.message);
             res.status(500).send('Server Error');
 
-          case 22:
+          case 27:
           case "end":
             return _context4.stop();
         }
       }
-    }, _callee4, null, [[0, 18]]);
+    }, _callee4, null, [[2, 23]]);
   }));
 
   return function followUser(_x7, _x8) {
@@ -342,7 +355,7 @@ var uploadUserAvatar = /*#__PURE__*/function () {
 
           case 7:
             _context6.next = 9;
-            return (0, _imageUpload.uploadPhoto)(files);
+            return (0, _imageUpload.uploadImageToS3)(files);
 
           case 9:
             profilePicResponse = _context6.sent;
@@ -407,7 +420,7 @@ var uploadUserBackgroundImage = /*#__PURE__*/function () {
 
           case 7:
             _context7.next = 9;
-            return (0, _imageUpload.uploadPhoto)(files);
+            return (0, _imageUpload.uploadImageToS3)(files);
 
           case 9:
             backgroundPicResponse = _context7.sent;

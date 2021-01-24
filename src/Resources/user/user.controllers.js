@@ -1,7 +1,9 @@
-import { User } from './user.model';
-import { uploadPhoto } from '../../services/imageUpload';
 import normalize from 'normalize-url';
 import mongoose from 'mongoose';
+import { User } from './user.model';
+import { Notification } from '../notifications/notification.model';
+import { uploadImageToS3 } from '../../services/imageUpload';
+
 const ObjectId = mongoose.Types.ObjectId;
 
 export const fetchCurrentUser = async (req, res) => {
@@ -50,9 +52,11 @@ export const fetchUserByUsername = async (req, res) => {
 };
 
 export const followUser = async (req, res) => {
+   const userId = req.user.id;
+   const userToFollowId = req.params.id;
    try {
-      const user = await User.findById(req.user.id).select('-password');
-      const userToBeFollowed = await User.findById(req.params.id);
+      const user = await User.findById(userId).select('-password');
+      const userToBeFollowed = await User.findById(userToFollowId);
       if (
          userToBeFollowed.followers.filter(
             (follower) => follower.user.toString() === req.user.id
@@ -61,11 +65,19 @@ export const followUser = async (req, res) => {
          return res.status(400).json({ msg: 'User is already followed' });
       }
 
-      userToBeFollowed.followers.unshift({ user: req.user.id });
-      user.following.unshift({ user: req.params.id });
+      userToBeFollowed.followers.unshift({ user: userId });
+      user.following.unshift({ user: userToFollowId });
 
       await userToBeFollowed.save();
       await user.save();
+
+      const notification = new Notification({
+         notificationType: 'follow',
+         sender: user._id,
+         receiver: userToBeFollowed._id,
+      });
+
+      await notification.save();
 
       // Return the followers of the user who is being followed.
       res.json(userToBeFollowed.followers);
@@ -121,7 +133,7 @@ export const uploadUserAvatar = async (req, res) => {
             msg: 'Invalid file type. Please upload a JPG or PNG filetype.',
          });
       } else {
-         const profilePicResponse = await uploadPhoto(files);
+         const profilePicResponse = await uploadImageToS3(files);
 
          const user = await User.findByIdAndUpdate(
             req.user.id,
@@ -146,7 +158,7 @@ export const uploadUserBackgroundImage = async (req, res) => {
             msg: 'Invalid file type. Please upload a JPG or PNG filetype.',
          });
       } else {
-         const backgroundPicResponse = await uploadPhoto(files);
+         const backgroundPicResponse = await uploadImageToS3(files);
 
          const user = await User.findByIdAndUpdate(
             req.user.id,
