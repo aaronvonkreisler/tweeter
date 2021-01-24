@@ -1,5 +1,6 @@
 import { Message } from './messages.model';
 import { Chat } from '../chat/chat.model';
+import { Notification } from '../../notifications/notification.model';
 import { uploadImageToS3 } from '../../../services/imageUpload';
 import { resizeImage } from '../../../utils/images';
 // eslint-disable-next-line no-undef
@@ -88,6 +89,7 @@ export const sendMessage = async (req, res) => {
          }
 
          socketHandler.sendSocketMessage(req, populatedMessage, userId);
+         Notification.insertNotification(userId, sender, 'message', chatId);
       });
 
       res.json(populatedMessage);

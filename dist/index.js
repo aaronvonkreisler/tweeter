@@ -34,6 +34,8 @@ var _chat = _interopRequireDefault(require("./Resources/messages/chat/chat.route
 
 var _messages = _interopRequireDefault(require("./Resources/messages/message/messages.router"));
 
+var _notification = _interopRequireDefault(require("./Resources/notifications/notification.router"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -75,6 +77,7 @@ app.use('/api/tweets', _tweet.default);
 app.use('/api/profile', _profile.default);
 app.use('/api/bookmarks', _bookmarks.default);
 app.use('/api/chats', _chat.default);
+app.use('/api/notifications', _notification.default);
 app.use('/api/messages', _messages.default);
 
 _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {

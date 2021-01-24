@@ -179,7 +179,7 @@ exports.fetchUserByUsername = fetchUserByUsername;
 
 var followUser = /*#__PURE__*/function () {
   var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(req, res) {
-    var userId, userToFollowId, user, userToBeFollowed, notification;
+    var userId, userToFollowId, user, userToBeFollowed, isFollowing;
     return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
@@ -197,11 +197,12 @@ var followUser = /*#__PURE__*/function () {
 
           case 8:
             userToBeFollowed = _context4.sent;
-
-            if (!(userToBeFollowed.followers.filter(function (follower) {
+            isFollowing = userToBeFollowed.followers.filter(function (follower) {
               return follower.user.toString() === req.user.id;
-            }).length > 0)) {
-              _context4.next = 11;
+            }).length > 0;
+
+            if (!isFollowing) {
+              _context4.next = 12;
               break;
             }
 
@@ -209,30 +210,29 @@ var followUser = /*#__PURE__*/function () {
               msg: 'User is already followed'
             }));
 
-          case 11:
+          case 12:
             userToBeFollowed.followers.unshift({
               user: userId
             });
             user.following.unshift({
               user: userToFollowId
             });
-            _context4.next = 15;
+            _context4.next = 16;
             return userToBeFollowed.save();
 
-          case 15:
-            _context4.next = 17;
+          case 16:
+            _context4.next = 18;
             return user.save();
 
-          case 17:
-            notification = new _notification.Notification({
-              notificationType: 'follow',
-              sender: user._id,
-              receiver: userToBeFollowed._id
-            });
+          case 18:
             _context4.next = 20;
-            return notification.save();
+            return _notification.Notification.insertNotification(userToFollowId, userId, 'follow', userId);
 
           case 20:
+            /* socketHandler.sendNotification({
+               will need to populate the sender field (req.user.id)
+            })
+            */
             // Return the followers of the user who is being followed.
             res.json(userToBeFollowed.followers);
             _context4.next = 27;

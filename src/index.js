@@ -11,6 +11,7 @@ import profileRouter from './Resources/profile/profile.router';
 import bookmarksRouter from './Resources/bookmarks/bookmarks.router';
 import chatsRouter from './Resources/messages/chat/chat.router';
 import messagesRouter from './Resources/messages/message/messages.router';
+import notificationsRouter from './Resources/notifications/notification.router';
 // eslint-disable-next-line no-undef
 const socketio = require('socket.io');
 
@@ -44,6 +45,7 @@ app.use('/api/tweets', tweetRouter);
 app.use('/api/profile', profileRouter);
 app.use('/api/bookmarks', bookmarksRouter);
 app.use('/api/chats', chatsRouter);
+app.use('/api/notifications', notificationsRouter);
 app.use('/api/messages', messagesRouter);
 
 (async function () {

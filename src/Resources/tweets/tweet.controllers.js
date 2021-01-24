@@ -1,6 +1,7 @@
 import { validationResult } from 'express-validator';
 import { Tweet } from './tweet.model';
 import { User } from '../user/user.model';
+import { Notification } from '../notifications/notification.model';
 import { uploadImageToS3 } from '../../services/imageUpload';
 import { resizeImage } from '../../utils/images';
 
@@ -106,14 +107,23 @@ export const deleteTweet = async (req, res) => {
 };
 
 export const favoriteTweet = async (req, res) => {
+   const tweetId = req.params.id;
+   const userId = req.user.id;
    try {
       const tweet = await Tweet.findByIdAndUpdate(
-         req.params.id,
+         tweetId,
          {
             $addToSet: { favorites: { user: req.user.id } },
          },
          { new: true }
       ).exec();
+
+      await Notification.insertNotification(
+         tweet.user,
+         userId,
+         'like',
+         tweet._id
+      );
 
       res.json(tweet.favorites);
    } catch (err) {
@@ -175,6 +185,15 @@ export const retweet = async (req, res) => {
          { new: true }
       ).populate({ path: 'user', select: 'avatar screen_name verified name ' });
 
+      if (!deletedTweet) {
+         await Notification.insertNotification(
+            tweet.user,
+            userId,
+            'retweet',
+            tweet._id
+         );
+      }
+
       res.json(tweet);
    } catch (err) {
       console.error(err.message);
@@ -184,6 +203,7 @@ export const retweet = async (req, res) => {
 
 export const replyToTweetWithImage = async (req, res) => {
    const tweetId = req.params.tweet_id;
+   const sender = req.user.id;
    const { content } = req.body;
    const { files } = req;
    let reply = undefined;
@@ -195,7 +215,7 @@ export const replyToTweetWithImage = async (req, res) => {
       const originalTweet = await Tweet.findByIdAndUpdate(
          tweetId,
          {
-            $push: { replies: { user: req.user.id } },
+            $push: { replies: { user: sender } },
          },
          { new: true }
       );
@@ -205,7 +225,7 @@ export const replyToTweetWithImage = async (req, res) => {
       const image = await uploadImageToS3(resizedImage);
 
       reply = new Tweet({
-         user: req.user.id,
+         user: sender,
          content,
          in_reply_to: originalTweet._id,
          replyingToUser: originalTweet.user.screen_name,
@@ -221,6 +241,17 @@ export const replyToTweetWithImage = async (req, res) => {
          })
          .execPopulate();
 
+      const isReplyingToOwnTweet = originalTweet.user.toString() === sender;
+
+      if (!isReplyingToOwnTweet) {
+         await Notification.insertNotification(
+            originalTweet.user,
+            sender,
+            'reply',
+            populatedReply._id
+         );
+      }
+
       res.json(populatedReply);
    } catch (err) {
       console.error(err.message);
@@ -233,22 +264,23 @@ export const replyToTweetWithImage = async (req, res) => {
 
 export const replytoTweet = async (req, res) => {
    const errors = validationResult(req);
+   const tweetId = req.params.tweet_id;
+   const sender = req.user.id;
    if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
    }
 
    try {
-      const tweetId = req.params.tweet_id;
       const originalTweet = await Tweet.findByIdAndUpdate(
          tweetId,
          {
-            $push: { replies: { user: req.user.id } },
+            $push: { replies: { user: sender } },
          },
          { new: true }
       );
 
       const reply = await Tweet.create({
-         user: req.user.id,
+         user: sender,
          content: req.body.content,
          in_reply_to: originalTweet._id,
          replyingToUser: originalTweet.user.screen_name,
@@ -261,6 +293,18 @@ export const replytoTweet = async (req, res) => {
          path: 'user',
          select: 'avatar verified name screen_name',
       });
+
+      const isReplyingToOwnTweet = originalTweet.user.toString() === sender;
+      console.log(originalTweet);
+
+      if (!isReplyingToOwnTweet) {
+         await Notification.insertNotification(
+            originalTweet.user,
+            sender,
+            'reply',
+            tweetToSend._id
+         );
+      }
 
       res.json(tweetToSend);
    } catch (err) {

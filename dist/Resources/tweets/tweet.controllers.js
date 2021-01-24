@@ -21,6 +21,8 @@ var _tweet = require("./tweet.model");
 
 var _user = require("../user/user.model");
 
+var _notification = require("../notifications/notification.model");
+
 var _imageUpload = require("../../services/imageUpload");
 
 var _images = require("../../utils/images");
@@ -271,14 +273,16 @@ exports.deleteTweet = deleteTweet;
 
 var favoriteTweet = /*#__PURE__*/function () {
   var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(req, res) {
-    var tweet;
+    var tweetId, userId, tweet;
     return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
-            _context4.prev = 0;
-            _context4.next = 3;
-            return _tweet.Tweet.findByIdAndUpdate(req.params.id, {
+            tweetId = req.params.id;
+            userId = req.user.id;
+            _context4.prev = 2;
+            _context4.next = 5;
+            return _tweet.Tweet.findByIdAndUpdate(tweetId, {
               $addToSet: {
                 favorites: {
                   user: req.user.id
@@ -288,24 +292,28 @@ var favoriteTweet = /*#__PURE__*/function () {
               new: true
             }).exec();
 
-          case 3:
+          case 5:
             tweet = _context4.sent;
+            _context4.next = 8;
+            return _notification.Notification.insertNotification(tweet.user, userId, 'like', tweet._id);
+
+          case 8:
             res.json(tweet.favorites);
-            _context4.next = 11;
+            _context4.next = 15;
             break;
 
-          case 7:
-            _context4.prev = 7;
-            _context4.t0 = _context4["catch"](0);
+          case 11:
+            _context4.prev = 11;
+            _context4.t0 = _context4["catch"](2);
             console.error(_context4.t0.message);
             res.status(500).send('Server Error');
 
-          case 11:
+          case 15:
           case "end":
             return _context4.stop();
         }
       }
-    }, _callee4, null, [[0, 7]]);
+    }, _callee4, null, [[2, 11]]);
   }));
 
   return function favoriteTweet(_x7, _x8) {
@@ -415,22 +423,32 @@ var retweet = /*#__PURE__*/function () {
 
           case 14:
             tweet = _context6.sent;
-            res.json(tweet);
-            _context6.next = 22;
-            break;
+
+            if (deletedTweet) {
+              _context6.next = 18;
+              break;
+            }
+
+            _context6.next = 18;
+            return _notification.Notification.insertNotification(tweet.user, userId, 'retweet', tweet._id);
 
           case 18:
-            _context6.prev = 18;
+            res.json(tweet);
+            _context6.next = 25;
+            break;
+
+          case 21:
+            _context6.prev = 21;
             _context6.t0 = _context6["catch"](0);
             console.error(_context6.t0.message);
             res.status(500).send('Server Error');
 
-          case 22:
+          case 25:
           case "end":
             return _context6.stop();
         }
       }
-    }, _callee6, null, [[0, 18]]);
+    }, _callee6, null, [[0, 21]]);
   }));
 
   return function retweet(_x11, _x12) {
@@ -442,18 +460,19 @@ exports.retweet = retweet;
 
 var replyToTweetWithImage = /*#__PURE__*/function () {
   var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(req, res) {
-    var tweetId, content, files, reply, originalTweet, resizedImage, image, populatedReply;
+    var tweetId, sender, content, files, reply, originalTweet, resizedImage, image, populatedReply, isReplyingToOwnTweet;
     return regeneratorRuntime.wrap(function _callee7$(_context7) {
       while (1) {
         switch (_context7.prev = _context7.next) {
           case 0:
             tweetId = req.params.tweet_id;
+            sender = req.user.id;
             content = req.body.content;
             files = req.files;
             reply = undefined;
 
             if (files) {
-              _context7.next = 6;
+              _context7.next = 7;
               break;
             }
 
@@ -461,57 +480,68 @@ var replyToTweetWithImage = /*#__PURE__*/function () {
               msg: 'This route requires a file'
             }));
 
-          case 6:
-            _context7.prev = 6;
-            _context7.next = 9;
+          case 7:
+            _context7.prev = 7;
+            _context7.next = 10;
             return _tweet.Tweet.findByIdAndUpdate(tweetId, {
               $push: {
                 replies: {
-                  user: req.user.id
+                  user: sender
                 }
               }
             }, {
               new: true
             });
 
-          case 9:
+          case 10:
             originalTweet = _context7.sent;
-            _context7.next = 12;
+            _context7.next = 13;
             return (0, _images.resizeImage)(560, null, files.image.data);
 
-          case 12:
+          case 13:
             resizedImage = _context7.sent;
-            _context7.next = 15;
+            _context7.next = 16;
             return (0, _imageUpload.uploadImageToS3)(resizedImage);
 
-          case 15:
+          case 16:
             image = _context7.sent;
             reply = new _tweet.Tweet({
-              user: req.user.id,
+              user: sender,
               content: content,
               in_reply_to: originalTweet._id,
               replyingToUser: originalTweet.user.screen_name,
               image: image.Location
             });
-            _context7.next = 19;
+            _context7.next = 20;
             return reply.save();
 
-          case 19:
-            _context7.next = 21;
+          case 20:
+            _context7.next = 22;
             return reply.populate({
               path: 'user',
               select: 'avatar verified name screen_name'
             }).execPopulate();
 
-          case 21:
+          case 22:
             populatedReply = _context7.sent;
+            isReplyingToOwnTweet = originalTweet.user.toString() === sender;
+
+            if (isReplyingToOwnTweet) {
+              _context7.next = 27;
+              break;
+            }
+
+            _context7.next = 27;
+            return _notification.Notification.insertNotification(originalTweet.user, sender, 'reply', populatedReply._id);
+
+          case 27:
             res.json(populatedReply);
-            _context7.next = 30;
+            _context7.next = 35;
             break;
 
-          case 25:
-            _context7.prev = 25;
-            _context7.t0 = _context7["catch"](6);
+          case 30:
+            _context7.prev = 30;
+            _context7.t0 = _context7["catch"](7);
             console.error(_context7.t0.message);
 
             if (_context7.t0.message === 'Input buffer contains unsupported image format') {
@@ -522,12 +552,12 @@ var replyToTweetWithImage = /*#__PURE__*/function () {
 
             res.status(500).send('Server Error');
 
-          case 30:
+          case 35:
           case "end":
             return _context7.stop();
         }
       }
-    }, _callee7, null, [[6, 25]]);
+    }, _callee7, null, [[7, 30]]);
   }));
 
   return function replyToTweetWithImage(_x13, _x14) {
@@ -539,15 +569,17 @@ exports.replyToTweetWithImage = replyToTweetWithImage;
 
 var replytoTweet = /*#__PURE__*/function () {
   var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8(req, res) {
-    var errors, tweetId, originalTweet, reply, tweetToSend;
+    var errors, tweetId, sender, originalTweet, reply, tweetToSend, isReplyingToOwnTweet;
     return regeneratorRuntime.wrap(function _callee8$(_context8) {
       while (1) {
         switch (_context8.prev = _context8.next) {
           case 0:
             errors = (0, _expressValidator.validationResult)(req);
+            tweetId = req.params.tweet_id;
+            sender = req.user.id;
 
             if (errors.isEmpty()) {
-              _context8.next = 3;
+              _context8.next = 5;
               break;
             }
 
@@ -555,57 +587,68 @@ var replytoTweet = /*#__PURE__*/function () {
               errors: errors.array()
             }));
 
-          case 3:
-            _context8.prev = 3;
-            tweetId = req.params.tweet_id;
-            _context8.next = 7;
+          case 5:
+            _context8.prev = 5;
+            _context8.next = 8;
             return _tweet.Tweet.findByIdAndUpdate(tweetId, {
               $push: {
                 replies: {
-                  user: req.user.id
+                  user: sender
                 }
               }
             }, {
               new: true
             });
 
-          case 7:
+          case 8:
             originalTweet = _context8.sent;
-            _context8.next = 10;
+            _context8.next = 11;
             return _tweet.Tweet.create({
-              user: req.user.id,
+              user: sender,
               content: req.body.content,
               in_reply_to: originalTweet._id,
               replyingToUser: originalTweet.user.screen_name,
               image: req.body.image
             });
 
-          case 10:
+          case 11:
             reply = _context8.sent;
-            _context8.next = 13;
+            _context8.next = 14;
             return _tweet.Tweet.findById(reply._id).populate({
               path: 'user',
               select: 'avatar verified name screen_name'
             });
 
-          case 13:
+          case 14:
             tweetToSend = _context8.sent;
+            isReplyingToOwnTweet = originalTweet.user.toString() === sender;
+            console.log(originalTweet);
+
+            if (isReplyingToOwnTweet) {
+              _context8.next = 20;
+              break;
+            }
+
+            _context8.next = 20;
+            return _notification.Notification.insertNotification(originalTweet.user, sender, 'reply', tweetToSend._id);
+
+          case 20:
             res.json(tweetToSend);
-            _context8.next = 21;
+            _context8.next = 27;
             break;
 
-          case 17:
-            _context8.prev = 17;
-            _context8.t0 = _context8["catch"](3);
+          case 23:
+            _context8.prev = 23;
+            _context8.t0 = _context8["catch"](5);
             console.error(_context8.t0.message);
             res.status(500).send('Server Error');
 
-          case 21:
+          case 27:
           case "end":
             return _context8.stop();
         }
       }
-    }, _callee8, null, [[3, 17]]);
+    }, _callee8, null, [[5, 23]]);
   }));
 
   return function replytoTweet(_x15, _x16) {

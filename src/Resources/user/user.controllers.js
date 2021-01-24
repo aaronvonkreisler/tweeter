@@ -57,11 +57,12 @@ export const followUser = async (req, res) => {
    try {
       const user = await User.findById(userId).select('-password');
       const userToBeFollowed = await User.findById(userToFollowId);
-      if (
+      const isFollowing =
          userToBeFollowed.followers.filter(
             (follower) => follower.user.toString() === req.user.id
-         ).length > 0
-      ) {
+         ).length > 0;
+
+      if (isFollowing) {
          return res.status(400).json({ msg: 'User is already followed' });
       }
 
@@ -71,14 +72,17 @@ export const followUser = async (req, res) => {
       await userToBeFollowed.save();
       await user.save();
 
-      const notification = new Notification({
-         notificationType: 'follow',
-         sender: user._id,
-         receiver: userToBeFollowed._id,
-      });
+      await Notification.insertNotification(
+         userToFollowId,
+         userId,
+         'follow',
+         userId
+      );
 
-      await notification.save();
-
+      /* socketHandler.sendNotification({
+         will need to populate the sender field (req.user.id)
+      })
+*/
       // Return the followers of the user who is being followed.
       res.json(userToBeFollowed.followers);
    } catch (err) {

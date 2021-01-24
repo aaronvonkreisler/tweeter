@@ -25,6 +25,8 @@ var _messages = require("./messages.model");
 
 var _chat = require("../chat/chat.model");
 
+var _notification = require("../../notifications/notification.model");
+
 var _imageUpload = require("../../../services/imageUpload");
 
 var _images = require("../../../utils/images");
@@ -186,6 +188,8 @@ var sendMessage = /*#__PURE__*/function () {
               }
 
               socketHandler.sendSocketMessage(req, populatedMessage, userId);
+
+              _notification.Notification.insertNotification(userId, sender, 'message', chatId);
             });
             res.json(populatedMessage);
             _context2.next = 21;
