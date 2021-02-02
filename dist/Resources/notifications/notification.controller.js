@@ -56,9 +56,18 @@ var retrieveNotifications = /*#__PURE__*/function () {
                 as: 'receiver'
               }
             }, {
+              $lookup: {
+                from: 'tweets',
+                localField: 'entityId',
+                foreignField: '_id',
+                as: 'tweet'
+              }
+            }, {
               $unwind: '$sender'
             }, {
               $unwind: '$receiver'
+            }, {
+              $unwind: '$tweet'
             }, {
               $project: {
                 read: true,
@@ -68,8 +77,12 @@ var retrieveNotifications = /*#__PURE__*/function () {
                 'sender.name': true,
                 'sender.screen_name': true,
                 'sender.avatar': true,
+                'sender.verified': true,
                 'sender._id': true,
-                'receiver._id': true
+                'receiver._id': true,
+                'receiver.name': true,
+                'receiver.screen_name': true,
+                tweet: true
               }
             }]);
 

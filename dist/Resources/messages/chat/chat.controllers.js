@@ -156,7 +156,7 @@ var getChats = /*#__PURE__*/function () {
               }
             }).populate({
               path: 'users',
-              select: 'name avatar screen_name verified'
+              select: 'name avatarSmall screen_name verified'
             }).populate({
               path: 'lastMessage',
               select: 'content'

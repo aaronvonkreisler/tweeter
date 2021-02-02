@@ -150,7 +150,7 @@ var createTweet = /*#__PURE__*/function () {
             _context2.next = 11;
             return _tweet.Tweet.findById(newTweet._id).populate({
               path: 'user',
-              select: 'avatar name screen_name verified'
+              select: 'avatarSmall name screen_name verified'
             });
 
           case 11:
@@ -418,7 +418,7 @@ var retweet = /*#__PURE__*/function () {
               new: true
             }).populate({
               path: 'user',
-              select: 'avatar screen_name verified name '
+              select: 'avatarSmall screen_name verified name '
             });
 
           case 14:
@@ -519,7 +519,7 @@ var replyToTweetWithImage = /*#__PURE__*/function () {
             _context7.next = 22;
             return reply.populate({
               path: 'user',
-              select: 'avatar verified name screen_name'
+              select: 'avatarSmall verified name screen_name'
             }).execPopulate();
 
           case 22:

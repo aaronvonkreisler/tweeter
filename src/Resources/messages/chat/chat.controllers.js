@@ -66,7 +66,7 @@ export const getChats = async (req, res) => {
       })
          .populate({
             path: 'users',
-            select: 'name avatar screen_name verified',
+            select: 'name avatarSmall screen_name verified',
          })
          .populate({
             path: 'lastMessage',

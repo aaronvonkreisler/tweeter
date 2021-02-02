@@ -8,110 +8,28 @@ require("core-js/modules/es.promise");
 
 require("core-js/modules/es.regexp.exec");
 
-require("core-js/modules/es.string.match");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getProfileByScreenName = exports.getCurrentUsersProfile = exports.uploadUserBackgroundPic = void 0;
+exports.getProfileByScreenName = exports.getCurrentUsersProfile = void 0;
 
 require("regenerator-runtime/runtime");
 
 var _profile = require("./profile.model");
 
-var _imageUpload = require("../../services/imageUpload");
-
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-// TODO -- handle error if file size is too large. defaults to 403 status
-var uploadUserBackgroundPic = /*#__PURE__*/function () {
+var getCurrentUsersProfile = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(req, res) {
-    var files, regex, backgroundPicResponse, profileFields, profile;
+    var profile;
     return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             _context.prev = 0;
-            files = req.files;
-            regex = /(image\/jpg)|(image\/jpeg)|(image\/png)/i;
-
-            if (files.image.mimetype.match(regex)) {
-              _context.next = 7;
-              break;
-            }
-
-            res.status(422).json({
-              msg: 'Invalid file type. Please upload a JPG or PNG filetype.'
-            });
-            _context.next = 15;
-            break;
-
-          case 7:
-            _context.next = 9;
-            return (0, _imageUpload.uploadPhoto)(files);
-
-          case 9:
-            backgroundPicResponse = _context.sent;
-            profileFields = {
-              user: req.user.id,
-              background_picture: backgroundPicResponse.Location
-            };
-            _context.next = 13;
-            return _profile.Profile.findOneAndUpdate({
-              user: req.user.id
-            }, {
-              $set: profileFields
-            }, {
-              new: true,
-              upsert: true,
-              setDefaultsOnInsert: true
-            }).populate({
-              path: 'user',
-              select: '-password'
-            });
-
-          case 13:
-            profile = _context.sent;
-            res.json(profile);
-
-          case 15:
-            _context.next = 21;
-            break;
-
-          case 17:
-            _context.prev = 17;
-            _context.t0 = _context["catch"](0);
-            console.error(_context.t0);
-            res.status(500).json({
-              msg: 'Server Error'
-            });
-
-          case 21:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee, null, [[0, 17]]);
-  }));
-
-  return function uploadUserBackgroundPic(_x, _x2) {
-    return _ref.apply(this, arguments);
-  };
-}();
-
-exports.uploadUserBackgroundPic = uploadUserBackgroundPic;
-
-var getCurrentUsersProfile = /*#__PURE__*/function () {
-  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(req, res) {
-    var profile;
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            _context2.prev = 0;
-            _context2.next = 3;
+            _context.next = 3;
             return _profile.Profile.find({
               user: req.user.id
             }).populate({
@@ -120,7 +38,7 @@ var getCurrentUsersProfile = /*#__PURE__*/function () {
             }).exec();
 
           case 3:
-            profile = _context2.sent;
+            profile = _context.sent;
 
             if (!profile) {
               res.status(404).json({
@@ -129,20 +47,20 @@ var getCurrentUsersProfile = /*#__PURE__*/function () {
             }
 
             res.json(profile);
-            _context2.next = 14;
+            _context.next = 14;
             break;
 
           case 8:
-            _context2.prev = 8;
-            _context2.t0 = _context2["catch"](0);
-            console.error(_context2.t0.message);
+            _context.prev = 8;
+            _context.t0 = _context["catch"](0);
+            console.error(_context.t0.message);
 
-            if (!(_context2.t0.kind === 'ObjectId')) {
-              _context2.next = 13;
+            if (!(_context.t0.kind === 'ObjectId')) {
+              _context.next = 13;
               break;
             }
 
-            return _context2.abrupt("return", res.status(404).json({
+            return _context.abrupt("return", res.status(404).json({
               msg: 'No Profile found!'
             }));
 
@@ -153,28 +71,28 @@ var getCurrentUsersProfile = /*#__PURE__*/function () {
 
           case 14:
           case "end":
-            return _context2.stop();
+            return _context.stop();
         }
       }
-    }, _callee2, null, [[0, 8]]);
+    }, _callee, null, [[0, 8]]);
   }));
 
-  return function getCurrentUsersProfile(_x3, _x4) {
-    return _ref2.apply(this, arguments);
+  return function getCurrentUsersProfile(_x, _x2) {
+    return _ref.apply(this, arguments);
   };
 }();
 
 exports.getCurrentUsersProfile = getCurrentUsersProfile;
 
 var getProfileByScreenName = /*#__PURE__*/function () {
-  var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(req, res) {
+  var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(req, res) {
     var profile;
-    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
       while (1) {
-        switch (_context3.prev = _context3.next) {
+        switch (_context2.prev = _context2.next) {
           case 0:
-            _context3.prev = 0;
-            _context3.next = 3;
+            _context2.prev = 0;
+            _context2.next = 3;
             return _profile.Profile.findOne({
               screen_name: req.params.screen_name
             }).populate({
@@ -183,40 +101,40 @@ var getProfileByScreenName = /*#__PURE__*/function () {
             });
 
           case 3:
-            profile = _context3.sent;
+            profile = _context2.sent;
 
             if (profile) {
-              _context3.next = 6;
+              _context2.next = 6;
               break;
             }
 
-            return _context3.abrupt("return", res.status(400).json({
+            return _context2.abrupt("return", res.status(400).json({
               msg: 'No profile found'
             }));
 
           case 6:
             res.json(profile);
-            _context3.next = 13;
+            _context2.next = 13;
             break;
 
           case 9:
-            _context3.prev = 9;
-            _context3.t0 = _context3["catch"](0);
-            console.error(_context3.t0.message);
+            _context2.prev = 9;
+            _context2.t0 = _context2["catch"](0);
+            console.error(_context2.t0.message);
             res.status(500).json({
               msg: 'Server Error'
             });
 
           case 13:
           case "end":
-            return _context3.stop();
+            return _context2.stop();
         }
       }
-    }, _callee3, null, [[0, 9]]);
+    }, _callee2, null, [[0, 9]]);
   }));
 
-  return function getProfileByScreenName(_x5, _x6) {
-    return _ref3.apply(this, arguments);
+  return function getProfileByScreenName(_x3, _x4) {
+    return _ref2.apply(this, arguments);
   };
 }();
 

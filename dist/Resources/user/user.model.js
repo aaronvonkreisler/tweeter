@@ -33,7 +33,11 @@ var UserSchema = new _mongoose.default.Schema({
     unique: true,
     trim: true
   },
-  avatar: {
+  avatarSmall: {
+    type: String,
+    default: 'https://tweeter-dev.s3.us-east-2.amazonaws.com/Profile_avatar_placeholder_large.png'
+  },
+  avatarLarge: {
     type: String,
     default: 'https://tweeter-dev.s3.us-east-2.amazonaws.com/Profile_avatar_placeholder_large.png'
   },

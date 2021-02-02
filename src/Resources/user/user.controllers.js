@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { User } from './user.model';
 import { Notification } from '../notifications/notification.model';
 import { uploadImageToS3 } from '../../services/imageUpload';
+import { resizeImage } from '../../utils/images';
 
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -131,24 +132,30 @@ export const unfollowUser = async (req, res) => {
 export const uploadUserAvatar = async (req, res) => {
    try {
       const { files } = req;
-      const regex = /(image\/jpg)|(image\/jpeg)|(image\/png)/i;
-      if (!files.image.mimetype.match(regex)) {
-         res.status(422).json({
-            msg: 'Invalid file type. Please upload a JPG or PNG filetype.',
-         });
-      } else {
-         const profilePicResponse = await uploadImageToS3(files);
 
-         const user = await User.findByIdAndUpdate(
-            req.user.id,
-            { avatar: profilePicResponse.Location },
-            { new: true, select: '-password -email' }
-         );
+      // const profilePicResponse = await uploadImageToS3(files);
+      const avatarSmall = await resizeImage(50, 50, files.image.data);
+      const avatarLarge = await resizeImage(200, 200, files.image.data);
 
-         res.json(user);
-      }
+      const resizedSmallLocation = await uploadImageToS3(avatarSmall);
+      const resizedLargeLocation = await uploadImageToS3(avatarLarge);
+
+      const user = await User.findByIdAndUpdate(
+         req.user.id,
+         {
+            // avatar: profilePicResponse.Location,
+            avatarSmall: resizedSmallLocation.Location,
+            avatarLarge: resizedLargeLocation.Location,
+         },
+         { new: true, select: '-password -email' }
+      );
+
+      res.json(user);
    } catch (err) {
       console.error(err);
+      if (err.message === 'Input buffer contains unsupported image format') {
+         res.status(400).json({ msg: 'Unsupported image format' });
+      }
       res.status(500).send('Server Error');
    }
 };
@@ -156,23 +163,23 @@ export const uploadUserAvatar = async (req, res) => {
 export const uploadUserBackgroundImage = async (req, res) => {
    try {
       const { files } = req;
-      const regex = /(image\/jpg)|(image\/jpeg)|(image\/png)/i;
-      if (!files.image.mimetype.match(regex)) {
-         res.status(422).json({
-            msg: 'Invalid file type. Please upload a JPG or PNG filetype.',
-         });
-      } else {
-         const backgroundPicResponse = await uploadImageToS3(files);
 
-         const user = await User.findByIdAndUpdate(
-            req.user.id,
-            { backgroundPicture: backgroundPicResponse.Location },
-            { new: true, select: '-password -email' }
-         );
+      // const backgroundPicResponse = await uploadImageToS3(files);
+      const backgroundImage = await resizeImage(600, 200, files.image.data);
+      const imageLocation = await uploadImageToS3(backgroundImage);
 
-         res.json(user);
-      }
+      const user = await User.findByIdAndUpdate(
+         req.user.id,
+         { backgroundPicture: imageLocation.Location },
+         { new: true, select: '-password -email' }
+      );
+
+      res.json(user);
    } catch (err) {
+      if (err.message === 'Input buffer contains unsupported image format') {
+         res.status(400).json({ msg: 'Unsupported image format' });
+      }
+
       console.error(err);
       res.status(500).send('Server Error');
    }

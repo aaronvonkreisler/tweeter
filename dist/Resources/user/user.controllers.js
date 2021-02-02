@@ -22,8 +22,6 @@ require("core-js/modules/es.regexp.exec");
 
 require("core-js/modules/es.regexp.to-string");
 
-require("core-js/modules/es.string.match");
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -40,6 +38,8 @@ var _user = require("./user.model");
 var _notification = require("../notifications/notification.model");
 
 var _imageUpload = require("../../services/imageUpload");
+
+var _images = require("../../utils/images");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -333,60 +333,69 @@ exports.unfollowUser = unfollowUser;
 
 var uploadUserAvatar = /*#__PURE__*/function () {
   var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(req, res) {
-    var files, regex, profilePicResponse, user;
+    var files, avatarSmall, avatarLarge, resizedSmallLocation, resizedLargeLocation, user;
     return regeneratorRuntime.wrap(function _callee6$(_context6) {
       while (1) {
         switch (_context6.prev = _context6.next) {
           case 0:
             _context6.prev = 0;
-            files = req.files;
-            regex = /(image\/jpg)|(image\/jpeg)|(image\/png)/i;
+            files = req.files; // const profilePicResponse = await uploadImageToS3(files);
 
-            if (files.image.mimetype.match(regex)) {
-              _context6.next = 7;
-              break;
-            }
+            _context6.next = 4;
+            return (0, _images.resizeImage)(50, 50, files.image.data);
 
-            res.status(422).json({
-              msg: 'Invalid file type. Please upload a JPG or PNG filetype.'
-            });
-            _context6.next = 14;
-            break;
+          case 4:
+            avatarSmall = _context6.sent;
+            _context6.next = 7;
+            return (0, _images.resizeImage)(200, 200, files.image.data);
 
           case 7:
-            _context6.next = 9;
-            return (0, _imageUpload.uploadImageToS3)(files);
+            avatarLarge = _context6.sent;
+            _context6.next = 10;
+            return (0, _imageUpload.uploadImageToS3)(avatarSmall);
 
-          case 9:
-            profilePicResponse = _context6.sent;
-            _context6.next = 12;
+          case 10:
+            resizedSmallLocation = _context6.sent;
+            _context6.next = 13;
+            return (0, _imageUpload.uploadImageToS3)(avatarLarge);
+
+          case 13:
+            resizedLargeLocation = _context6.sent;
+            _context6.next = 16;
             return _user.User.findByIdAndUpdate(req.user.id, {
-              avatar: profilePicResponse.Location
+              // avatar: profilePicResponse.Location,
+              avatarSmall: resizedSmallLocation.Location,
+              avatarLarge: resizedLargeLocation.Location
             }, {
               new: true,
               select: '-password -email'
             });
 
-          case 12:
+          case 16:
             user = _context6.sent;
             res.json(user);
-
-          case 14:
-            _context6.next = 20;
+            _context6.next = 25;
             break;
 
-          case 16:
-            _context6.prev = 16;
+          case 20:
+            _context6.prev = 20;
             _context6.t0 = _context6["catch"](0);
             console.error(_context6.t0);
+
+            if (_context6.t0.message === 'Input buffer contains unsupported image format') {
+              res.status(400).json({
+                msg: 'Unsupported image format'
+              });
+            }
+
             res.status(500).send('Server Error');
 
-          case 20:
+          case 25:
           case "end":
             return _context6.stop();
         }
       }
-    }, _callee6, null, [[0, 16]]);
+    }, _callee6, null, [[0, 20]]);
   }));
 
   return function uploadUserAvatar(_x11, _x12) {
@@ -398,60 +407,57 @@ exports.uploadUserAvatar = uploadUserAvatar;
 
 var uploadUserBackgroundImage = /*#__PURE__*/function () {
   var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7(req, res) {
-    var files, regex, backgroundPicResponse, user;
+    var files, backgroundImage, imageLocation, user;
     return regeneratorRuntime.wrap(function _callee7$(_context7) {
       while (1) {
         switch (_context7.prev = _context7.next) {
           case 0:
             _context7.prev = 0;
-            files = req.files;
-            regex = /(image\/jpg)|(image\/jpeg)|(image\/png)/i;
+            files = req.files; // const backgroundPicResponse = await uploadImageToS3(files);
 
-            if (files.image.mimetype.match(regex)) {
-              _context7.next = 7;
-              break;
-            }
+            _context7.next = 4;
+            return (0, _images.resizeImage)(600, 200, files.image.data);
 
-            res.status(422).json({
-              msg: 'Invalid file type. Please upload a JPG or PNG filetype.'
-            });
-            _context7.next = 14;
-            break;
+          case 4:
+            backgroundImage = _context7.sent;
+            _context7.next = 7;
+            return (0, _imageUpload.uploadImageToS3)(backgroundImage);
 
           case 7:
-            _context7.next = 9;
-            return (0, _imageUpload.uploadImageToS3)(files);
-
-          case 9:
-            backgroundPicResponse = _context7.sent;
-            _context7.next = 12;
+            imageLocation = _context7.sent;
+            _context7.next = 10;
             return _user.User.findByIdAndUpdate(req.user.id, {
-              backgroundPicture: backgroundPicResponse.Location
+              backgroundPicture: imageLocation.Location
             }, {
               new: true,
               select: '-password -email'
             });
 
-          case 12:
+          case 10:
             user = _context7.sent;
             res.json(user);
-
-          case 14:
-            _context7.next = 20;
+            _context7.next = 19;
             break;
 
-          case 16:
-            _context7.prev = 16;
+          case 14:
+            _context7.prev = 14;
             _context7.t0 = _context7["catch"](0);
+
+            if (_context7.t0.message === 'Input buffer contains unsupported image format') {
+              res.status(400).json({
+                msg: 'Unsupported image format'
+              });
+            }
+
             console.error(_context7.t0);
             res.status(500).send('Server Error');
 
-          case 20:
+          case 19:
           case "end":
             return _context7.stop();
         }
       }
-    }, _callee7, null, [[0, 16]]);
+    }, _callee7, null, [[0, 14]]);
   }));
 
   return function uploadUserBackgroundImage(_x13, _x14) {

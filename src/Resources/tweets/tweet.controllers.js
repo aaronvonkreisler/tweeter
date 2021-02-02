@@ -64,7 +64,7 @@ export const createTweet = async (req, res) => {
 
       const tweet = await Tweet.findById(newTweet._id).populate({
          path: 'user',
-         select: 'avatar name screen_name verified',
+         select: 'avatarSmall name screen_name verified',
       });
 
       res.json(tweet);
@@ -183,7 +183,10 @@ export const retweet = async (req, res) => {
          tweetId,
          { [option]: { retweetUsers: userId } },
          { new: true }
-      ).populate({ path: 'user', select: 'avatar screen_name verified name ' });
+      ).populate({
+         path: 'user',
+         select: 'avatarSmall screen_name verified name ',
+      });
 
       if (!deletedTweet) {
          await Notification.insertNotification(
@@ -237,7 +240,7 @@ export const replyToTweetWithImage = async (req, res) => {
       const populatedReply = await reply
          .populate({
             path: 'user',
-            select: 'avatar verified name screen_name',
+            select: 'avatarSmall verified name screen_name',
          })
          .execPopulate();
 
