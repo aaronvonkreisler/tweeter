@@ -11,7 +11,7 @@ export const getTweetById = async (req, res) => {
          .populate({
             path: 'user',
             select:
-               'avatar verified name email screen_name followers following bio',
+               'avatarSmall verified name screen_name followers following bio',
          })
          .exec();
       if (!tweet) {
@@ -148,7 +148,7 @@ export const getTweetsLikedUsers = async (req, res) => {
             path: 'favorites',
             populate: {
                path: 'user',
-               select: 'name screen_name followers verified avatar',
+               select: 'name screen_name followers verified avatarSmall',
             },
          })
 
@@ -170,7 +170,7 @@ export const getTweetsRetweetUsers = async (req, res) => {
       const tweet = await Tweet.find({ retweet: req.params.tweet_id })
          .populate({
             path: 'user',
-            select: '_id display_name screen_name name verified avatar',
+            select: '_id display_name screen_name name verified avatarSmall',
          })
          .select('user -_id')
          .lean()

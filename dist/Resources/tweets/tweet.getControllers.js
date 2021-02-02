@@ -48,7 +48,7 @@ var getTweetById = /*#__PURE__*/function () {
             _context.next = 3;
             return _tweet.Tweet.findById(req.params.id).populate('retweet').populate({
               path: 'user',
-              select: 'avatar verified name email screen_name followers following bio'
+              select: 'avatarSmall verified name screen_name followers following bio'
             }).exec();
 
           case 3:
@@ -410,7 +410,7 @@ var getTweetsLikedUsers = /*#__PURE__*/function () {
               path: 'favorites',
               populate: {
                 path: 'user',
-                select: 'name screen_name followers verified avatar'
+                select: 'name screen_name followers verified avatarSmall'
               }
             }).lean().exec();
 
@@ -461,7 +461,7 @@ var getTweetsRetweetUsers = /*#__PURE__*/function () {
               retweet: req.params.tweet_id
             }).populate({
               path: 'user',
-              select: '_id display_name screen_name name verified avatar'
+              select: '_id display_name screen_name name verified avatarSmall'
             }).select('user -_id').lean().exec();
 
           case 3:

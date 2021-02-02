@@ -294,11 +294,10 @@ export const replytoTweet = async (req, res) => {
 
       const tweetToSend = await Tweet.findById(reply._id).populate({
          path: 'user',
-         select: 'avatar verified name screen_name',
+         select: 'avatarSmall verified name screen_name',
       });
 
       const isReplyingToOwnTweet = originalTweet.user.toString() === sender;
-      console.log(originalTweet);
 
       if (!isReplyingToOwnTweet) {
          await Notification.insertNotification(

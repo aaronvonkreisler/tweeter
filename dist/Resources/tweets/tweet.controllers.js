@@ -616,39 +616,38 @@ var replytoTweet = /*#__PURE__*/function () {
             _context8.next = 14;
             return _tweet.Tweet.findById(reply._id).populate({
               path: 'user',
-              select: 'avatar verified name screen_name'
+              select: 'avatarSmall verified name screen_name'
             });
 
           case 14:
             tweetToSend = _context8.sent;
             isReplyingToOwnTweet = originalTweet.user.toString() === sender;
-            console.log(originalTweet);
 
             if (isReplyingToOwnTweet) {
-              _context8.next = 20;
+              _context8.next = 19;
               break;
             }
 
-            _context8.next = 20;
+            _context8.next = 19;
             return _notification.Notification.insertNotification(originalTweet.user, sender, 'reply', tweetToSend._id);
 
-          case 20:
+          case 19:
             res.json(tweetToSend);
-            _context8.next = 27;
+            _context8.next = 26;
             break;
 
-          case 23:
-            _context8.prev = 23;
+          case 22:
+            _context8.prev = 22;
             _context8.t0 = _context8["catch"](5);
             console.error(_context8.t0.message);
             res.status(500).send('Server Error');
 
-          case 27:
+          case 26:
           case "end":
             return _context8.stop();
         }
       }
-    }, _callee8, null, [[5, 23]]);
+    }, _callee8, null, [[5, 22]]);
   }));
 
   return function replytoTweet(_x15, _x16) {
